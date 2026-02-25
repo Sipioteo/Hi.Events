@@ -71,6 +71,13 @@ export const router: RouteObject[] = [
                     const AcceptInvitation = await import("./components/routes/auth/AcceptInvitation");
                     return { Component: AcceptInvitation.default };
                 }
+            },
+            {
+                path: ":provider/callback",
+                async lazy() {
+                    const ProviderCallback = await import("./components/routes/auth/ProviderCallback");
+                    return { Component: ProviderCallback.default };
+                }
             }
         ]
     },
