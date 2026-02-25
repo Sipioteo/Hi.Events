@@ -167,7 +167,7 @@ const EventHomepage = ({ ...loaderData }: EventHomepageProps) => {
     const isGradientBg = backgroundType === 'GRADIENT';
 
     return (
-        <div className={`min-h-screen font-sans relative ${isCardDark ? 'selection:bg-white/20' : 'selection:bg-black/10'}`}>
+        <div className={`min-h-[100dvh] font-sans relative ${isCardDark ? 'selection:bg-white/20' : 'selection:bg-black/10'}`}>
             {isImageBg && coverImage ? (
                 <div className="fixed inset-0 z-[-1] w-full h-full overflow-hidden" aria-hidden="true">
                     <div
@@ -482,7 +482,7 @@ const EventHomepage = ({ ...loaderData }: EventHomepageProps) => {
                                     )}
                                 </div>
                                 {mapUrl && (
-                                    <div className={`w-full sm:w-64 h-48 rounded-2xl overflow-hidden relative border ${borderStyle} shadow-sm shrink-0`}>
+                                    <div className={`relative isolate z-0 transform-gpu overflow-hidden w-full sm:w-64 h-48 rounded-2xl border ${borderStyle} shadow-sm shrink-0`}>
                                         <iframe
                                             src={`https://maps.google.com/maps?q=${encodeURIComponent(formatAddress(locationDetails))}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                                             width="100%"
@@ -492,8 +492,9 @@ const EventHomepage = ({ ...loaderData }: EventHomepageProps) => {
                                             loading="lazy"
                                             referrerPolicy="no-referrer-when-downgrade"
                                             title="Event Location Map"
-                                            className="absolute inset-0 grayscale-[20%] contrast-[1.1]"
+                                            className="absolute inset-0 w-full h-full border-0"
                                         />
+                                        <div className="absolute inset-0 z-10 pointer-events-none mix-blend-color bg-gray-400/50" aria-hidden="true" />
                                     </div>
                                 )}
                             </div>
@@ -573,7 +574,7 @@ const EventHomepage = ({ ...loaderData }: EventHomepageProps) => {
 
                 {/* Right Side: Branding */}
                 <div className={`flex items-center text-sm ${isBgDark ? '!text-white/60' : '!text-gray-500'}`}>
-                    <span>{t`Powered by`}&nbsp;</span>
+                    <span>{t`Powered by`} </span>
                     <a href="https://hi.events" target="_blank" rel="noopener noreferrer" className={`font-semibold transition-colors ${isBgDark ? '!text-white hover:!text-white/80' : '!text-gray-900 hover:!text-gray-700'} !no-underline`} style={{ color: 'inherit' }}>
                         Hi.Events 🚀
                     </a>
