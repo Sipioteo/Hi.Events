@@ -56,7 +56,7 @@ export const App: FC<
                     width: "100vw",
                     height: "100vh",
                     position: "fixed",
-                    background: "transparent",
+                    background: "#ffffff",
                     zIndex: 1000,
                     display: isLoadedOnBrowser ? "none" : "block",
                 }}

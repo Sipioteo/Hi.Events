@@ -69,7 +69,7 @@ msgid "{0} Active Webhooks"
 msgstr "{0} aktív webhook"
 
 #. placeholder {0}: product.quantity_available
-#: src/components/routes/product-widget/SelectProducts/index.tsx:560
+#: src/components/routes/product-widget/SelectProducts/index.tsx:561
 msgid "{0} available"
 msgstr "{0} elérhető"
 
@@ -818,7 +818,7 @@ msgstr "Megjelenés"
 msgid "Application Fees Configuration"
 msgstr "Alkalmazási díjak konfigurációja"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:661
+#: src/components/routes/product-widget/SelectProducts/index.tsx:662
 msgid "applied"
 msgstr "alkalmazva"
 
@@ -832,7 +832,7 @@ msgid "Applies to 1 product"
 msgstr "1 termékre vonatkozik"
 
 #: src/components/common/FilterModal/index.tsx:284
-#: src/components/routes/product-widget/SelectProducts/index.tsx:690
+#: src/components/routes/product-widget/SelectProducts/index.tsx:691
 msgid "Apply"
 msgstr "Alkalmaz"
 
@@ -1672,7 +1672,7 @@ msgstr "Kattintson a másoláshoz"
 msgid "Click to view notes"
 msgstr "Kattintson a jegyzet megtekintéséhez"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:696
+#: src/components/routes/product-widget/SelectProducts/index.tsx:697
 msgid "close"
 msgstr "bezárás"
 
@@ -1680,7 +1680,7 @@ msgstr "bezárás"
 #: src/components/modals/JoinWaitlistModal/index.tsx:123
 #: src/components/modals/JoinWaitlistModal/index.tsx:159
 #: src/components/modals/RefundOrderModal/index.tsx:169
-#: src/components/routes/product-widget/SelectProducts/index.tsx:697
+#: src/components/routes/product-widget/SelectProducts/index.tsx:698
 msgid "Close"
 msgstr "Bezárás"
 
@@ -2021,7 +2021,7 @@ msgstr "Csatlakozási adatok"
 
 #: src/components/common/WaitlistTable/index.tsx:132
 #: src/components/layouts/EventHomepage/index.tsx:319
-#: src/components/layouts/EventHomepage/index.tsx:537
+#: src/components/layouts/EventHomepage/index.tsx:564
 #: src/components/layouts/OrganizerHomepage/index.tsx:245
 msgid "Contact"
 msgstr "Kapcsolat"
@@ -2042,7 +2042,7 @@ msgstr "Kapcsolati e-mail címünk az ügyfélszolgálathoz"
 
 #: src/components/common/WidgetEditor/index.tsx:29
 #: src/components/common/WidgetEditor/index.tsx:222
-#: src/components/routes/product-widget/SelectProducts/index.tsx:647
+#: src/components/routes/product-widget/SelectProducts/index.tsx:648
 msgid "Continue"
 msgstr "Folytatás"
 
@@ -2061,7 +2061,7 @@ msgstr "Beállítás folytatása"
 msgid "Continue Setup"
 msgstr "Beállítás folytatása"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:432
+#: src/components/routes/product-widget/SelectProducts/index.tsx:433
 msgid "Continue to Checkout"
 msgstr "Folytatás"
 
@@ -2713,7 +2713,7 @@ msgstr "Kedvezmény {0}-ban"
 msgid "Discount Type"
 msgstr "Kedvezmény típusa"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:449
+#: src/components/routes/product-widget/SelectProducts/index.tsx:450
 msgid "Dismiss this message"
 msgstr "Üzenet elvetése"
 
@@ -4046,7 +4046,7 @@ msgstr "Azonnali kifizetés Stripe Connect-en keresztül"
 msgid "Get started"
 msgstr "Kezdés"
 
-#: src/components/layouts/EventHomepage/index.tsx:595
+#: src/components/layouts/EventHomepage/index.tsx:626
 msgid "Get Tickets"
 msgstr "Jegyek vásárlása"
 
@@ -4110,7 +4110,7 @@ msgstr "Vendégkezelés"
 msgid "Guests"
 msgstr "Résztvevők"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:656
+#: src/components/routes/product-widget/SelectProducts/index.tsx:657
 msgid "Have a promo code?"
 msgstr "Van promóciós kódja?"
 
@@ -4175,7 +4175,7 @@ msgstr "Rejtett a nyilvánosság elől"
 msgid "Hidden questions are only visible to the event organizer and not to the customer."
 msgstr "A rejtett kérdések csak az eseményszervező számára láthatók, az ügyfél számára nem."
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:120
+#: src/components/routes/product-widget/SelectProducts/index.tsx:121
 msgid "Hide"
 msgstr "Elrejtés"
 
@@ -4317,7 +4317,7 @@ msgstr "Elfogadom az <0>általános szerződési feltételeket</0>"
 msgid "I confirm this is a transactional message related to this event"
 msgstr "Megerősítem, hogy ez egy tranzakciós üzenet az eseményhez kapcsolódóan"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:409
+#: src/components/routes/product-widget/SelectProducts/index.tsx:410
 msgid "If a new tab did not open automatically, please click the button below to continue to checkout."
 msgstr "Ha nem nyílt meg automatikusan új lap, kérjük, kattintson az alábbi gombra a fizetés folytatásához."
 
@@ -6369,7 +6369,7 @@ msgstr "Kérjük, ellenőrizze, hogy az e-mail címe érvényes-e."
 msgid "Please check your email to confirm your email address"
 msgstr "Kérjük, ellenőrizze e-mail címét az e-mail cím megerősítéséhez."
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:400
+#: src/components/routes/product-widget/SelectProducts/index.tsx:401
 msgid "Please continue in the new tab"
 msgstr "Kérjük, folytassa az új lapon."
 
@@ -6426,7 +6426,7 @@ msgstr "Kérjük, válasszon dátumtartományt"
 msgid "Please select an image."
 msgstr "Kérjük, válasszon egy képet."
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:323
+#: src/components/routes/product-widget/SelectProducts/index.tsx:324
 msgid "Please select at least one product"
 msgstr "Kérjük, válasszon ki legalább egy terméket."
 
@@ -6487,7 +6487,7 @@ msgid "Post Checkout Message"
 msgstr "Pénztár utáni üzenet"
 
 #: src/components/common/PoweredByFooter/index.tsx:60
-#: src/components/layouts/EventHomepage/index.tsx:576
+#: src/components/layouts/EventHomepage/index.tsx:603
 msgid "Powered by"
 msgstr "Működteti:"
 
@@ -6496,7 +6496,7 @@ msgid "Pre Checkout message"
 msgstr "Fizetés előtti üzenet"
 
 #: src/components/layouts/EventHomepage/index.tsx:292
-#: src/components/layouts/EventHomepage/index.tsx:506
+#: src/components/layouts/EventHomepage/index.tsx:533
 msgid "Presented By"
 msgstr ""
 
@@ -6573,7 +6573,7 @@ msgstr "Jegyek nyomtatása"
 msgid "Print to PDF"
 msgstr "Nyomtatás PDF-be"
 
-#: src/components/layouts/EventHomepage/index.tsx:567
+#: src/components/layouts/EventHomepage/index.tsx:594
 #: src/components/layouts/OrganizerHomepage/index.tsx:328
 msgid "Privacy Policy"
 msgstr "Adatvédelmi irányelvek"
@@ -6674,7 +6674,7 @@ msgstr "Profil"
 msgid "Profile updated successfully"
 msgstr "Profil sikeresen frissítve"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:264
+#: src/components/routes/product-widget/SelectProducts/index.tsx:265
 msgid "Promo {promo_code} code applied"
 msgstr "Promóciós kód {promo_code} alkalmazva"
 
@@ -6957,14 +6957,14 @@ msgstr "Regisztrációs kérdések"
 msgid "Remaining Uses"
 msgstr "Fennmaradó felhasználások"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:665
+#: src/components/routes/product-widget/SelectProducts/index.tsx:666
 msgid "remove"
 msgstr "eltávolítás"
 
 #: src/components/common/Editor/Controls/InsertImageControl/index.tsx:146
 #: src/components/common/WaitlistTable/index.tsx:68
 #: src/components/common/WaitlistTable/index.tsx:94
-#: src/components/routes/product-widget/SelectProducts/index.tsx:666
+#: src/components/routes/product-widget/SelectProducts/index.tsx:667
 msgid "Remove"
 msgstr "Eltávolítás"
 
@@ -7715,7 +7715,7 @@ msgstr "Marketing opt-in jelölőnégyzet megjelenítése"
 msgid "Show marketing opt-in checkbox by default"
 msgstr "Marketing opt-in jelölőnégyzet alapértelmezés szerinti megjelenítése"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:120
+#: src/components/routes/product-widget/SelectProducts/index.tsx:121
 msgid "Show more"
 msgstr "Több mutatása"
 
@@ -7847,7 +7847,7 @@ msgstr "Valami hiba történt. Kérjük, próbálja újra."
 msgid "Sorry for the inconvenience."
 msgstr "Elnézést a kellemetlenségért."
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:332
+#: src/components/routes/product-widget/SelectProducts/index.tsx:333
 msgid "Sorry, this promo code is not recognized"
 msgstr "Sajnáljuk, ez a promóciós kód nem felismerhető."
 
@@ -8303,7 +8303,7 @@ msgstr "Sablon sikeresen törölve"
 msgid "Template saved successfully"
 msgstr "Sablon sikeresen mentve"
 
-#: src/components/layouts/EventHomepage/index.tsx:570
+#: src/components/layouts/EventHomepage/index.tsx:597
 #: src/components/layouts/OrganizerHomepage/index.tsx:335
 msgid "Terms of Service"
 msgstr "Szolgáltatási feltételek"
@@ -8320,8 +8320,8 @@ msgstr "Köszönjük, hogy részt vett!"
 msgid "Thanks for your support as we continue to grow and improve Hi.Events!"
 msgstr "Köszönjük támogatását, miközben tovább fejlődünk és fejlesztjük a Hi.Events-et!"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:224
-#: src/components/routes/product-widget/SelectProducts/index.tsx:272
+#: src/components/routes/product-widget/SelectProducts/index.tsx:225
+#: src/components/routes/product-widget/SelectProducts/index.tsx:273
 msgid "That promo code is invalid"
 msgstr "Ez a promóciós kód érvénytelen."
 
@@ -8396,7 +8396,7 @@ msgstr "A vásárló nyelve"
 
 #. placeholder {0}: product.title
 #. placeholder {1}: product.max_per_order
-#: src/components/routes/product-widget/SelectProducts/index.tsx:609
+#: src/components/routes/product-widget/SelectProducts/index.tsx:610
 msgid "The maximum number of products for {0} is {1}"
 msgstr ""
 
@@ -8460,11 +8460,11 @@ msgstr "Színház"
 msgid "Theme & Colors"
 msgstr "Téma és színek"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:366
+#: src/components/routes/product-widget/SelectProducts/index.tsx:367
 msgid "There are no products available for this event"
 msgstr "Nincsenek elérhető termékek ehhez az eseményhez."
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:478
+#: src/components/routes/product-widget/SelectProducts/index.tsx:479
 msgid "There are no products available in this category"
 msgstr "Nincsenek elérhető termékek ebben a kategóriában."
 
@@ -9028,7 +9028,7 @@ msgstr "Nem sikerült kijelentkezni a résztvevőnek."
 msgid "Unable to create product. Please check the your details"
 msgstr "Nem sikerült létrehozni a terméket. Kérjük, ellenőrizze adatait."
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:209
+#: src/components/routes/product-widget/SelectProducts/index.tsx:210
 msgid "Unable to create product. Please check your details"
 msgstr "Nem sikerült létrehozni a terméket. Kérjük, ellenőrizze adatait."
 
@@ -9092,7 +9092,7 @@ msgstr "Ismeretlen résztvevő"
 msgid "Unlimited"
 msgstr "Korlátlan"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:557
+#: src/components/routes/product-widget/SelectProducts/index.tsx:558
 msgid "Unlimited available"
 msgstr "Korlátlanul elérhető"
 
@@ -9443,6 +9443,7 @@ msgid "View logs"
 msgstr "Naplók megtekintése"
 
 #: src/components/layouts/EventHomepage/index.tsx:395
+#: src/components/layouts/EventHomepage/index.tsx:521
 msgid "View Map"
 msgstr "Térkép megtekintése"
 

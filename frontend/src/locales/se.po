@@ -69,7 +69,7 @@ msgid "{0} Active Webhooks"
 msgstr "{0} aktiva webhooks"
 
 #. placeholder {0}: product.quantity_available
-#: src/components/routes/product-widget/SelectProducts/index.tsx:560
+#: src/components/routes/product-widget/SelectProducts/index.tsx:561
 msgid "{0} available"
 msgstr "{0} tillgängliga"
 
@@ -818,7 +818,7 @@ msgstr "Utseende"
 msgid "Application Fees Configuration"
 msgstr "Konfiguration av avgifter"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:661
+#: src/components/routes/product-widget/SelectProducts/index.tsx:662
 msgid "applied"
 msgstr "tillämpat"
 
@@ -832,7 +832,7 @@ msgid "Applies to 1 product"
 msgstr "Gäller 1 produkt"
 
 #: src/components/common/FilterModal/index.tsx:284
-#: src/components/routes/product-widget/SelectProducts/index.tsx:690
+#: src/components/routes/product-widget/SelectProducts/index.tsx:691
 msgid "Apply"
 msgstr "Använd"
 
@@ -1672,7 +1672,7 @@ msgstr "Klicka för att kopiera"
 msgid "Click to view notes"
 msgstr "Klicka för att visa anteckningar"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:696
+#: src/components/routes/product-widget/SelectProducts/index.tsx:697
 msgid "close"
 msgstr "stäng"
 
@@ -1680,7 +1680,7 @@ msgstr "stäng"
 #: src/components/modals/JoinWaitlistModal/index.tsx:123
 #: src/components/modals/JoinWaitlistModal/index.tsx:159
 #: src/components/modals/RefundOrderModal/index.tsx:169
-#: src/components/routes/product-widget/SelectProducts/index.tsx:697
+#: src/components/routes/product-widget/SelectProducts/index.tsx:698
 msgid "Close"
 msgstr "Stäng"
 
@@ -2021,7 +2021,7 @@ msgstr "Anslutningsuppgifter"
 
 #: src/components/common/WaitlistTable/index.tsx:132
 #: src/components/layouts/EventHomepage/index.tsx:319
-#: src/components/layouts/EventHomepage/index.tsx:537
+#: src/components/layouts/EventHomepage/index.tsx:564
 #: src/components/layouts/OrganizerHomepage/index.tsx:245
 msgid "Contact"
 msgstr "Kontakt"
@@ -2042,7 +2042,7 @@ msgstr "Kontakt-e-post för support"
 
 #: src/components/common/WidgetEditor/index.tsx:29
 #: src/components/common/WidgetEditor/index.tsx:222
-#: src/components/routes/product-widget/SelectProducts/index.tsx:647
+#: src/components/routes/product-widget/SelectProducts/index.tsx:648
 msgid "Continue"
 msgstr "Fortsätt"
 
@@ -2061,7 +2061,7 @@ msgstr "Fortsätt konfigureringen"
 msgid "Continue Setup"
 msgstr "Fortsätt konfigurering"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:432
+#: src/components/routes/product-widget/SelectProducts/index.tsx:433
 msgid "Continue to Checkout"
 msgstr "Fortsätt till kassan"
 
@@ -2713,7 +2713,7 @@ msgstr "Rabatt i {0}"
 msgid "Discount Type"
 msgstr "Rabattyp"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:449
+#: src/components/routes/product-widget/SelectProducts/index.tsx:450
 msgid "Dismiss this message"
 msgstr "Stäng detta meddelande"
 
@@ -4046,7 +4046,7 @@ msgstr "Få betalt direkt med Stipe Connect"
 msgid "Get started"
 msgstr "Sätt igång"
 
-#: src/components/layouts/EventHomepage/index.tsx:595
+#: src/components/layouts/EventHomepage/index.tsx:626
 msgid "Get Tickets"
 msgstr "Köp biljetter"
 
@@ -4110,7 +4110,7 @@ msgstr "Gästhantering"
 msgid "Guests"
 msgstr "Gäster"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:656
+#: src/components/routes/product-widget/SelectProducts/index.tsx:657
 msgid "Have a promo code?"
 msgstr "Har du en kampanjkod?"
 
@@ -4175,7 +4175,7 @@ msgstr "Dold från offentlig vy"
 msgid "Hidden questions are only visible to the event organizer and not to the customer."
 msgstr "Dolda frågor är endast synliga för arrangören och inte för kunden."
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:120
+#: src/components/routes/product-widget/SelectProducts/index.tsx:121
 msgid "Hide"
 msgstr "Dölj"
 
@@ -4317,7 +4317,7 @@ msgstr "Jag godkänner <0>villkoren</0>"
 msgid "I confirm this is a transactional message related to this event"
 msgstr "Jag bekräftar att detta är ett transaktionsmeddelande relaterat till detta evenemang"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:409
+#: src/components/routes/product-widget/SelectProducts/index.tsx:410
 msgid "If a new tab did not open automatically, please click the button below to continue to checkout."
 msgstr "Om en ny flik inte öppnades automatiskt, klicka på knappen nedan för att fortsätta till kassan."
 
@@ -6369,7 +6369,7 @@ msgstr "Kontrollera att din e-postadress är giltig"
 msgid "Please check your email to confirm your email address"
 msgstr "Kontrollera din e-post för att bekräfta din e-postadress"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:400
+#: src/components/routes/product-widget/SelectProducts/index.tsx:401
 msgid "Please continue in the new tab"
 msgstr "Fortsätt i den nya fliken"
 
@@ -6426,7 +6426,7 @@ msgstr "Välj ett datumintervall"
 msgid "Please select an image."
 msgstr "Välj en bild."
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:323
+#: src/components/routes/product-widget/SelectProducts/index.tsx:324
 msgid "Please select at least one product"
 msgstr "Välj minst en produkt"
 
@@ -6487,7 +6487,7 @@ msgid "Post Checkout Message"
 msgstr "Meddelande efter checkout"
 
 #: src/components/common/PoweredByFooter/index.tsx:60
-#: src/components/layouts/EventHomepage/index.tsx:576
+#: src/components/layouts/EventHomepage/index.tsx:603
 msgid "Powered by"
 msgstr "Drivs av"
 
@@ -6496,7 +6496,7 @@ msgid "Pre Checkout message"
 msgstr "Meddelande före checkout"
 
 #: src/components/layouts/EventHomepage/index.tsx:292
-#: src/components/layouts/EventHomepage/index.tsx:506
+#: src/components/layouts/EventHomepage/index.tsx:533
 msgid "Presented By"
 msgstr ""
 
@@ -6573,7 +6573,7 @@ msgstr "Skriv ut biljetter"
 msgid "Print to PDF"
 msgstr "Skriv ut till PDF"
 
-#: src/components/layouts/EventHomepage/index.tsx:567
+#: src/components/layouts/EventHomepage/index.tsx:594
 #: src/components/layouts/OrganizerHomepage/index.tsx:328
 msgid "Privacy Policy"
 msgstr "Integritetspolicy"
@@ -6674,7 +6674,7 @@ msgstr "Profil"
 msgid "Profile updated successfully"
 msgstr "Profilen uppdaterades"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:264
+#: src/components/routes/product-widget/SelectProducts/index.tsx:265
 msgid "Promo {promo_code} code applied"
 msgstr "Kampanjkoden {promo_code} har tillämpats"
 
@@ -6959,14 +6959,14 @@ msgstr "Registreringsfrågor"
 msgid "Remaining Uses"
 msgstr "Återstående användningar"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:665
+#: src/components/routes/product-widget/SelectProducts/index.tsx:666
 msgid "remove"
 msgstr "ta bort"
 
 #: src/components/common/Editor/Controls/InsertImageControl/index.tsx:146
 #: src/components/common/WaitlistTable/index.tsx:68
 #: src/components/common/WaitlistTable/index.tsx:94
-#: src/components/routes/product-widget/SelectProducts/index.tsx:666
+#: src/components/routes/product-widget/SelectProducts/index.tsx:667
 msgid "Remove"
 msgstr "Ta bort"
 
@@ -7717,7 +7717,7 @@ msgstr "Visa kryssruta för samtycke till marknadsföring"
 msgid "Show marketing opt-in checkbox by default"
 msgstr "Visa kryssruta för samtycke till marknadsföring som standard"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:120
+#: src/components/routes/product-widget/SelectProducts/index.tsx:121
 msgid "Show more"
 msgstr "Visa mer"
 
@@ -7849,7 +7849,7 @@ msgstr "Något gick fel. Försök igen."
 msgid "Sorry for the inconvenience."
 msgstr "Beklagar besväret."
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:332
+#: src/components/routes/product-widget/SelectProducts/index.tsx:333
 msgid "Sorry, this promo code is not recognized"
 msgstr "Tyvärr, den här kampanjkoden känns inte igen"
 
@@ -8305,7 +8305,7 @@ msgstr "Mallen togs bort"
 msgid "Template saved successfully"
 msgstr "Mallen sparades"
 
-#: src/components/layouts/EventHomepage/index.tsx:570
+#: src/components/layouts/EventHomepage/index.tsx:597
 #: src/components/layouts/OrganizerHomepage/index.tsx:335
 msgid "Terms of Service"
 msgstr "Användarvillkor"
@@ -8322,8 +8322,8 @@ msgstr "Tack för att du deltog!"
 msgid "Thanks for your support as we continue to grow and improve Hi.Events!"
 msgstr "Tack för ditt stöd när vi fortsätter att växa och förbättra Hi.Events!"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:224
-#: src/components/routes/product-widget/SelectProducts/index.tsx:272
+#: src/components/routes/product-widget/SelectProducts/index.tsx:225
+#: src/components/routes/product-widget/SelectProducts/index.tsx:273
 msgid "That promo code is invalid"
 msgstr "Den kampanjkoden är ogiltig"
 
@@ -8398,7 +8398,7 @@ msgstr "Kundens språk och region"
 
 #. placeholder {0}: product.title
 #. placeholder {1}: product.max_per_order
-#: src/components/routes/product-widget/SelectProducts/index.tsx:609
+#: src/components/routes/product-widget/SelectProducts/index.tsx:610
 msgid "The maximum number of products for {0} is {1}"
 msgstr ""
 
@@ -8462,11 +8462,11 @@ msgstr "Teater"
 msgid "Theme & Colors"
 msgstr "Tema och färger"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:366
+#: src/components/routes/product-widget/SelectProducts/index.tsx:367
 msgid "There are no products available for this event"
 msgstr "Det finns inga produkter tillgängliga för det här evenemanget"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:478
+#: src/components/routes/product-widget/SelectProducts/index.tsx:479
 msgid "There are no products available in this category"
 msgstr "Det finns inga produkter tillgängliga i den här kategorin"
 
@@ -9030,7 +9030,7 @@ msgstr "Det gick inte att checka ut deltagaren"
 msgid "Unable to create product. Please check the your details"
 msgstr "Det gick inte att skapa produkten. Kontrollera dina uppgifter"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:209
+#: src/components/routes/product-widget/SelectProducts/index.tsx:210
 msgid "Unable to create product. Please check your details"
 msgstr "Det gick inte att skapa produkten. Kontrollera dina uppgifter"
 
@@ -9094,7 +9094,7 @@ msgstr "Okänd deltagare"
 msgid "Unlimited"
 msgstr "Obegränsat"
 
-#: src/components/routes/product-widget/SelectProducts/index.tsx:557
+#: src/components/routes/product-widget/SelectProducts/index.tsx:558
 msgid "Unlimited available"
 msgstr "Obegränsat antal tillgängliga"
 
@@ -9445,6 +9445,7 @@ msgid "View logs"
 msgstr "Visa loggar"
 
 #: src/components/layouts/EventHomepage/index.tsx:395
+#: src/components/layouts/EventHomepage/index.tsx:521
 msgid "View Map"
 msgstr "Visa karta"
 
