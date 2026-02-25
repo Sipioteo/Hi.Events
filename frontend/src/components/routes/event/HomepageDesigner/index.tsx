@@ -1,25 +1,25 @@
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import classes from './HomepageDesigner.module.scss';
-import {useParams} from "react-router";
-import {useGetEventSettings} from "../../../../queries/useGetEventSettings.ts";
-import {useUpdateEventSettings} from "../../../../mutations/useUpdateEventSettings.ts";
-import {useFormErrorResponseHandler} from "../../../../hooks/useFormErrorResponseHandler.tsx";
-import {EventSettings, HomepageThemeSettings, IdParam} from "../../../../types.ts";
-import {showSuccess} from "../../../../utilites/notifications.tsx";
-import {t} from "@lingui/macro";
-import {useForm} from "@mantine/form";
-import {Button, Group, TextInput, Accordion, Stack, Text} from "@mantine/core";
-import {IconColorPicker, IconHelp, IconPhoto, IconPalette, IconTypography} from "@tabler/icons-react";
-import {Tooltip} from "../../../common/Tooltip";
-import {CustomSelect} from "../../../common/CustomSelect";
-import {GET_EVENT_IMAGES_QUERY_KEY, useGetEventImages} from "../../../../queries/useGetEventImages.ts";
-import {eventPreviewPath} from "../../../../utilites/urlHelper.ts";
-import {LoadingMask} from "../../../common/LoadingMask";
-import {ImageUploadDropzone} from "../../../common/ImageUploadDropzone";
-import {queryClient} from "../../../../utilites/queryClient.ts";
-import {GET_EVENT_PUBLIC_QUERY_KEY} from "../../../../queries/useGetEventPublic.ts";
-import {ThemeColorControls} from "../../../common/ThemeColorControls";
-import {validateThemeSettings} from "../../../../utilites/themeUtils.ts";
+import { useParams } from "react-router";
+import { useGetEventSettings } from "../../../../queries/useGetEventSettings.ts";
+import { useUpdateEventSettings } from "../../../../mutations/useUpdateEventSettings.ts";
+import { useFormErrorResponseHandler } from "../../../../hooks/useFormErrorResponseHandler.tsx";
+import { EventSettings, HomepageThemeSettings, IdParam } from "../../../../types.ts";
+import { showSuccess } from "../../../../utilites/notifications.tsx";
+import { t } from "@lingui/macro";
+import { useForm } from "@mantine/form";
+import { Button, Group, TextInput, Accordion, Stack, Text } from "@mantine/core";
+import { IconColorPicker, IconHelp, IconPhoto, IconPalette, IconTypography } from "@tabler/icons-react";
+import { Tooltip } from "../../../common/Tooltip";
+import { CustomSelect } from "../../../common/CustomSelect";
+import { GET_EVENT_IMAGES_QUERY_KEY, useGetEventImages } from "../../../../queries/useGetEventImages.ts";
+import { eventPreviewPath } from "../../../../utilites/urlHelper.ts";
+import { LoadingMask } from "../../../common/LoadingMask";
+import { ImageUploadDropzone } from "../../../common/ImageUploadDropzone";
+import { queryClient } from "../../../../utilites/queryClient.ts";
+import { GET_EVENT_PUBLIC_QUERY_KEY } from "../../../../queries/useGetEventPublic.ts";
+import { ThemeColorControls } from "../../../common/ThemeColorControls";
+import { validateThemeSettings } from "../../../../utilites/themeUtils.ts";
 
 interface FormValues {
     homepage_theme_settings: Partial<HomepageThemeSettings>;
@@ -27,7 +27,7 @@ interface FormValues {
 }
 
 const HomepageDesigner = () => {
-    const {eventId} = useParams();
+    const { eventId } = useParams();
     const eventSettingsQuery = useGetEventSettings(eventId);
     const eventImagesQuery = useGetEventImages(eventId);
     const updateMutation = useUpdateEventSettings();
@@ -95,7 +95,7 @@ const HomepageDesigner = () => {
         };
 
         updateMutation.mutate(
-            {eventSettings, eventId: eventId},
+            { eventSettings, eventId: eventId },
             {
                 onSuccess: () => {
                     showSuccess(t`Successfully Updated Homepage Design`);
@@ -128,7 +128,7 @@ const HomepageDesigner = () => {
             const settingsJson = JSON.stringify(settingsToSend);
             if (settingsJson !== lastSentSettings.current) {
                 iframeRef.current.contentWindow.postMessage(
-                    {type: "UPDATE_SETTINGS", settings: settingsToSend},
+                    { type: "UPDATE_SETTINGS", settings: settingsToSend },
                     "*"
                 );
                 lastSentSettings.current = settingsJson;
@@ -148,7 +148,7 @@ const HomepageDesigner = () => {
         const value = Array.isArray(backgroundType) ? backgroundType[0] : backgroundType;
         form.setFieldValue('homepage_theme_settings', {
             ...form.values.homepage_theme_settings,
-            background_type: value as 'COLOR' | 'MIRROR_COVER_IMAGE',
+            background_type: value as 'COLOR' | 'GRADIENT' | 'MIRROR_COVER_IMAGE',
         });
     };
 
@@ -179,7 +179,7 @@ const HomepageDesigner = () => {
                                             <Text fw={500} size="sm">{t`Cover Image`}</Text>
                                             <Tooltip
                                                 label={t`We recommend dimensions of 1950px by 650px, a ratio of 3:1, and a maximum file size of 5MB`}>
-                                                <IconHelp size={16} style={{ color: 'var(--mantine-color-gray-6)' }}/>
+                                                <IconHelp size={16} style={{ color: 'var(--mantine-color-gray-6)' }} />
                                             </Tooltip>
                                         </Group>
                                         <ImageUploadDropzone
@@ -210,14 +210,20 @@ const HomepageDesigner = () => {
                                             <CustomSelect
                                                 optionList={[
                                                     {
-                                                        icon: <IconColorPicker/>,
-                                                        label: t`Color`,
+                                                        icon: <IconColorPicker />,
+                                                        label: t`Solid Color`,
                                                         value: 'COLOR',
-                                                        description: t`Choose a color for your background`,
+                                                        description: t`Choose a solid color for your background`,
                                                     },
                                                     {
-                                                        icon: <IconPhoto/>,
-                                                        label: t`Use cover image`,
+                                                        icon: <IconColorPicker />,
+                                                        label: t`Animated Gradient`,
+                                                        value: 'GRADIENT',
+                                                        description: t`A fluid, animated mesh gradient`,
+                                                    },
+                                                    {
+                                                        icon: <IconPhoto />,
+                                                        label: t`Cover Image`,
                                                         value: 'MIRROR_COVER_IMAGE',
                                                         description: t`Use a blurred version of the cover image as the background`,
                                                         disabled: !existingCover,
@@ -285,7 +291,7 @@ const HomepageDesigner = () => {
                             onLoad={() => setIframeLoaded(true)}
                         />
                     ) : (
-                        <LoadingMask/>
+                        <LoadingMask />
                     )}
                 </div>
             </div>
