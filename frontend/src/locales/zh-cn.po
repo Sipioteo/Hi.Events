@@ -14,12 +14,12 @@ msgstr ""
 "Plural-Forms: \n"
 
 #: src/components/layouts/Event/index.tsx:192
-#: src/components/layouts/OrganizerLayout/index.tsx:207
+#: src/components/layouts/OrganizerLayout/index.tsx:209
 msgid "- Click to Publish"
 msgstr "- 点击发布"
 
 #: src/components/layouts/Event/index.tsx:194
-#: src/components/layouts/OrganizerLayout/index.tsx:209
+#: src/components/layouts/OrganizerLayout/index.tsx:211
 msgid "- Click to Unpublish"
 msgstr "- 点击取消发布"
 
@@ -64,6 +64,7 @@ msgstr "{0} <0>签退</0>成功"
 
 #. placeholder {0}: webhooks.length
 #: src/components/routes/event/Webhooks/index.tsx:24
+#: src/components/routes/organizer/Webhooks/index.tsx:25
 msgid "{0} Active Webhooks"
 msgstr "{0} 个活动的 Webhook"
 
@@ -117,6 +118,7 @@ msgstr "{availableCount} / {totalCount} 可用"
 msgid "{days} days, {hours} hours, {minutes} minutes, and {seconds} seconds"
 msgstr "{days} 天, {hours} 小时, {minutes} 分钟, 和 {seconds} 秒"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:79
 #: src/components/common/WebhookTable/index.tsx:79
 msgid "{eventCount} events"
 msgstr "{eventCount} 个事件"
@@ -165,6 +167,7 @@ msgstr "<0>设置一个单一的总人数上限，同时适用于多个票种。
 msgid "<0>The number of products available for this product</0><1>This value can be overridden if there are <2>Capacity Limits</2> associated with this product.</1>"
 msgstr "<0>该产品的可用数量</0><1>如果该产品有相关的<2>容量限制</2>，此值可以被覆盖。</1>"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:205
 #: src/components/common/WebhookTable/index.tsx:205
 msgid "<0>Webhooks instantly notify external services when events happen, like adding a new attendee to your CRM or mailing list upon registration, ensuring seamless automation.</0><1>Use third-party services like <2>Zapier</2>, <3>IFTTT</3> or <4>Make</4> to create custom workflows and automate tasks.</1>"
 msgstr "<0>Webhooks 可在事件发生时立即通知外部服务，例如，在注册时将新与会者添加到您的 CRM 或邮件列表，确保无缝自动化。</0><1>使用第三方服务，如 <2>Zapier</2>、<3>IFTTT</3> 或 <4>Make</4> 来创建自定义工作流并自动化任务。</1>"
@@ -199,6 +202,7 @@ msgid "0 minutes and 0 seconds"
 msgstr "0 分 0 秒"
 
 #: src/components/routes/event/Webhooks/index.tsx:23
+#: src/components/routes/organizer/Webhooks/index.tsx:24
 msgid "1 Active Webhook"
 msgstr "1 个活动的 Webhook"
 
@@ -542,8 +546,10 @@ msgstr "增加层级"
 msgid "Add to Calendar"
 msgstr "添加到日历"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:223
 #: src/components/common/WebhookTable/index.tsx:223
 #: src/components/routes/event/Webhooks/index.tsx:37
+#: src/components/routes/organizer/Webhooks/index.tsx:35
 msgid "Add Webhook"
 msgstr "添加 Webhook"
 
@@ -727,8 +733,8 @@ msgstr "快完成了！完成连接您的 Stripe 账户以开始接受付款。"
 msgid "Almost there! We're just waiting for your payment to be processed. This should only take a few seconds."
 msgstr "快完成了！我们正在等待您的付款处理。这只需要几秒钟。"
 
-#. placeholder {0}: import {Button, Checkbox, PasswordInput, SimpleGrid, TextInput} from "@mantine/core"; import {hasLength, isEmail, matchesField, useForm} from "@mantine/form"; import {RegisterAccountRequest} from "../../../../types.ts"; import {useFormErrorResponseHandler} from "../../../../hooks/useFormErrorResponseHandler.tsx"; import {useRegisterAccount} from "../../../../mutations/useRegisterAccount.ts"; import {NavLink, useLocation, useNavigate} from "react-router"; import {t, Trans} from "@lingui/macro"; import classes from "./Register.module.scss"; import {getClientLocale} from "../../../../locales.ts"; import {useEffect} from "react"; import {getUserCurrency} from "../../../../utilites/currency.ts"; import {getConfig} from "../../../../utilites/config.ts"; import {captureUtmData, getStoredUtmData, clearStoredUtmData} from "../../../../utilites/utm.ts"; export const Register = () => { const navigate = useNavigate(); const location = useLocation(); const form = useForm({ validateInputOnBlur: true, initialValues: { first_name: '', last_name: '', email: '', password: '', password_confirmation: '', timezone: typeof window !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC', locale: getClientLocale(), invite_token: '', currency_code: getUserCurrency(), marketing_opt_in: false, }, validate: { password: hasLength({min: 8}, t`Password must be at least 8 characters`), password_confirmation: matchesField('password', t`Passwords are not the same`), email: isEmail(t`Please check your email is valid`), }, }); const errorHandler = useFormErrorResponseHandler(); const mutate = useRegisterAccount(); const registerUser = (data: RegisterAccountRequest) => { const utmData = getStoredUtmData(); const registrationData = utmData ? {...data, ...utmData} : data; mutate.mutate({registerData: registrationData}, { onSuccess: () => { clearStoredUtmData(); navigate(`/welcome${location.search}`); }, onError: (error: any) => { errorHandler(form, error, error.response?.data?.message); }, }); } useEffect(() => { captureUtmData(); const searchParams = new URLSearchParams(location.search); const token = searchParams.get('invite_token'); if (token) { form.setFieldValue('invite_token', token); } }, [location.search]); return ( <> <header className={classes.header}> <h2>{t`Get started`}</h2> <p> <Trans> Already have an account?{' '} <NavLink to={`/auth/login${location.search}`}> {t`Log in`} </NavLink> </Trans> </p> </header> <div className={classes.registerCard}> <form onSubmit={form.onSubmit((values) => registerUser(values as RegisterAccountRequest))}> <SimpleGrid verticalSpacing={{base: "md", sm: 0}} cols={{base: 1, sm: 2}} mb="md"> <TextInput {...form.getInputProps('first_name')} label={t`First Name`} placeholder={t`John`} required /> <TextInput {...form.getInputProps('last_name')} label={t`Last Name`} placeholder={t`Smith`} /> </SimpleGrid> <TextInput mb={0} {...form.getInputProps('email')} label={t`Email`} placeholder={'your@email.com'} required /> <SimpleGrid verticalSpacing={{base: "md", sm: 0}} cols={{base: 1, sm: 2}} mt="md" mb="md"> <PasswordInput {...form.getInputProps('password')} label={t`Password`} placeholder={t`Your password`} required /> <PasswordInput {...form.getInputProps('password_confirmation')} label={t`Confirm Password`} placeholder={t`Confirm password`} required /> </SimpleGrid> <TextInput style={{display: 'none'}} {...form.getInputProps('timezone')} type="hidden" /> <Checkbox mb="md" {...form.getInputProps('marketing_opt_in', {type: 'checkbox'})} label={<Trans>Receive product updates from {getConfig("VITE_APP_NAME", "Hi.Events")}.</Trans>} /> <Button color="secondary.5" type="submit" fullWidth disabled={mutate.isPending}> {mutate.isPending ? t`Working...` : t`Register`} </Button> </form> <footer> <Trans> By registering you agree to our <NavLink target={'_blank'} to={getConfig("VITE_TOS_URL", "https://hi.events/terms-of-service?utm_source=app-register-footer") as string}>Terms of Service</NavLink> and <NavLink target={'_blank'} to={getConfig("VITE_PRIVACY_URL", 'https://hi.events/privacy-policy?utm_source=app-register-footer') as string}>Privacy Policy</NavLink>. </Trans> </footer> </div> </> ) } export default Register; 
-#: src/components/routes/auth/Register/index.tsx:75
+#. placeholder {0}: import { Button, Checkbox, PasswordInput, SimpleGrid, TextInput } from "@mantine/core"; import { hasLength, isEmail, matchesField, useForm } from "@mantine/form"; import { RegisterAccountRequest } from "../../../../types.ts"; import { useFormErrorResponseHandler } from "../../../../hooks/useFormErrorResponseHandler.tsx"; import { useRegisterAccount } from "../../../../mutations/useRegisterAccount.ts"; import { Navigate, NavLink, useLocation, useNavigate, useSearchParams } from "react-router"; import { useAuthConfigQuery } from "../../../../queries/useAuthConfigQuery.ts"; import { t, Trans } from "@lingui/macro"; import classes from "./Register.module.scss"; import { getClientLocale } from "../../../../locales.ts"; import { useEffect } from "react"; import { getUserCurrency } from "../../../../utilites/currency.ts"; import { getConfig } from "../../../../utilites/config.ts"; import { captureUtmData, getStoredUtmData, clearStoredUtmData } from "../../../../utilites/utm.ts"; export const Register = () => { const navigate = useNavigate(); const location = useLocation(); const [searchParamsHook] = useSearchParams(); const showLoginBackdoor = searchParamsHook.get('show_login') === '1'; const { data: authConfig, isLoading: isConfigLoading } = useAuthConfigQuery(); const hideDefaultForms = authConfig?.auth_disable_default && !showLoginBackdoor; const form = useForm({ validateInputOnBlur: true, initialValues: { first_name: '', last_name: '', email: '', password: '', password_confirmation: '', timezone: typeof window !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC', locale: getClientLocale(), invite_token: '', currency_code: getUserCurrency(), marketing_opt_in: false, }, validate: { password: hasLength({ min: 8 }, t`Password must be at least 8 characters`), password_confirmation: matchesField('password', t`Passwords are not the same`), email: isEmail(t`Please check your email is valid`), }, }); const errorHandler = useFormErrorResponseHandler(); const mutate = useRegisterAccount(); const registerUser = (data: RegisterAccountRequest) => { const utmData = getStoredUtmData(); const registrationData = utmData ? { ...data, ...utmData } : data; mutate.mutate({ registerData: registrationData }, { onSuccess: () => { clearStoredUtmData(); navigate(`/welcome${location.search}`); }, onError: (error: any) => { errorHandler(form, error, error.response?.data?.message); }, }); } useEffect(() => { captureUtmData(); const searchParams = new URLSearchParams(location.search); const token = searchParams.get('invite_token'); if (token) { form.setFieldValue('invite_token', token); } }, [location.search]); return ( <> {hideDefaultForms && !isConfigLoading && ( <Navigate replace to={`/auth/login${location.search}`} /> )} <header className={classes.header}> <h2>{t`Get started`}</h2> <p> <Trans> Already have an account?{' '} <NavLink to={`/auth/login${location.search}`}> {t`Log in`} </NavLink> </Trans> </p> </header> <div className={classes.registerCard}> <form onSubmit={form.onSubmit((values) => registerUser(values as RegisterAccountRequest))}> <SimpleGrid verticalSpacing={{ base: "md", sm: 0 }} cols={{ base: 1, sm: 2 }} mb="md"> <TextInput {...form.getInputProps('first_name')} label={t`First Name`} placeholder={t`John`} required /> <TextInput {...form.getInputProps('last_name')} label={t`Last Name`} placeholder={t`Smith`} /> </SimpleGrid> <TextInput mb={0} {...form.getInputProps('email')} label={t`Email`} placeholder={'your@email.com'} required /> <SimpleGrid verticalSpacing={{ base: "md", sm: 0 }} cols={{ base: 1, sm: 2 }} mt="md" mb="md"> <PasswordInput {...form.getInputProps('password')} label={t`Password`} placeholder={t`Your password`} required /> <PasswordInput {...form.getInputProps('password_confirmation')} label={t`Confirm Password`} placeholder={t`Confirm password`} required /> </SimpleGrid> <TextInput style={{ display: 'none' }} {...form.getInputProps('timezone')} type="hidden" /> <Checkbox mb="md" {...form.getInputProps('marketing_opt_in', { type: 'checkbox' })} label={<Trans>Receive product updates from {getConfig("VITE_APP_NAME", "Hi.Events")}.</Trans>} /> <Button color="secondary.5" type="submit" fullWidth disabled={mutate.isPending}> {mutate.isPending ? t`Working...` : t`Register`} </Button> </form> <footer> <Trans> By registering you agree to our <NavLink target={'_blank'} to={getConfig("VITE_TOS_URL", "https://hi.events/terms-of-service?utm_source=app-register-footer") as string}>Terms of Service</NavLink> and <NavLink target={'_blank'} to={getConfig("VITE_PRIVACY_URL", 'https://hi.events/privacy-policy?utm_source=app-register-footer') as string}>Privacy Policy</NavLink>. </Trans> </footer> </div> </> ) } export default Register; 
+#: src/components/routes/auth/Register/index.tsx:84
 msgid "Already have an account? <0>{0}</0>"
 msgstr "已有账户？<0>{0}</0>"
 
@@ -891,6 +897,7 @@ msgstr "确定要删除此模板吗？此操作无法撤消，邮件将回退到
 msgid "Are you sure you want to delete this template? This action cannot be undone and emails will fall back to the organizer or default template."
 msgstr "确定要删除此模板吗？此操作无法撤消，邮件将回退到组织者或默认模板。"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:122
 #: src/components/common/WebhookTable/index.tsx:122
 msgid "Are you sure you want to delete this webhook?"
 msgstr "您确定要删除此 Webhook 吗？"
@@ -909,11 +916,11 @@ msgstr "您确定要将此活动设为草稿吗？这将使公众无法看到该
 msgid "Are you sure you want to make this event public? This will make the event visible to the public"
 msgstr "您确定要将此事件公开吗？这将使事件对公众可见"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:123
+#: src/components/layouts/OrganizerLayout/index.tsx:125
 msgid "Are you sure you want to make this organizer draft? This will make the organizer page invisible to the public"
 msgstr "您确定要将此组织者设为草稿吗？这样将使组织者页面对公众不可见。"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:124
+#: src/components/layouts/OrganizerLayout/index.tsx:126
 msgid "Are you sure you want to make this organizer public? This will make the organizer page visible to the public"
 msgstr "您确定要将此组织者设为公开吗？这样将使组织者页面对公众可见。"
 
@@ -1000,6 +1007,7 @@ msgstr "已分配配置"
 msgid "Assigned Tier"
 msgstr "分配的级别"
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:33
 #: src/components/modals/CreateWebhookModal/index.tsx:33
 msgid "At least one event type must be selected"
 msgstr "必须选择至少一种事件类型"
@@ -1020,11 +1028,11 @@ msgstr "所有活动的出席率和签到率"
 msgid "Attendee"
 msgstr "参与者"
 
-#: src/components/forms/WebhookForm/index.tsx:94
+#: src/components/forms/WebhookForm/index.tsx:112
 msgid "Attendee Cancelled"
 msgstr "与会者已取消"
 
-#: src/components/forms/WebhookForm/index.tsx:82
+#: src/components/forms/WebhookForm/index.tsx:100
 msgid "Attendee Created"
 msgstr "与会者已创建"
 
@@ -1075,7 +1083,7 @@ msgstr "参与者状态"
 msgid "Attendee Ticket"
 msgstr "参会者票"
 
-#: src/components/forms/WebhookForm/index.tsx:88
+#: src/components/forms/WebhookForm/index.tsx:106
 msgid "Attendee Updated"
 msgstr "与会者已更新"
 
@@ -1130,6 +1138,14 @@ msgstr "归因细分"
 #: src/components/routes/admin/Attribution/index.tsx:131
 msgid "Attribution Value"
 msgstr "归因值"
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:66
+msgid "Authentication Failed"
+msgstr ""
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:38
+msgid "Authentication failed. Please try again."
+msgstr ""
 
 #: src/components/common/WidgetEditor/index.tsx:236
 msgid "Auto Resize"
@@ -1321,7 +1337,7 @@ msgstr "买家看到的是净价。平台费用将从您的付款中扣除。"
 msgid "By continuing, you agree to the <0>{0} Terms of Service</0>"
 msgstr "继续操作即表示您同意<0>{0}服务条款</0>"
 
-#: src/components/routes/auth/Register/index.tsx:141
+#: src/components/routes/auth/Register/index.tsx:150
 msgid "By registering you agree to our <0>Terms of Service</0> and <1>Privacy Policy</1>."
 msgstr "注册即表示您同意我们的<0>服务条款</0>和<1>隐私政策</1>。"
 
@@ -1502,16 +1518,16 @@ msgstr "看看这个活动吧！"
 msgid "Check your email"
 msgstr "查看您的邮箱"
 
-#: src/components/routes/auth/Login/index.tsx:133
+#: src/components/routes/auth/Login/index.tsx:192
 #: src/components/routes/my-tickets/index.tsx:174
 msgid "Check your inbox! If tickets are associated with this email, you'll receive a link to view them."
 msgstr "请检查您的收件箱！如果此邮箱有关联的票，您将收到查看链接。"
 
-#: src/components/forms/WebhookForm/index.tsx:100
+#: src/components/forms/WebhookForm/index.tsx:118
 msgid "Check-in Created"
 msgstr "签到已创建"
 
-#: src/components/forms/WebhookForm/index.tsx:106
+#: src/components/forms/WebhookForm/index.tsx:124
 msgid "Check-in Deleted"
 msgstr "签到已删除"
 
@@ -1705,7 +1721,7 @@ msgstr "代码长度必须在 3 至 50 个字符之间"
 msgid "Code must be no more than 20 characters"
 msgstr "代码不能超过20个字符"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:162
+#: src/components/layouts/OrganizerLayout/index.tsx:164
 msgid "Collaborate with your team to create amazing events together."
 msgstr "与您的团队协作，共同创建精彩的活动。"
 
@@ -1815,6 +1831,10 @@ msgstr "已完成订单"
 msgid "Completed Orders"
 msgstr "已完成订单"
 
+#: src/components/routes/auth/ProviderCallback/index.tsx:60
+msgid "Completing authentication..."
+msgstr ""
+
 #: src/components/common/WidgetEditor/index.tsx:293
 msgid "Component Code"
 msgstr "组件代码"
@@ -1899,12 +1919,12 @@ msgid "Confirm New Password"
 msgstr "确认新密码"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:134
-#: src/components/routes/auth/Register/index.tsx:119
+#: src/components/routes/auth/Register/index.tsx:128
 msgid "Confirm password"
 msgstr "确认密码"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:133
-#: src/components/routes/auth/Register/index.tsx:118
+#: src/components/routes/auth/Register/index.tsx:127
 #: src/components/routes/auth/ResetPassword/index.tsx:70
 msgid "Confirm Password"
 msgstr "确认密码"
@@ -1913,7 +1933,7 @@ msgstr "确认密码"
 msgid "Confirm your email to access all features."
 msgstr "请确认您的邮箱以访问所有功能。"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:296
+#: src/components/layouts/OrganizerLayout/index.tsx:298
 msgid "Confirmation email sent! Please check your inbox."
 msgstr "确认邮件已发送！请检查您的收件箱。"
 
@@ -1945,8 +1965,8 @@ msgstr "连接文档"
 msgid "Connect payment processing"
 msgstr "连接支付处理"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:175
-#: src/components/layouts/OrganizerLayout/index.tsx:183
+#: src/components/layouts/OrganizerLayout/index.tsx:177
+#: src/components/layouts/OrganizerLayout/index.tsx:185
 msgid "Connect Stripe"
 msgstr "连接条纹"
 
@@ -1970,7 +1990,7 @@ msgstr "连接到 Stripe"
 msgid "Connect with Stripe"
 msgstr "与 Stripe 连接"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:176
+#: src/components/layouts/OrganizerLayout/index.tsx:178
 msgid "Connect your Stripe account to accept payments for tickets and products."
 msgstr "连接您的 Stripe 账户以接受门票和产品付款。"
 
@@ -2263,7 +2283,7 @@ msgid "Create discounts, access codes for hidden tickets, and special offers."
 msgstr "创建折扣、隐藏门票的访问码和特别优惠。"
 
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
-#: src/components/layouts/OrganizerLayout/index.tsx:152
+#: src/components/layouts/OrganizerLayout/index.tsx:154
 #: src/components/routes/organizer/Events/index.tsx:62
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:257
 msgid "Create Event"
@@ -2314,6 +2334,8 @@ msgstr "为您的活动创建门票、设定价格并管理可用数量。"
 msgid "Create trackable links to reward partners who promote your event."
 msgstr "创建可追踪链接以奖励推广您活动的合作伙伴。"
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:56
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:66
 #: src/components/modals/CreateWebhookModal/index.tsx:56
 #: src/components/modals/CreateWebhookModal/index.tsx:66
 msgid "Create Webhook"
@@ -2517,6 +2539,7 @@ msgstr "每日销售、税费和费用明细"
 #: src/components/common/CapacityAssignmentList/index.tsx:153
 #: src/components/common/CheckInListList/index.tsx:174
 #: src/components/common/OrdersTable/index.tsx:182
+#: src/components/common/OrganizerWebhookTable/index.tsx:116
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:492
 #: src/components/common/PromoCodeTable/index.tsx:181
 #: src/components/common/WebhookTable/index.tsx:116
@@ -2631,6 +2654,7 @@ msgstr "删除模板"
 msgid "Delete this question? This cannot be undone."
 msgstr "删除此问题？此操作无法撤销。"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:127
 #: src/components/common/WebhookTable/index.tsx:127
 msgid "Delete webhook"
 msgstr "删除 Webhook"
@@ -2709,7 +2733,7 @@ msgstr "文档"
 msgid "Don't forget!"
 msgstr "别忘了！"
 
-#: src/components/routes/auth/Login/index.tsx:82
+#: src/components/routes/auth/Login/index.tsx:121
 msgid "Don't have an account? <0>Sign up</0>"
 msgstr "还没有账户？<0>注册</0>"
 
@@ -2757,7 +2781,7 @@ msgstr "正在下载发票"
 
 #: src/components/common/EventCard/index.tsx:84
 #: src/components/layouts/Event/index.tsx:191
-#: src/components/layouts/OrganizerLayout/index.tsx:206
+#: src/components/layouts/OrganizerLayout/index.tsx:208
 msgid "Draft"
 msgstr "草稿"
 
@@ -2945,10 +2969,13 @@ msgstr "编辑用户"
 msgid "Edit VAT Settings"
 msgstr "编辑增值税设置"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:104
 #: src/components/common/WebhookTable/index.tsx:104
 msgid "Edit webhook"
 msgstr "编辑 Webhook"
 
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:66
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:87
 #: src/components/modals/EditWebhookModal/index.tsx:66
 #: src/components/modals/EditWebhookModal/index.tsx:87
 msgid "Edit Webhook"
@@ -2989,8 +3016,8 @@ msgstr "符合条件的签到列表"
 #: src/components/routes/admin/Dashboard/index.tsx:401
 #: src/components/routes/auth/AcceptInvitation/index.tsx:112
 #: src/components/routes/auth/ForgotPassword/index.tsx:65
-#: src/components/routes/auth/Login/index.tsx:93
-#: src/components/routes/auth/Register/index.tsx:104
+#: src/components/routes/auth/Login/index.tsx:151
+#: src/components/routes/auth/Register/index.tsx:113
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:78
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:68
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:68
@@ -3047,7 +3074,7 @@ msgid "Email confirmation resent"
 msgstr "重新发送电子邮件确认"
 
 #: src/components/layouts/Event/index.tsx:74
-#: src/components/layouts/OrganizerLayout/index.tsx:96
+#: src/components/layouts/OrganizerLayout/index.tsx:98
 #: src/components/routes/profile/ManageProfile/index.tsx:100
 msgid "Email confirmation resent successfully"
 msgstr "成功重新发送电子邮件确认"
@@ -3075,7 +3102,7 @@ msgstr "邮件预览"
 msgid "Email Templates"
 msgstr "邮件模板"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:275
+#: src/components/layouts/OrganizerLayout/index.tsx:277
 msgid "Email Verification Required"
 msgstr "需要验证邮箱"
 
@@ -3213,7 +3240,7 @@ msgid "Enter unique affiliate code"
 msgstr "输入唯一推广码"
 
 #: src/components/common/ContactOrganizerModal/index.tsx:80
-#: src/components/routes/auth/Login/index.tsx:150
+#: src/components/routes/auth/Login/index.tsx:209
 #: src/components/routes/my-tickets/index.tsx:192
 msgid "Enter your email"
 msgstr "输入您的电子邮箱"
@@ -3247,6 +3274,7 @@ msgstr "确认电子邮件地址出错"
 msgid "Error confirming email change"
 msgstr "确认更改电子邮件时出错"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:166
 #: src/components/modals/WebhookLogsModal/index.tsx:166
 msgid "Error loading logs"
 msgstr "加载日志时出错"
@@ -3289,6 +3317,10 @@ msgstr "欧元"
 msgid "Event"
 msgstr "活动"
 
+#: src/components/forms/WebhookForm/index.tsx:52
+msgid "Event Archived"
+msgstr ""
+
 #: src/components/modals/CreateEventModal/index.tsx:185
 msgid "Event Category"
 msgstr "活动类别"
@@ -3296,6 +3328,10 @@ msgstr "活动类别"
 #: src/components/modals/DuplicateEventModal/index.tsx:30
 msgid "Event Cover Image"
 msgstr "活动封面图片"
+
+#: src/components/forms/WebhookForm/index.tsx:40
+msgid "Event Created"
+msgstr ""
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:223
 msgid "Event custom template"
@@ -3432,10 +3468,15 @@ msgstr "活动标题"
 msgid "Event Too New"
 msgstr "活动太新"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:237
 #: src/components/common/WebhookTable/index.tsx:237
-#: src/components/forms/WebhookForm/index.tsx:122
+#: src/components/forms/WebhookForm/index.tsx:140
 msgid "Event Types"
 msgstr "事件类型"
+
+#: src/components/forms/WebhookForm/index.tsx:46
+msgid "Event Updated"
+msgstr ""
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:40
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:74
@@ -3444,7 +3485,7 @@ msgstr "活动场地"
 
 #: src/components/common/AdminAccountsTable/index.tsx:82
 #: src/components/layouts/Admin/index.tsx:16
-#: src/components/layouts/OrganizerLayout/index.tsx:84
+#: src/components/layouts/OrganizerLayout/index.tsx:85
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:159
 #: src/components/routes/admin/Attribution/index.tsx:133
 #: src/components/routes/admin/Dashboard/index.tsx:403
@@ -3639,6 +3680,7 @@ msgstr "加载签到列表失败"
 msgid "Failed to load recipients"
 msgstr "加载收件人失败"
 
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:75
 #: src/components/modals/EditWebhookModal/index.tsx:75
 msgid "Failed to load Webhook"
 msgstr "加载 Webhook 失败"
@@ -3861,7 +3903,7 @@ msgstr "姓名"
 #: src/components/modals/InviteUserModal/index.tsx:57
 #: src/components/modals/JoinWaitlistModal/index.tsx:191
 #: src/components/routes/auth/AcceptInvitation/index.tsx:97
-#: src/components/routes/auth/Register/index.tsx:90
+#: src/components/routes/auth/Register/index.tsx:99
 #: src/components/routes/product-widget/CollectInformation/index.tsx:427
 #: src/components/routes/product-widget/CollectInformation/index.tsx:639
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:53
@@ -3932,7 +3974,7 @@ msgstr "美食美酒"
 msgid "Footer Text"
 msgstr "页脚文字"
 
-#: src/components/routes/auth/Login/index.tsx:108
+#: src/components/routes/auth/Login/index.tsx:166
 msgid "Forgot password?"
 msgstr "忘记密码？"
 
@@ -4000,7 +4042,7 @@ msgstr "德国"
 msgid "Get paid immediately via Stripe Connect"
 msgstr "通过Stripe Connect立即获得付款"
 
-#: src/components/routes/auth/Register/index.tsx:73
+#: src/components/routes/auth/Register/index.tsx:82
 msgid "Get started"
 msgstr "开始使用"
 
@@ -4212,7 +4254,7 @@ msgid "Homepage Design"
 msgstr "主页设计"
 
 #: src/components/layouts/Event/index.tsx:105
-#: src/components/layouts/OrganizerLayout/index.tsx:88
+#: src/components/layouts/OrganizerLayout/index.tsx:89
 msgid "Homepage Designer"
 msgstr "主页设计器"
 
@@ -4255,7 +4297,7 @@ msgstr "https://awesome-events.com"
 msgid "https://example-maps-service.com/..."
 msgstr "https://example-maps-service.com/..."
 
-#: src/components/forms/WebhookForm/index.tsx:118
+#: src/components/forms/WebhookForm/index.tsx:136
 msgid "https://webhook-domain.com/webhook"
 msgstr "https://webhook-domain.com/webhook"
 
@@ -4470,7 +4512,7 @@ msgstr "邀请团队成员"
 msgid "Invite Team Member"
 msgstr "邀请团队成员"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:164
+#: src/components/layouts/OrganizerLayout/index.tsx:166
 msgid "Invite Team Members"
 msgstr "邀请团队成员"
 
@@ -4482,7 +4524,7 @@ msgstr "邀请无限团队成员并自定义角色"
 msgid "Invite User"
 msgstr "邀请用户"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:161
+#: src/components/layouts/OrganizerLayout/index.tsx:163
 msgid "Invite Your Team"
 msgstr "邀请您的团队"
 
@@ -4552,7 +4594,7 @@ msgid "Job queued for retry"
 msgstr "任务已排队等待重试"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:98
-#: src/components/routes/auth/Register/index.tsx:91
+#: src/components/routes/auth/Register/index.tsx:100
 msgid "John"
 msgstr "约翰"
 
@@ -4586,7 +4628,7 @@ msgstr "已加入"
 msgid "Just click the button below to reconnect your Stripe account."
 msgstr "只需点击下面的按钮重新连接您的 Stripe 账户。"
 
-#: src/components/routes/auth/Login/index.tsx:121
+#: src/components/routes/auth/Login/index.tsx:180
 msgid "Just looking for your tickets?"
 msgstr "只是在找您的票？"
 
@@ -4664,7 +4706,7 @@ msgstr "姓氏"
 #: src/components/modals/InviteUserModal/index.tsx:58
 #: src/components/modals/JoinWaitlistModal/index.tsx:196
 #: src/components/routes/auth/AcceptInvitation/index.tsx:102
-#: src/components/routes/auth/Register/index.tsx:96
+#: src/components/routes/auth/Register/index.tsx:105
 #: src/components/routes/product-widget/CollectInformation/index.tsx:433
 #: src/components/routes/product-widget/CollectInformation/index.tsx:434
 #: src/components/routes/product-widget/CollectInformation/index.tsx:645
@@ -4680,10 +4722,12 @@ msgstr "姓氏"
 msgid "Last name is required"
 msgstr "姓氏为必填项"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:239
 #: src/components/common/WebhookTable/index.tsx:239
 msgid "Last Response"
 msgstr "最新响应"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:240
 #: src/components/common/WebhookTable/index.tsx:240
 msgid "Last Triggered"
 msgstr "最近触发"
@@ -4730,7 +4774,7 @@ msgstr "允许链接"
 
 #: src/components/common/EventCard/index.tsx:87
 #: src/components/layouts/Event/index.tsx:193
-#: src/components/layouts/OrganizerLayout/index.tsx:208
+#: src/components/layouts/OrganizerLayout/index.tsx:210
 msgid "Live"
 msgstr "上线"
 
@@ -4753,6 +4797,7 @@ msgid "Loading tokens..."
 msgstr "加载令牌中..."
 
 #: src/components/routes/event/Webhooks/index.tsx:21
+#: src/components/routes/organizer/Webhooks/index.tsx:22
 msgid "Loading Webhooks"
 msgstr "正在加载 Webhook"
 
@@ -4770,12 +4815,12 @@ msgstr "加载中..."
 msgid "Location"
 msgstr "地点"
 
-#: src/components/routes/auth/Login/index.tsx:104
-#: src/components/routes/auth/Register/index.tsx:78
+#: src/components/routes/auth/Login/index.tsx:162
+#: src/components/routes/auth/Register/index.tsx:87
 msgid "Log in"
 msgstr "登录"
 
-#: src/components/routes/auth/Login/index.tsx:104
+#: src/components/routes/auth/Login/index.tsx:162
 msgid "Logging in"
 msgstr "登录"
 
@@ -4830,7 +4875,7 @@ msgstr "让您的活动上线"
 #: src/components/common/OrdersTable/index.tsx:150
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:461
 #: src/components/common/PromoCodeTable/index.tsx:167
-#: src/components/layouts/OrganizerLayout/index.tsx:83
+#: src/components/layouts/OrganizerLayout/index.tsx:84
 msgid "Manage"
 msgstr "管理"
 
@@ -5116,6 +5161,7 @@ msgstr "导航至与会者"
 msgid "Net Revenue"
 msgstr "净收入"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:266
 #: src/components/common/PromoCodeTable/index.tsx:158
 #: src/components/common/WebhookTable/index.tsx:266
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:101
@@ -5153,6 +5199,7 @@ msgid "No accounts found"
 msgstr "未找到账户"
 
 #: src/components/routes/event/Webhooks/index.tsx:22
+#: src/components/routes/organizer/Webhooks/index.tsx:23
 msgid "No Active Webhooks"
 msgstr "没有活动的 Webhook"
 
@@ -5260,6 +5307,7 @@ msgstr "不影响您当前或过去的交易"
 msgid "No invoice"
 msgstr "无发票"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:177
 #: src/components/modals/WebhookLogsModal/index.tsx:177
 msgid "No logs found"
 msgstr "未找到日志"
@@ -5356,10 +5404,12 @@ msgstr "没有最近的账户注册"
 msgid "No recipients found"
 msgstr "未找到收件人"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:174
 #: src/components/common/WebhookTable/index.tsx:174
 msgid "No response"
 msgstr "无响应"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:141
 #: src/components/common/WebhookTable/index.tsx:141
 msgid "No responses yet"
 msgstr "尚无响应"
@@ -5404,10 +5454,12 @@ msgstr "过去14天没有浏览的活动"
 msgid "No waitlist entries"
 msgstr "没有候补名单条目"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:180
 #: src/components/modals/WebhookLogsModal/index.tsx:180
 msgid "No webhook events have been recorded for this endpoint yet. Events will appear here once they are triggered."
 msgstr "此端点尚未记录任何 Webhook 事件。事件触发后将显示在此处。"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:201
 #: src/components/common/WebhookTable/index.tsx:201
 msgid "No Webhooks"
 msgstr "没有 Webhooks"
@@ -5664,7 +5716,7 @@ msgstr "订单和门票"
 msgid "Order cancelled"
 msgstr "订单已取消"
 
-#: src/components/forms/WebhookForm/index.tsx:76
+#: src/components/forms/WebhookForm/index.tsx:94
 msgid "Order Cancelled"
 msgstr "取消订单"
 
@@ -5682,7 +5734,7 @@ msgstr "订单确认"
 msgid "Order confirmation resent successfully"
 msgstr "订单确认重新发送成功"
 
-#: src/components/forms/WebhookForm/index.tsx:52
+#: src/components/forms/WebhookForm/index.tsx:70
 msgid "Order Created"
 msgstr "订单已创建"
 
@@ -5751,7 +5803,7 @@ msgstr "订单语言"
 msgid "Order marked as paid"
 msgstr "订单已标记为已支付"
 
-#: src/components/forms/WebhookForm/index.tsx:64
+#: src/components/forms/WebhookForm/index.tsx:82
 msgid "Order Marked as Paid"
 msgstr "订单标记为已支付"
 
@@ -5795,7 +5847,7 @@ msgstr "订单参考"
 msgid "Order Reference"
 msgstr "订购参考"
 
-#: src/components/forms/WebhookForm/index.tsx:70
+#: src/components/forms/WebhookForm/index.tsx:88
 msgid "Order Refunded"
 msgstr "订单已退款"
 
@@ -5823,7 +5875,7 @@ msgstr "订单超时"
 msgid "Order Total"
 msgstr "订单总额"
 
-#: src/components/forms/WebhookForm/index.tsx:58
+#: src/components/forms/WebhookForm/index.tsx:76
 msgid "Order Updated"
 msgstr "订单已更新"
 
@@ -5903,7 +5955,7 @@ msgid "Organizer"
 msgstr "主办方"
 
 #: src/components/layouts/Event/index.tsx:84
-#: src/components/layouts/OrganizerLayout/index.tsx:75
+#: src/components/layouts/OrganizerLayout/index.tsx:76
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:160
 msgid "Organizer Dashboard"
 msgstr "组织者仪表板"
@@ -5942,12 +5994,12 @@ msgid "Organizer statistics are not available for the selected currency or an er
 msgstr "所选货币无法获取组织者统计信息，或发生错误。"
 
 #: src/components/common/StatusToggle/index.tsx:76
-#: src/components/layouts/OrganizerLayout/index.tsx:135
+#: src/components/layouts/OrganizerLayout/index.tsx:137
 msgid "Organizer status update failed. Please try again later"
 msgstr "组织者状态更新失败。请稍后再试"
 
 #: src/components/common/StatusToggle/index.tsx:68
-#: src/components/layouts/OrganizerLayout/index.tsx:132
+#: src/components/layouts/OrganizerLayout/index.tsx:134
 msgid "Organizer status updated"
 msgstr "组织者状态已更新"
 
@@ -6045,8 +6097,8 @@ msgid "Pass to Buyer"
 msgstr "转嫁给买家"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:127
-#: src/components/routes/auth/Login/index.tsx:98
-#: src/components/routes/auth/Register/index.tsx:112
+#: src/components/routes/auth/Login/index.tsx:156
+#: src/components/routes/auth/Register/index.tsx:121
 #: src/components/routes/profile/ManageProfile/index.tsx:119
 msgid "Password"
 msgstr "密码"
@@ -6055,7 +6107,7 @@ msgstr "密码"
 msgid "Password must be a minimum  of 8 characters"
 msgstr "密码必须至少包含 8 个字符"
 
-#: src/components/routes/auth/Register/index.tsx:36
+#: src/components/routes/auth/Register/index.tsx:42
 msgid "Password must be at least 8 characters"
 msgstr "密码必须至少包含 8 个字符"
 
@@ -6064,7 +6116,7 @@ msgid "Password reset successfully. Please login with your new password."
 msgstr "密码重置成功。请使用新密码登录。"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:32
-#: src/components/routes/auth/Register/index.tsx:37
+#: src/components/routes/auth/Register/index.tsx:43
 msgid "Passwords are not the same"
 msgstr "密码不一样"
 
@@ -6304,12 +6356,12 @@ msgstr "请至少添加一个选项"
 msgid "Please check the provided information is correct"
 msgstr "请检查所提供的信息是否正确"
 
-#: src/components/routes/auth/Login/index.tsx:53
+#: src/components/routes/auth/Login/index.tsx:91
 msgid "Please check your email and password and try again"
 msgstr "请检查您的电子邮件和密码并重试"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:33
-#: src/components/routes/auth/Register/index.tsx:38
+#: src/components/routes/auth/Register/index.tsx:44
 msgid "Please check your email is valid"
 msgstr "请检查您的电子邮件是否有效"
 
@@ -6337,6 +6389,7 @@ msgstr "请输入有效的电子邮件地址"
 msgid "Please enter a valid image URL that points to an image."
 msgstr "请输入指向图像的有效图片网址。"
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:30
 #: src/components/modals/CreateWebhookModal/index.tsx:30
 msgid "Please enter a valid URL"
 msgstr "请输入有效的 URL"
@@ -6390,6 +6443,10 @@ msgstr "请验证您的电子邮件地址，以访问所有功能"
 #: src/components/routes/welcome/index.tsx:123
 msgid "Please wait before requesting another code"
 msgstr "请稍候再请求新的验证码"
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:61
+msgid "Please wait while we log you in."
+msgstr ""
 
 #: src/components/routes/event/Affiliates/index.tsx:43
 msgid "Please wait while we prepare your affiliates for export..."
@@ -6550,7 +6607,7 @@ msgstr "产品类别更新成功。"
 msgid "Product Created"
 msgstr "产品已创建"
 
-#: src/components/forms/WebhookForm/index.tsx:46
+#: src/components/forms/WebhookForm/index.tsx:64
 msgid "Product Deleted"
 msgstr "产品已删除"
 
@@ -6580,7 +6637,7 @@ msgstr "产品等级"
 msgid "Product Type"
 msgstr "产品类型"
 
-#: src/components/forms/WebhookForm/index.tsx:40
+#: src/components/forms/WebhookForm/index.tsx:58
 msgid "Product Updated"
 msgstr "产品已更新"
 
@@ -6763,7 +6820,7 @@ msgstr "实时分析"
 
 #. placeholder {0}: getConfig("VITE_APP_NAME", "Hi.Events")
 #: src/components/routes/auth/AcceptInvitation/index.tsx:157
-#: src/components/routes/auth/Register/index.tsx:133
+#: src/components/routes/auth/Register/index.tsx:142
 #: src/components/routes/profile/ManageProfile/index.tsx:209
 msgid "Receive product updates from {0}."
 msgstr "接收 {0} 的产品更新。"
@@ -6806,6 +6863,10 @@ msgstr "重新连接 Stripe →"
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:80
 msgid "Reddit"
 msgstr "Reddit"
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:67
+msgid "Redirecting back to login..."
+msgstr ""
 
 #: src/components/common/StripeConnectButton/index.tsx:59
 #: src/components/common/StripeConnectButton/index.tsx:74
@@ -6879,7 +6940,7 @@ msgstr "退款"
 msgid "Regional Settings"
 msgstr "区域设置"
 
-#: src/components/routes/auth/Register/index.tsx:137
+#: src/components/routes/auth/Register/index.tsx:146
 msgid "Register"
 msgstr "注册"
 
@@ -6912,7 +6973,7 @@ msgid "Report not found"
 msgstr "未找到报告"
 
 #: src/components/layouts/Event/index.tsx:97
-#: src/components/layouts/OrganizerLayout/index.tsx:78
+#: src/components/layouts/OrganizerLayout/index.tsx:79
 #: src/components/routes/event/Reports/index.tsx:39
 #: src/components/routes/organizer/Reports/index.tsx:51
 msgid "Reports"
@@ -6938,7 +6999,7 @@ msgstr "重新发送验证码"
 msgid "Resend Confirmation"
 msgstr "重新发送确认"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:292
+#: src/components/layouts/OrganizerLayout/index.tsx:294
 msgid "Resend Confirmation Email"
 msgstr "重新发送确认邮件"
 
@@ -7359,7 +7420,7 @@ msgstr "选择结束时间"
 msgid "Select event category"
 msgstr "选择活动类别"
 
-#: src/components/forms/WebhookForm/index.tsx:124
+#: src/components/forms/WebhookForm/index.tsx:142
 msgid "Select event types"
 msgstr "选择事件类型"
 
@@ -7427,7 +7488,7 @@ msgstr "选择时区"
 msgid "Select which attendees should receive this message"
 msgstr "选择应该收到此消息的参会者"
 
-#: src/components/forms/WebhookForm/index.tsx:123
+#: src/components/forms/WebhookForm/index.tsx:141
 msgid "Select which events will trigger this webhook"
 msgstr "选择哪些事件将触发此 Webhook"
 
@@ -7448,7 +7509,7 @@ msgstr "已选择"
 msgid "Selling fast 🔥"
 msgstr "热卖中 🔥"
 
-#: src/components/routes/auth/Login/index.tsx:160
+#: src/components/routes/auth/Login/index.tsx:219
 #: src/components/routes/my-tickets/index.tsx:202
 msgid "Send"
 msgstr "发送"
@@ -7594,7 +7655,7 @@ msgstr "设置已更新"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:81
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
-#: src/components/layouts/OrganizerLayout/index.tsx:85
+#: src/components/layouts/OrganizerLayout/index.tsx:86
 #: src/components/modals/DuplicateEventModal/index.tsx:26
 msgid "Settings"
 msgstr "设置"
@@ -7605,7 +7666,7 @@ msgstr "设置与设计"
 
 #: src/components/common/ShareIcon/index.tsx:30
 #: src/components/layouts/EventHomepage/index.tsx:279
-#: src/components/layouts/OrganizerLayout/index.tsx:228
+#: src/components/layouts/OrganizerLayout/index.tsx:230
 #: src/components/modals/ShareModal/index.tsx:37
 #: src/components/modals/ShareModal/index.tsx:165
 #: src/components/modals/ShareModal/index.tsx:186
@@ -7624,8 +7685,8 @@ msgstr "分享推广链接"
 msgid "Share Event"
 msgstr "分享活动"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:225
-#: src/components/layouts/OrganizerLayout/index.tsx:260
+#: src/components/layouts/OrganizerLayout/index.tsx:227
+#: src/components/layouts/OrganizerLayout/index.tsx:262
 msgid "Share Organizer Page"
 msgstr "分享组织者页面"
 
@@ -7701,7 +7762,7 @@ msgid "Skip this step"
 msgstr "跳过此步骤"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:103
-#: src/components/routes/auth/Register/index.tsx:97
+#: src/components/routes/auth/Register/index.tsx:106
 msgid "Smith"
 msgstr "史密斯"
 
@@ -7774,8 +7835,8 @@ msgid "Something went wrong. Please try again later."
 msgstr "出了点问题。请稍后再试。"
 
 #: src/components/layouts/Event/index.tsx:78
-#: src/components/layouts/OrganizerLayout/index.tsx:100
-#: src/components/routes/auth/Login/index.tsx:72
+#: src/components/layouts/OrganizerLayout/index.tsx:102
+#: src/components/routes/auth/Login/index.tsx:110
 #: src/components/routes/my-tickets/index.tsx:145
 #: src/components/routes/profile/ManageProfile/index.tsx:90
 #: src/components/routes/profile/ManageProfile/index.tsx:104
@@ -7851,11 +7912,12 @@ msgstr "统计数据基于账户创建日期"
 #: src/components/common/AttendeeTable/index.tsx:274
 #: src/components/common/OrderDetails/index.tsx:51
 #: src/components/common/OrdersTable/index.tsx:396
+#: src/components/common/OrganizerWebhookTable/index.tsx:238
 #: src/components/common/WaitlistTable/index.tsx:164
 #: src/components/common/WebhookTable/index.tsx:238
 #: src/components/forms/AffiliateForm/index.tsx:98
 #: src/components/forms/CapaciyAssigmentForm/index.tsx:56
-#: src/components/forms/WebhookForm/index.tsx:133
+#: src/components/forms/WebhookForm/index.tsx:151
 #: src/components/modals/EditUserModal/index.tsx:103
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:157
 #: src/components/routes/admin/Dashboard/index.tsx:405
@@ -8083,6 +8145,7 @@ msgstr "设置更新成功"
 msgid "Successfully Updated Social Links"
 msgstr "社交链接更新成功"
 
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:44
 #: src/components/modals/EditWebhookModal/index.tsx:44
 msgid "Successfully updated Webhook"
 msgstr "Webhook 更新成功"
@@ -8118,7 +8181,7 @@ msgstr "支持电子邮件"
 msgid "Swedish"
 msgstr "瑞典语"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:68
+#: src/components/layouts/OrganizerLayout/index.tsx:69
 #: src/components/modals/SwitchOrganizerModal/index.tsx:33
 msgid "Switch Organizer"
 msgstr "切换组织者"
@@ -8807,7 +8870,7 @@ msgstr "要接受信用卡付款，您需要连接您的 Stripe 账户。Stripe 
 msgid "Toggle columns"
 msgstr "切换列"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:87
+#: src/components/layouts/OrganizerLayout/index.tsx:88
 msgid "Tools"
 msgstr "工具"
 
@@ -8915,7 +8978,7 @@ msgstr "如果是线下支付则为真"
 msgid "True if payment pending"
 msgstr "如果付款待处理则为真"
 
-#: src/components/routes/auth/Login/index.tsx:141
+#: src/components/routes/auth/Login/index.tsx:200
 #: src/components/routes/my-tickets/index.tsx:183
 msgid "Try another email"
 msgstr "尝试其他邮箱"
@@ -9099,6 +9162,7 @@ msgstr "上传图片"
 msgid "Uploading image..."
 msgstr "正在上传图像..."
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:236
 #: src/components/common/WebhookTable/index.tsx:236
 msgid "URL"
 msgstr "链接"
@@ -9107,6 +9171,7 @@ msgstr "链接"
 msgid "URL copied to clipboard"
 msgstr "复制到剪贴板的 URL"
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:25
 #: src/components/modals/CreateWebhookModal/index.tsx:25
 msgid "URL is required"
 msgstr "URL 是必填项"
@@ -9372,6 +9437,7 @@ msgstr "查看活动页面"
 msgid "View Event Page"
 msgstr "查看活动页面"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:113
 #: src/components/common/WebhookTable/index.tsx:113
 msgid "View logs"
 msgstr "查看日志"
@@ -9404,8 +9470,8 @@ msgstr "查看订单详情"
 msgid "View order details, issue refunds, and resend confirmations."
 msgstr "查看订单详情、退款和重新发送确认。"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:243
-#: src/components/layouts/OrganizerLayout/index.tsx:246
+#: src/components/layouts/OrganizerLayout/index.tsx:245
+#: src/components/layouts/OrganizerLayout/index.tsx:248
 msgid "View Organizer Homepage"
 msgstr "查看组织者主页"
 
@@ -9563,19 +9629,22 @@ msgstr "我们已将总部搬迁至爱尔兰。因此，我们需要您重新连
 msgid "We've sent a 5-digit verification code to:"
 msgstr "我们已向以下邮箱发送了5位数验证码："
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:45
 #: src/components/modals/CreateWebhookModal/index.tsx:45
 msgid "Webhook created successfully"
 msgstr "Webhook 创建成功"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:53
 #: src/components/common/WebhookTable/index.tsx:53
 msgid "Webhook deleted successfully"
 msgstr "Webhook 删除成功"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:151
 #: src/components/modals/WebhookLogsModal/index.tsx:151
 msgid "Webhook Logs"
 msgstr "Webhook 日志"
 
-#: src/components/forms/WebhookForm/index.tsx:117
+#: src/components/forms/WebhookForm/index.tsx:135
 msgid "Webhook URL"
 msgstr "Webhook URL"
 
@@ -9588,8 +9657,10 @@ msgid "Webhook will send notifications"
 msgstr "Webhook 将发送通知"
 
 #: src/components/layouts/Event/index.tsx:127
+#: src/components/layouts/OrganizerLayout/index.tsx:90
 #: src/components/modals/DuplicateEventModal/index.tsx:32
 #: src/components/routes/event/Webhooks/index.tsx:32
+#: src/components/routes/organizer/Webhooks/index.tsx:30
 msgid "Webhooks"
 msgstr "Webhooks"
 
@@ -9605,7 +9676,7 @@ msgstr "微博"
 msgid "Welcome aboard! Please login to continue."
 msgstr "欢迎加入！请登录以继续。"
 
-#: src/components/routes/auth/Login/index.tsx:80
+#: src/components/routes/auth/Login/index.tsx:118
 msgid "Welcome back"
 msgstr "欢迎回来"
 
@@ -9665,15 +9736,19 @@ msgstr "您需要做的事:"
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
-#: src/components/forms/WebhookForm/index.tsx:108
+#: src/components/forms/WebhookForm/index.tsx:126
 msgid "When a check-in is deleted"
 msgstr "当签到被删除时"
 
-#: src/components/forms/WebhookForm/index.tsx:84
+#: src/components/forms/WebhookForm/index.tsx:102
 msgid "When a new attendee is created"
 msgstr "当新与会者被创建时"
 
-#: src/components/forms/WebhookForm/index.tsx:54
+#: src/components/forms/WebhookForm/index.tsx:42
+msgid "When a new event is created"
+msgstr ""
+
+#: src/components/forms/WebhookForm/index.tsx:72
 msgid "When a new order is created"
 msgstr "当新订单被创建时"
 
@@ -9681,11 +9756,11 @@ msgstr "当新订单被创建时"
 msgid "When a new product is created"
 msgstr "当新产品被创建时"
 
-#: src/components/forms/WebhookForm/index.tsx:48
+#: src/components/forms/WebhookForm/index.tsx:66
 msgid "When a product is deleted"
 msgstr "当产品被删除时"
 
-#: src/components/forms/WebhookForm/index.tsx:42
+#: src/components/forms/WebhookForm/index.tsx:60
 msgid "When a product is updated"
 msgstr "当产品被更新时"
 
@@ -9700,31 +9775,39 @@ msgid ""
 ""
 msgstr ""
 
-#: src/components/forms/WebhookForm/index.tsx:96
+#: src/components/forms/WebhookForm/index.tsx:114
 msgid "When an attendee is cancelled"
 msgstr "当与会者被取消时"
 
-#: src/components/forms/WebhookForm/index.tsx:102
+#: src/components/forms/WebhookForm/index.tsx:120
 msgid "When an attendee is checked in"
 msgstr "当与会者签到时"
 
-#: src/components/forms/WebhookForm/index.tsx:90
+#: src/components/forms/WebhookForm/index.tsx:108
 msgid "When an attendee is updated"
 msgstr "当与会者被更新时"
 
-#: src/components/forms/WebhookForm/index.tsx:78
+#: src/components/forms/WebhookForm/index.tsx:54
+msgid "When an event is archived"
+msgstr ""
+
+#: src/components/forms/WebhookForm/index.tsx:48
+msgid "When an event is updated"
+msgstr ""
+
+#: src/components/forms/WebhookForm/index.tsx:96
 msgid "When an order is cancelled"
 msgstr "当订单被取消时"
 
-#: src/components/forms/WebhookForm/index.tsx:66
+#: src/components/forms/WebhookForm/index.tsx:84
 msgid "When an order is marked as paid"
 msgstr "当订单被标记为已支付时"
 
-#: src/components/forms/WebhookForm/index.tsx:72
+#: src/components/forms/WebhookForm/index.tsx:90
 msgid "When an order is refunded"
 msgstr "当订单被退款时"
 
-#: src/components/forms/WebhookForm/index.tsx:60
+#: src/components/forms/WebhookForm/index.tsx:78
 msgid "When an order is updated"
 msgstr "当订单被更新时"
 
@@ -9801,7 +9884,7 @@ msgstr "工作"
 #: src/components/modals/JoinWaitlistModal/index.tsx:218
 #: src/components/modals/ManageAttendeeModal/index.tsx:231
 #: src/components/modals/ManageOrderModal/index.tsx:175
-#: src/components/routes/auth/Register/index.tsx:137
+#: src/components/routes/auth/Register/index.tsx:146
 msgid "Working..."
 msgstr "工作..."
 
@@ -9942,7 +10025,7 @@ msgstr "必须先创建机票，然后才能手动添加与会者。"
 msgid "You must have at least one price tier"
 msgstr "您必须至少有一个价格等级"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:281
+#: src/components/layouts/OrganizerLayout/index.tsx:283
 msgid "You must verify your email address before you can update the organizer status."
 msgstr "您必须先验证电子邮箱地址，才能更新组织者状态。"
 
@@ -10104,8 +10187,8 @@ msgstr "您的订单一旦开始滚动，就会出现在这里。"
 msgid "Your organizer address"
 msgstr "您组织者的地址"
 
-#: src/components/routes/auth/Login/index.tsx:99
-#: src/components/routes/auth/Register/index.tsx:113
+#: src/components/routes/auth/Login/index.tsx:157
+#: src/components/routes/auth/Register/index.tsx:122
 msgid "Your password"
 msgstr "您的密码"
 

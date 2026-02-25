@@ -14,12 +14,12 @@ msgstr ""
 "Plural-Forms: \n"
 
 #: src/components/layouts/Event/index.tsx:192
-#: src/components/layouts/OrganizerLayout/index.tsx:207
+#: src/components/layouts/OrganizerLayout/index.tsx:209
 msgid "- Click to Publish"
 msgstr "- Clique para publicar"
 
 #: src/components/layouts/Event/index.tsx:194
-#: src/components/layouts/OrganizerLayout/index.tsx:209
+#: src/components/layouts/OrganizerLayout/index.tsx:211
 msgid "- Click to Unpublish"
 msgstr "- Clique para despublicar"
 
@@ -64,6 +64,7 @@ msgstr "{0} <0>desmarcado</0> com sucesso"
 
 #. placeholder {0}: webhooks.length
 #: src/components/routes/event/Webhooks/index.tsx:24
+#: src/components/routes/organizer/Webhooks/index.tsx:25
 msgid "{0} Active Webhooks"
 msgstr "{0} webhooks ativos"
 
@@ -117,6 +118,7 @@ msgstr "{availableCount} de {totalCount} disponíveis"
 msgid "{days} days, {hours} hours, {minutes} minutes, and {seconds} seconds"
 msgstr "{days} dias, {hours} horas, {minutes} minutos e {seconds} segundos"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:79
 #: src/components/common/WebhookTable/index.tsx:79
 msgid "{eventCount} events"
 msgstr "{eventCount} eventos"
@@ -165,6 +167,7 @@ msgstr "<0>Defina um limite total de participação que se aplica a vários tipo
 msgid "<0>The number of products available for this product</0><1>This value can be overridden if there are <2>Capacity Limits</2> associated with this product.</1>"
 msgstr "<0>O número de produtos disponíveis para este produto</0><1>Esse valor pode ser substituído se houver <2>Limites de Capacidade</2> associados a este produto.</1>"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:205
 #: src/components/common/WebhookTable/index.tsx:205
 msgid "<0>Webhooks instantly notify external services when events happen, like adding a new attendee to your CRM or mailing list upon registration, ensuring seamless automation.</0><1>Use third-party services like <2>Zapier</2>, <3>IFTTT</3> or <4>Make</4> to create custom workflows and automate tasks.</1>"
 msgstr "<0>Os webhooks notificam instantaneamente serviços externos quando eventos ocorrem, como adicionar um novo participante ao seu CRM ou lista de e-mails no momento do registro, garantindo uma automação perfeita.</0><1>Use serviços de terceiros como <2>Zapier</2>, <3>IFTTT</3> ou <4>Make</4> para criar fluxos de trabalho personalizados e automatizar tarefas.</1>"
@@ -199,6 +202,7 @@ msgid "0 minutes and 0 seconds"
 msgstr "0 minutos e 0 segundos"
 
 #: src/components/routes/event/Webhooks/index.tsx:23
+#: src/components/routes/organizer/Webhooks/index.tsx:24
 msgid "1 Active Webhook"
 msgstr "1 webhook ativo"
 
@@ -542,8 +546,10 @@ msgstr "Adicionar nível"
 msgid "Add to Calendar"
 msgstr "Adicionar ao calendário"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:223
 #: src/components/common/WebhookTable/index.tsx:223
 #: src/components/routes/event/Webhooks/index.tsx:37
+#: src/components/routes/organizer/Webhooks/index.tsx:35
 msgid "Add Webhook"
 msgstr "Adicionar Webhook"
 
@@ -727,8 +733,8 @@ msgstr "Quase lá! Termine de conectar sua conta Stripe para começar a aceitar 
 msgid "Almost there! We're just waiting for your payment to be processed. This should only take a few seconds."
 msgstr "Quase lá! Estamos apenas a aguardar que o seu pagamento seja processado. Isto deve demorar apenas alguns segundos."
 
-#. placeholder {0}: import {Button, Checkbox, PasswordInput, SimpleGrid, TextInput} from "@mantine/core"; import {hasLength, isEmail, matchesField, useForm} from "@mantine/form"; import {RegisterAccountRequest} from "../../../../types.ts"; import {useFormErrorResponseHandler} from "../../../../hooks/useFormErrorResponseHandler.tsx"; import {useRegisterAccount} from "../../../../mutations/useRegisterAccount.ts"; import {NavLink, useLocation, useNavigate} from "react-router"; import {t, Trans} from "@lingui/macro"; import classes from "./Register.module.scss"; import {getClientLocale} from "../../../../locales.ts"; import {useEffect} from "react"; import {getUserCurrency} from "../../../../utilites/currency.ts"; import {getConfig} from "../../../../utilites/config.ts"; import {captureUtmData, getStoredUtmData, clearStoredUtmData} from "../../../../utilites/utm.ts"; export const Register = () => { const navigate = useNavigate(); const location = useLocation(); const form = useForm({ validateInputOnBlur: true, initialValues: { first_name: '', last_name: '', email: '', password: '', password_confirmation: '', timezone: typeof window !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC', locale: getClientLocale(), invite_token: '', currency_code: getUserCurrency(), marketing_opt_in: false, }, validate: { password: hasLength({min: 8}, t`Password must be at least 8 characters`), password_confirmation: matchesField('password', t`Passwords are not the same`), email: isEmail(t`Please check your email is valid`), }, }); const errorHandler = useFormErrorResponseHandler(); const mutate = useRegisterAccount(); const registerUser = (data: RegisterAccountRequest) => { const utmData = getStoredUtmData(); const registrationData = utmData ? {...data, ...utmData} : data; mutate.mutate({registerData: registrationData}, { onSuccess: () => { clearStoredUtmData(); navigate(`/welcome${location.search}`); }, onError: (error: any) => { errorHandler(form, error, error.response?.data?.message); }, }); } useEffect(() => { captureUtmData(); const searchParams = new URLSearchParams(location.search); const token = searchParams.get('invite_token'); if (token) { form.setFieldValue('invite_token', token); } }, [location.search]); return ( <> <header className={classes.header}> <h2>{t`Get started`}</h2> <p> <Trans> Already have an account?{' '} <NavLink to={`/auth/login${location.search}`}> {t`Log in`} </NavLink> </Trans> </p> </header> <div className={classes.registerCard}> <form onSubmit={form.onSubmit((values) => registerUser(values as RegisterAccountRequest))}> <SimpleGrid verticalSpacing={{base: "md", sm: 0}} cols={{base: 1, sm: 2}} mb="md"> <TextInput {...form.getInputProps('first_name')} label={t`First Name`} placeholder={t`John`} required /> <TextInput {...form.getInputProps('last_name')} label={t`Last Name`} placeholder={t`Smith`} /> </SimpleGrid> <TextInput mb={0} {...form.getInputProps('email')} label={t`Email`} placeholder={'your@email.com'} required /> <SimpleGrid verticalSpacing={{base: "md", sm: 0}} cols={{base: 1, sm: 2}} mt="md" mb="md"> <PasswordInput {...form.getInputProps('password')} label={t`Password`} placeholder={t`Your password`} required /> <PasswordInput {...form.getInputProps('password_confirmation')} label={t`Confirm Password`} placeholder={t`Confirm password`} required /> </SimpleGrid> <TextInput style={{display: 'none'}} {...form.getInputProps('timezone')} type="hidden" /> <Checkbox mb="md" {...form.getInputProps('marketing_opt_in', {type: 'checkbox'})} label={<Trans>Receive product updates from {getConfig("VITE_APP_NAME", "Hi.Events")}.</Trans>} /> <Button color="secondary.5" type="submit" fullWidth disabled={mutate.isPending}> {mutate.isPending ? t`Working...` : t`Register`} </Button> </form> <footer> <Trans> By registering you agree to our <NavLink target={'_blank'} to={getConfig("VITE_TOS_URL", "https://hi.events/terms-of-service?utm_source=app-register-footer") as string}>Terms of Service</NavLink> and <NavLink target={'_blank'} to={getConfig("VITE_PRIVACY_URL", 'https://hi.events/privacy-policy?utm_source=app-register-footer') as string}>Privacy Policy</NavLink>. </Trans> </footer> </div> </> ) } export default Register; 
-#: src/components/routes/auth/Register/index.tsx:75
+#. placeholder {0}: import { Button, Checkbox, PasswordInput, SimpleGrid, TextInput } from "@mantine/core"; import { hasLength, isEmail, matchesField, useForm } from "@mantine/form"; import { RegisterAccountRequest } from "../../../../types.ts"; import { useFormErrorResponseHandler } from "../../../../hooks/useFormErrorResponseHandler.tsx"; import { useRegisterAccount } from "../../../../mutations/useRegisterAccount.ts"; import { Navigate, NavLink, useLocation, useNavigate, useSearchParams } from "react-router"; import { useAuthConfigQuery } from "../../../../queries/useAuthConfigQuery.ts"; import { t, Trans } from "@lingui/macro"; import classes from "./Register.module.scss"; import { getClientLocale } from "../../../../locales.ts"; import { useEffect } from "react"; import { getUserCurrency } from "../../../../utilites/currency.ts"; import { getConfig } from "../../../../utilites/config.ts"; import { captureUtmData, getStoredUtmData, clearStoredUtmData } from "../../../../utilites/utm.ts"; export const Register = () => { const navigate = useNavigate(); const location = useLocation(); const [searchParamsHook] = useSearchParams(); const showLoginBackdoor = searchParamsHook.get('show_login') === '1'; const { data: authConfig, isLoading: isConfigLoading } = useAuthConfigQuery(); const hideDefaultForms = authConfig?.auth_disable_default && !showLoginBackdoor; const form = useForm({ validateInputOnBlur: true, initialValues: { first_name: '', last_name: '', email: '', password: '', password_confirmation: '', timezone: typeof window !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC', locale: getClientLocale(), invite_token: '', currency_code: getUserCurrency(), marketing_opt_in: false, }, validate: { password: hasLength({ min: 8 }, t`Password must be at least 8 characters`), password_confirmation: matchesField('password', t`Passwords are not the same`), email: isEmail(t`Please check your email is valid`), }, }); const errorHandler = useFormErrorResponseHandler(); const mutate = useRegisterAccount(); const registerUser = (data: RegisterAccountRequest) => { const utmData = getStoredUtmData(); const registrationData = utmData ? { ...data, ...utmData } : data; mutate.mutate({ registerData: registrationData }, { onSuccess: () => { clearStoredUtmData(); navigate(`/welcome${location.search}`); }, onError: (error: any) => { errorHandler(form, error, error.response?.data?.message); }, }); } useEffect(() => { captureUtmData(); const searchParams = new URLSearchParams(location.search); const token = searchParams.get('invite_token'); if (token) { form.setFieldValue('invite_token', token); } }, [location.search]); return ( <> {hideDefaultForms && !isConfigLoading && ( <Navigate replace to={`/auth/login${location.search}`} /> )} <header className={classes.header}> <h2>{t`Get started`}</h2> <p> <Trans> Already have an account?{' '} <NavLink to={`/auth/login${location.search}`}> {t`Log in`} </NavLink> </Trans> </p> </header> <div className={classes.registerCard}> <form onSubmit={form.onSubmit((values) => registerUser(values as RegisterAccountRequest))}> <SimpleGrid verticalSpacing={{ base: "md", sm: 0 }} cols={{ base: 1, sm: 2 }} mb="md"> <TextInput {...form.getInputProps('first_name')} label={t`First Name`} placeholder={t`John`} required /> <TextInput {...form.getInputProps('last_name')} label={t`Last Name`} placeholder={t`Smith`} /> </SimpleGrid> <TextInput mb={0} {...form.getInputProps('email')} label={t`Email`} placeholder={'your@email.com'} required /> <SimpleGrid verticalSpacing={{ base: "md", sm: 0 }} cols={{ base: 1, sm: 2 }} mt="md" mb="md"> <PasswordInput {...form.getInputProps('password')} label={t`Password`} placeholder={t`Your password`} required /> <PasswordInput {...form.getInputProps('password_confirmation')} label={t`Confirm Password`} placeholder={t`Confirm password`} required /> </SimpleGrid> <TextInput style={{ display: 'none' }} {...form.getInputProps('timezone')} type="hidden" /> <Checkbox mb="md" {...form.getInputProps('marketing_opt_in', { type: 'checkbox' })} label={<Trans>Receive product updates from {getConfig("VITE_APP_NAME", "Hi.Events")}.</Trans>} /> <Button color="secondary.5" type="submit" fullWidth disabled={mutate.isPending}> {mutate.isPending ? t`Working...` : t`Register`} </Button> </form> <footer> <Trans> By registering you agree to our <NavLink target={'_blank'} to={getConfig("VITE_TOS_URL", "https://hi.events/terms-of-service?utm_source=app-register-footer") as string}>Terms of Service</NavLink> and <NavLink target={'_blank'} to={getConfig("VITE_PRIVACY_URL", 'https://hi.events/privacy-policy?utm_source=app-register-footer') as string}>Privacy Policy</NavLink>. </Trans> </footer> </div> </> ) } export default Register; 
+#: src/components/routes/auth/Register/index.tsx:84
 msgid "Already have an account? <0>{0}</0>"
 msgstr "Já tem uma conta? <0>{0}</0>"
 
@@ -891,6 +897,7 @@ msgstr "Tem certeza de que deseja excluir este modelo? Esta ação não pode ser
 msgid "Are you sure you want to delete this template? This action cannot be undone and emails will fall back to the organizer or default template."
 msgstr "Tem certeza de que deseja excluir este modelo? Esta ação não pode ser desfeita e os e-mails voltarão ao modelo do organizador ou padrão."
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:122
 #: src/components/common/WebhookTable/index.tsx:122
 msgid "Are you sure you want to delete this webhook?"
 msgstr "Tem certeza de que deseja excluir este webhook?"
@@ -909,11 +916,11 @@ msgstr "Tem certeza de que deseja fazer o rascunho deste evento? Isso tornará o
 msgid "Are you sure you want to make this event public? This will make the event visible to the public"
 msgstr "Tem certeza de que deseja tornar este evento público? Isso tornará o evento visível ao público"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:123
+#: src/components/layouts/OrganizerLayout/index.tsx:125
 msgid "Are you sure you want to make this organizer draft? This will make the organizer page invisible to the public"
 msgstr "Tem certeza de que deseja definir este organizador como rascunho? Isso tornará a página do organizador invisível ao público."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:124
+#: src/components/layouts/OrganizerLayout/index.tsx:126
 msgid "Are you sure you want to make this organizer public? This will make the organizer page visible to the public"
 msgstr "Tem certeza de que deseja tornar este organizador público? Isso tornará a página do organizador visível ao público."
 
@@ -1000,6 +1007,7 @@ msgstr "Configuração Atribuída"
 msgid "Assigned Tier"
 msgstr "Nível atribuído"
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:33
 #: src/components/modals/CreateWebhookModal/index.tsx:33
 msgid "At least one event type must be selected"
 msgstr "Pelo menos um tipo de evento deve ser selecionado"
@@ -1020,11 +1028,11 @@ msgstr "Presença e taxas de registo em todos os eventos"
 msgid "Attendee"
 msgstr "Participante"
 
-#: src/components/forms/WebhookForm/index.tsx:94
+#: src/components/forms/WebhookForm/index.tsx:112
 msgid "Attendee Cancelled"
 msgstr "Participante cancelado"
 
-#: src/components/forms/WebhookForm/index.tsx:82
+#: src/components/forms/WebhookForm/index.tsx:100
 msgid "Attendee Created"
 msgstr "Participante criado"
 
@@ -1075,7 +1083,7 @@ msgstr "Status do Participante"
 msgid "Attendee Ticket"
 msgstr "Bilhete do Participante"
 
-#: src/components/forms/WebhookForm/index.tsx:88
+#: src/components/forms/WebhookForm/index.tsx:106
 msgid "Attendee Updated"
 msgstr "Participante atualizado"
 
@@ -1130,6 +1138,14 @@ msgstr "Detalhamento de atribuição"
 #: src/components/routes/admin/Attribution/index.tsx:131
 msgid "Attribution Value"
 msgstr "Valor de atribuição"
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:66
+msgid "Authentication Failed"
+msgstr ""
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:38
+msgid "Authentication failed. Please try again."
+msgstr ""
 
 #: src/components/common/WidgetEditor/index.tsx:236
 msgid "Auto Resize"
@@ -1321,7 +1337,7 @@ msgstr "Os compradores veem um preço limpo. A taxa da plataforma é deduzida do
 msgid "By continuing, you agree to the <0>{0} Terms of Service</0>"
 msgstr "Ao continuar, concorda com os <0>Termos de Serviço de {0}</0>"
 
-#: src/components/routes/auth/Register/index.tsx:141
+#: src/components/routes/auth/Register/index.tsx:150
 msgid "By registering you agree to our <0>Terms of Service</0> and <1>Privacy Policy</1>."
 msgstr "Ao se registrar, você concorda com nossos <0>Termos de Serviço</0> e <1>Política de Privacidade</1>."
 
@@ -1502,16 +1518,16 @@ msgstr "Confira este evento!"
 msgid "Check your email"
 msgstr "Verifique o seu email"
 
-#: src/components/routes/auth/Login/index.tsx:133
+#: src/components/routes/auth/Login/index.tsx:192
 #: src/components/routes/my-tickets/index.tsx:174
 msgid "Check your inbox! If tickets are associated with this email, you'll receive a link to view them."
 msgstr "Verifique sua caixa de entrada! Se houver ingressos associados a este e-mail, você receberá um link para visualizá-los."
 
-#: src/components/forms/WebhookForm/index.tsx:100
+#: src/components/forms/WebhookForm/index.tsx:118
 msgid "Check-in Created"
 msgstr "Check-in criado"
 
-#: src/components/forms/WebhookForm/index.tsx:106
+#: src/components/forms/WebhookForm/index.tsx:124
 msgid "Check-in Deleted"
 msgstr "Check-in excluído"
 
@@ -1705,7 +1721,7 @@ msgstr "O código deve ter entre 3 e 50 caracteres"
 msgid "Code must be no more than 20 characters"
 msgstr "O código não deve ter mais de 20 caracteres"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:162
+#: src/components/layouts/OrganizerLayout/index.tsx:164
 msgid "Collaborate with your team to create amazing events together."
 msgstr "Colabore com sua equipe para criar eventos incríveis juntos."
 
@@ -1815,6 +1831,10 @@ msgstr "Pedidos concluídos"
 msgid "Completed Orders"
 msgstr "Pedidos concluídos"
 
+#: src/components/routes/auth/ProviderCallback/index.tsx:60
+msgid "Completing authentication..."
+msgstr ""
+
 #: src/components/common/WidgetEditor/index.tsx:293
 msgid "Component Code"
 msgstr "Código do componente"
@@ -1899,12 +1919,12 @@ msgid "Confirm New Password"
 msgstr "Confirme a nova senha"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:134
-#: src/components/routes/auth/Register/index.tsx:119
+#: src/components/routes/auth/Register/index.tsx:128
 msgid "Confirm password"
 msgstr "Confirme sua senha"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:133
-#: src/components/routes/auth/Register/index.tsx:118
+#: src/components/routes/auth/Register/index.tsx:127
 #: src/components/routes/auth/ResetPassword/index.tsx:70
 msgid "Confirm Password"
 msgstr "Confirme sua senha"
@@ -1913,7 +1933,7 @@ msgstr "Confirme sua senha"
 msgid "Confirm your email to access all features."
 msgstr "Confirme seu e-mail para acessar todos os recursos."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:296
+#: src/components/layouts/OrganizerLayout/index.tsx:298
 msgid "Confirmation email sent! Please check your inbox."
 msgstr "E-mail de confirmação enviado! Verifique sua caixa de entrada."
 
@@ -1945,8 +1965,8 @@ msgstr "Documentação de conexão"
 msgid "Connect payment processing"
 msgstr "Conectar processamento de pagamento"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:175
-#: src/components/layouts/OrganizerLayout/index.tsx:183
+#: src/components/layouts/OrganizerLayout/index.tsx:177
+#: src/components/layouts/OrganizerLayout/index.tsx:185
 msgid "Connect Stripe"
 msgstr "Conectar faixa"
 
@@ -1970,7 +1990,7 @@ msgstr "Conectar ao Stripe"
 msgid "Connect with Stripe"
 msgstr "Conecte-se com Stripe"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:176
+#: src/components/layouts/OrganizerLayout/index.tsx:178
 msgid "Connect your Stripe account to accept payments for tickets and products."
 msgstr "Conecte sua conta Stripe para aceitar pagamentos de ingressos e produtos."
 
@@ -2263,7 +2283,7 @@ msgid "Create discounts, access codes for hidden tickets, and special offers."
 msgstr "Crie descontos, códigos de acesso para ingressos ocultos e ofertas especiais."
 
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
-#: src/components/layouts/OrganizerLayout/index.tsx:152
+#: src/components/layouts/OrganizerLayout/index.tsx:154
 #: src/components/routes/organizer/Events/index.tsx:62
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:257
 msgid "Create Event"
@@ -2314,6 +2334,8 @@ msgstr "Crie ingressos para o seu evento, defina preços e gerencie a quantidade
 msgid "Create trackable links to reward partners who promote your event."
 msgstr "Crie links rastreáveis para recompensar parceiros que promovem seu evento."
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:56
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:66
 #: src/components/modals/CreateWebhookModal/index.tsx:56
 #: src/components/modals/CreateWebhookModal/index.tsx:66
 msgid "Create Webhook"
@@ -2517,6 +2539,7 @@ msgstr "Detalhamento das vendas diárias, impostos e taxas"
 #: src/components/common/CapacityAssignmentList/index.tsx:153
 #: src/components/common/CheckInListList/index.tsx:174
 #: src/components/common/OrdersTable/index.tsx:182
+#: src/components/common/OrganizerWebhookTable/index.tsx:116
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:492
 #: src/components/common/PromoCodeTable/index.tsx:181
 #: src/components/common/WebhookTable/index.tsx:116
@@ -2631,6 +2654,7 @@ msgstr "Excluir modelo"
 msgid "Delete this question? This cannot be undone."
 msgstr "Excluir esta pergunta? Isso não pode ser desfeito."
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:127
 #: src/components/common/WebhookTable/index.tsx:127
 msgid "Delete webhook"
 msgstr "Excluir webhook"
@@ -2709,7 +2733,7 @@ msgstr "Documentação"
 msgid "Don't forget!"
 msgstr "Não se esqueça!"
 
-#: src/components/routes/auth/Login/index.tsx:82
+#: src/components/routes/auth/Login/index.tsx:121
 msgid "Don't have an account? <0>Sign up</0>"
 msgstr "Não tem uma conta? <0>Registe-se</0>"
 
@@ -2757,7 +2781,7 @@ msgstr "A baixar fatura"
 
 #: src/components/common/EventCard/index.tsx:84
 #: src/components/layouts/Event/index.tsx:191
-#: src/components/layouts/OrganizerLayout/index.tsx:206
+#: src/components/layouts/OrganizerLayout/index.tsx:208
 msgid "Draft"
 msgstr "Rascunho"
 
@@ -2945,10 +2969,13 @@ msgstr "Editar usuário"
 msgid "Edit VAT Settings"
 msgstr "Editar Configurações de IVA"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:104
 #: src/components/common/WebhookTable/index.tsx:104
 msgid "Edit webhook"
 msgstr "Editar webhook"
 
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:66
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:87
 #: src/components/modals/EditWebhookModal/index.tsx:66
 #: src/components/modals/EditWebhookModal/index.tsx:87
 msgid "Edit Webhook"
@@ -2989,8 +3016,8 @@ msgstr "Listas de Check-In Elegíveis"
 #: src/components/routes/admin/Dashboard/index.tsx:401
 #: src/components/routes/auth/AcceptInvitation/index.tsx:112
 #: src/components/routes/auth/ForgotPassword/index.tsx:65
-#: src/components/routes/auth/Login/index.tsx:93
-#: src/components/routes/auth/Register/index.tsx:104
+#: src/components/routes/auth/Login/index.tsx:151
+#: src/components/routes/auth/Register/index.tsx:113
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:78
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:68
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:68
@@ -3047,7 +3074,7 @@ msgid "Email confirmation resent"
 msgstr "Confirmação de e-mail reenviada"
 
 #: src/components/layouts/Event/index.tsx:74
-#: src/components/layouts/OrganizerLayout/index.tsx:96
+#: src/components/layouts/OrganizerLayout/index.tsx:98
 #: src/components/routes/profile/ManageProfile/index.tsx:100
 msgid "Email confirmation resent successfully"
 msgstr "Confirmação de e-mail reenviada com sucesso"
@@ -3075,7 +3102,7 @@ msgstr "Visualização do e-mail"
 msgid "Email Templates"
 msgstr "Modelos de e-mail"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:275
+#: src/components/layouts/OrganizerLayout/index.tsx:277
 msgid "Email Verification Required"
 msgstr "Verificação de e-mail necessária"
 
@@ -3213,7 +3240,7 @@ msgid "Enter unique affiliate code"
 msgstr "Introduza um código de afiliado único"
 
 #: src/components/common/ContactOrganizerModal/index.tsx:80
-#: src/components/routes/auth/Login/index.tsx:150
+#: src/components/routes/auth/Login/index.tsx:209
 #: src/components/routes/my-tickets/index.tsx:192
 msgid "Enter your email"
 msgstr "Digite seu e-mail"
@@ -3247,6 +3274,7 @@ msgstr "Erro ao confirmar o endereço de e-mail"
 msgid "Error confirming email change"
 msgstr "Erro ao confirmar a alteração do e-mail"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:166
 #: src/components/modals/WebhookLogsModal/index.tsx:166
 msgid "Error loading logs"
 msgstr "Erro ao carregar os registros"
@@ -3289,6 +3317,10 @@ msgstr "EUR"
 msgid "Event"
 msgstr "Evento"
 
+#: src/components/forms/WebhookForm/index.tsx:52
+msgid "Event Archived"
+msgstr ""
+
 #: src/components/modals/CreateEventModal/index.tsx:185
 msgid "Event Category"
 msgstr "Categoria do evento"
@@ -3296,6 +3328,10 @@ msgstr "Categoria do evento"
 #: src/components/modals/DuplicateEventModal/index.tsx:30
 msgid "Event Cover Image"
 msgstr "Imagem de capa do evento"
+
+#: src/components/forms/WebhookForm/index.tsx:40
+msgid "Event Created"
+msgstr ""
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:223
 msgid "Event custom template"
@@ -3432,10 +3468,15 @@ msgstr "Título do evento"
 msgid "Event Too New"
 msgstr "Evento muito recente"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:237
 #: src/components/common/WebhookTable/index.tsx:237
-#: src/components/forms/WebhookForm/index.tsx:122
+#: src/components/forms/WebhookForm/index.tsx:140
 msgid "Event Types"
 msgstr "Tipos de eventos"
+
+#: src/components/forms/WebhookForm/index.tsx:46
+msgid "Event Updated"
+msgstr ""
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:40
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:74
@@ -3444,7 +3485,7 @@ msgstr "Local do Evento"
 
 #: src/components/common/AdminAccountsTable/index.tsx:82
 #: src/components/layouts/Admin/index.tsx:16
-#: src/components/layouts/OrganizerLayout/index.tsx:84
+#: src/components/layouts/OrganizerLayout/index.tsx:85
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:159
 #: src/components/routes/admin/Attribution/index.tsx:133
 #: src/components/routes/admin/Dashboard/index.tsx:403
@@ -3639,6 +3680,7 @@ msgstr "Falha ao carregar a Lista de Registro"
 msgid "Failed to load recipients"
 msgstr "Falha ao carregar destinatários"
 
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:75
 #: src/components/modals/EditWebhookModal/index.tsx:75
 msgid "Failed to load Webhook"
 msgstr "Falha ao carregar o Webhook"
@@ -3861,7 +3903,7 @@ msgstr "Primeiro nome"
 #: src/components/modals/InviteUserModal/index.tsx:57
 #: src/components/modals/JoinWaitlistModal/index.tsx:191
 #: src/components/routes/auth/AcceptInvitation/index.tsx:97
-#: src/components/routes/auth/Register/index.tsx:90
+#: src/components/routes/auth/Register/index.tsx:99
 #: src/components/routes/product-widget/CollectInformation/index.tsx:427
 #: src/components/routes/product-widget/CollectInformation/index.tsx:639
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:53
@@ -3932,7 +3974,7 @@ msgstr "Comida e bebida"
 msgid "Footer Text"
 msgstr "Texto do Rodapé"
 
-#: src/components/routes/auth/Login/index.tsx:108
+#: src/components/routes/auth/Login/index.tsx:166
 msgid "Forgot password?"
 msgstr "Esqueceu sua senha?"
 
@@ -4000,7 +4042,7 @@ msgstr "alemão"
 msgid "Get paid immediately via Stripe Connect"
 msgstr "Receba imediatamente via Stripe Connect"
 
-#: src/components/routes/auth/Register/index.tsx:73
+#: src/components/routes/auth/Register/index.tsx:82
 msgid "Get started"
 msgstr "Começar"
 
@@ -4212,7 +4254,7 @@ msgid "Homepage Design"
 msgstr "Design da página inicial"
 
 #: src/components/layouts/Event/index.tsx:105
-#: src/components/layouts/OrganizerLayout/index.tsx:88
+#: src/components/layouts/OrganizerLayout/index.tsx:89
 msgid "Homepage Designer"
 msgstr "Designer de página inicial"
 
@@ -4255,7 +4297,7 @@ msgstr "https://awesome-events.com"
 msgid "https://example-maps-service.com/..."
 msgstr "https://example-maps-service.com/..."
 
-#: src/components/forms/WebhookForm/index.tsx:118
+#: src/components/forms/WebhookForm/index.tsx:136
 msgid "https://webhook-domain.com/webhook"
 msgstr "https://webhook-domain.com/webhook"
 
@@ -4470,7 +4512,7 @@ msgstr "Convidar um membro da equipe"
 msgid "Invite Team Member"
 msgstr "Convidar membro da equipe"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:164
+#: src/components/layouts/OrganizerLayout/index.tsx:166
 msgid "Invite Team Members"
 msgstr "Convidar membros da equipe"
 
@@ -4482,7 +4524,7 @@ msgstr "Convide membros ilimitados da equipa com funções personalizadas"
 msgid "Invite User"
 msgstr "Convidar Usuário"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:161
+#: src/components/layouts/OrganizerLayout/index.tsx:163
 msgid "Invite Your Team"
 msgstr "Convide sua equipe"
 
@@ -4552,7 +4594,7 @@ msgid "Job queued for retry"
 msgstr "Trabalho em fila para nova tentativa"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:98
-#: src/components/routes/auth/Register/index.tsx:91
+#: src/components/routes/auth/Register/index.tsx:100
 msgid "John"
 msgstr "John"
 
@@ -4586,7 +4628,7 @@ msgstr "Inscrito"
 msgid "Just click the button below to reconnect your Stripe account."
 msgstr "Basta clicar no botão abaixo para reconectar sua conta Stripe."
 
-#: src/components/routes/auth/Login/index.tsx:121
+#: src/components/routes/auth/Login/index.tsx:180
 msgid "Just looking for your tickets?"
 msgstr "Apenas procurando seus ingressos?"
 
@@ -4664,7 +4706,7 @@ msgstr "Sobrenome"
 #: src/components/modals/InviteUserModal/index.tsx:58
 #: src/components/modals/JoinWaitlistModal/index.tsx:196
 #: src/components/routes/auth/AcceptInvitation/index.tsx:102
-#: src/components/routes/auth/Register/index.tsx:96
+#: src/components/routes/auth/Register/index.tsx:105
 #: src/components/routes/product-widget/CollectInformation/index.tsx:433
 #: src/components/routes/product-widget/CollectInformation/index.tsx:434
 #: src/components/routes/product-widget/CollectInformation/index.tsx:645
@@ -4680,10 +4722,12 @@ msgstr "Sobrenome"
 msgid "Last name is required"
 msgstr "O apelido é obrigatório"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:239
 #: src/components/common/WebhookTable/index.tsx:239
 msgid "Last Response"
 msgstr "Última resposta"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:240
 #: src/components/common/WebhookTable/index.tsx:240
 msgid "Last Triggered"
 msgstr "Última ativação"
@@ -4730,7 +4774,7 @@ msgstr "Links permitidos"
 
 #: src/components/common/EventCard/index.tsx:87
 #: src/components/layouts/Event/index.tsx:193
-#: src/components/layouts/OrganizerLayout/index.tsx:208
+#: src/components/layouts/OrganizerLayout/index.tsx:210
 msgid "Live"
 msgstr "Ao vivo"
 
@@ -4753,6 +4797,7 @@ msgid "Loading tokens..."
 msgstr "Carregando tokens..."
 
 #: src/components/routes/event/Webhooks/index.tsx:21
+#: src/components/routes/organizer/Webhooks/index.tsx:22
 msgid "Loading Webhooks"
 msgstr "Carregando webhooks"
 
@@ -4770,12 +4815,12 @@ msgstr "Carregando..."
 msgid "Location"
 msgstr "Localização"
 
-#: src/components/routes/auth/Login/index.tsx:104
-#: src/components/routes/auth/Register/index.tsx:78
+#: src/components/routes/auth/Login/index.tsx:162
+#: src/components/routes/auth/Register/index.tsx:87
 msgid "Log in"
 msgstr "Conecte-se"
 
-#: src/components/routes/auth/Login/index.tsx:104
+#: src/components/routes/auth/Login/index.tsx:162
 msgid "Logging in"
 msgstr "Fazendo login"
 
@@ -4830,7 +4875,7 @@ msgstr "Torne seu evento ao vivo"
 #: src/components/common/OrdersTable/index.tsx:150
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:461
 #: src/components/common/PromoCodeTable/index.tsx:167
-#: src/components/layouts/OrganizerLayout/index.tsx:83
+#: src/components/layouts/OrganizerLayout/index.tsx:84
 msgid "Manage"
 msgstr "Gerenciar"
 
@@ -5116,6 +5161,7 @@ msgstr "Navegue até o participante"
 msgid "Net Revenue"
 msgstr "Receita Líquida"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:266
 #: src/components/common/PromoCodeTable/index.tsx:158
 #: src/components/common/WebhookTable/index.tsx:266
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:101
@@ -5153,6 +5199,7 @@ msgid "No accounts found"
 msgstr "Nenhuma conta encontrada"
 
 #: src/components/routes/event/Webhooks/index.tsx:22
+#: src/components/routes/organizer/Webhooks/index.tsx:23
 msgid "No Active Webhooks"
 msgstr "Nenhum webhook ativo"
 
@@ -5260,6 +5307,7 @@ msgstr "Sem impacto nas suas transações atuais ou passadas"
 msgid "No invoice"
 msgstr "Sem fatura"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:177
 #: src/components/modals/WebhookLogsModal/index.tsx:177
 msgid "No logs found"
 msgstr "Nenhum registro encontrado"
@@ -5356,10 +5404,12 @@ msgstr "Sem registos de contas recentes"
 msgid "No recipients found"
 msgstr "Nenhum destinatário encontrado"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:174
 #: src/components/common/WebhookTable/index.tsx:174
 msgid "No response"
 msgstr "Sem resposta"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:141
 #: src/components/common/WebhookTable/index.tsx:141
 msgid "No responses yet"
 msgstr "Ainda sem respostas"
@@ -5404,10 +5454,12 @@ msgstr "Sem eventos vistos nos últimos 14 dias"
 msgid "No waitlist entries"
 msgstr "Sem inscrições na lista de espera"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:180
 #: src/components/modals/WebhookLogsModal/index.tsx:180
 msgid "No webhook events have been recorded for this endpoint yet. Events will appear here once they are triggered."
 msgstr "Nenhum evento de webhook foi registrado para este endpoint ainda. Os eventos aparecerão aqui assim que forem acionados."
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:201
 #: src/components/common/WebhookTable/index.tsx:201
 msgid "No Webhooks"
 msgstr "Nenhum Webhook"
@@ -5664,7 +5716,7 @@ msgstr "Pedido e Bilhete"
 msgid "Order cancelled"
 msgstr "Pedido cancelado"
 
-#: src/components/forms/WebhookForm/index.tsx:76
+#: src/components/forms/WebhookForm/index.tsx:94
 msgid "Order Cancelled"
 msgstr "Pedido cancelado"
 
@@ -5682,7 +5734,7 @@ msgstr "Confirmação do pedido"
 msgid "Order confirmation resent successfully"
 msgstr "Confirmação do pedido reenviada com sucesso"
 
-#: src/components/forms/WebhookForm/index.tsx:52
+#: src/components/forms/WebhookForm/index.tsx:70
 msgid "Order Created"
 msgstr "Pedido criado"
 
@@ -5751,7 +5803,7 @@ msgstr "Idioma do Pedido"
 msgid "Order marked as paid"
 msgstr "Pedido marcado como pago"
 
-#: src/components/forms/WebhookForm/index.tsx:64
+#: src/components/forms/WebhookForm/index.tsx:82
 msgid "Order Marked as Paid"
 msgstr "Pedido marcado como pago"
 
@@ -5795,7 +5847,7 @@ msgstr "Ref. pedido"
 msgid "Order Reference"
 msgstr "Referência do pedido"
 
-#: src/components/forms/WebhookForm/index.tsx:70
+#: src/components/forms/WebhookForm/index.tsx:88
 msgid "Order Refunded"
 msgstr "Pedido reembolsado"
 
@@ -5823,7 +5875,7 @@ msgstr "Tempo limite do pedido"
 msgid "Order Total"
 msgstr "Total do pedido"
 
-#: src/components/forms/WebhookForm/index.tsx:58
+#: src/components/forms/WebhookForm/index.tsx:76
 msgid "Order Updated"
 msgstr "Pedido atualizado"
 
@@ -5903,7 +5955,7 @@ msgid "Organizer"
 msgstr "Organizador"
 
 #: src/components/layouts/Event/index.tsx:84
-#: src/components/layouts/OrganizerLayout/index.tsx:75
+#: src/components/layouts/OrganizerLayout/index.tsx:76
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:160
 msgid "Organizer Dashboard"
 msgstr "Painel do organizador"
@@ -5942,12 +5994,12 @@ msgid "Organizer statistics are not available for the selected currency or an er
 msgstr "As estatísticas do organizador não estão disponíveis para a moeda selecionada ou ocorreu um erro."
 
 #: src/components/common/StatusToggle/index.tsx:76
-#: src/components/layouts/OrganizerLayout/index.tsx:135
+#: src/components/layouts/OrganizerLayout/index.tsx:137
 msgid "Organizer status update failed. Please try again later"
 msgstr "Falha ao atualizar o status do organizador. Por favor, tente novamente mais tarde."
 
 #: src/components/common/StatusToggle/index.tsx:68
-#: src/components/layouts/OrganizerLayout/index.tsx:132
+#: src/components/layouts/OrganizerLayout/index.tsx:134
 msgid "Organizer status updated"
 msgstr "Status do organizador atualizado"
 
@@ -6045,8 +6097,8 @@ msgid "Pass to Buyer"
 msgstr "Passar para o comprador"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:127
-#: src/components/routes/auth/Login/index.tsx:98
-#: src/components/routes/auth/Register/index.tsx:112
+#: src/components/routes/auth/Login/index.tsx:156
+#: src/components/routes/auth/Register/index.tsx:121
 #: src/components/routes/profile/ManageProfile/index.tsx:119
 msgid "Password"
 msgstr "Senha"
@@ -6055,7 +6107,7 @@ msgstr "Senha"
 msgid "Password must be a minimum  of 8 characters"
 msgstr "A senha deve ter no mínimo 8 caracteres"
 
-#: src/components/routes/auth/Register/index.tsx:36
+#: src/components/routes/auth/Register/index.tsx:42
 msgid "Password must be at least 8 characters"
 msgstr "A senha deve conter pelo menos 8 caracteres"
 
@@ -6064,7 +6116,7 @@ msgid "Password reset successfully. Please login with your new password."
 msgstr "Redefinição de senha com sucesso. Por favor faça login com sua nova senha."
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:32
-#: src/components/routes/auth/Register/index.tsx:37
+#: src/components/routes/auth/Register/index.tsx:43
 msgid "Passwords are not the same"
 msgstr "senhas nao sao as mesmas"
 
@@ -6304,12 +6356,12 @@ msgstr "Adicione pelo menos uma opção"
 msgid "Please check the provided information is correct"
 msgstr "Verifique se as informações fornecidas estão corretas"
 
-#: src/components/routes/auth/Login/index.tsx:53
+#: src/components/routes/auth/Login/index.tsx:91
 msgid "Please check your email and password and try again"
 msgstr "Verifique seu e-mail e senha e tente novamente"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:33
-#: src/components/routes/auth/Register/index.tsx:38
+#: src/components/routes/auth/Register/index.tsx:44
 msgid "Please check your email is valid"
 msgstr "Verifique se seu e-mail é válido"
 
@@ -6337,6 +6389,7 @@ msgstr "Por favor, introduza um endereço de e-mail válido"
 msgid "Please enter a valid image URL that points to an image."
 msgstr "Por favor, insira um URL de imagem válido que aponte para uma imagem."
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:30
 #: src/components/modals/CreateWebhookModal/index.tsx:30
 msgid "Please enter a valid URL"
 msgstr "Por favor, insira uma URL válida"
@@ -6390,6 +6443,10 @@ msgstr "Verifique seu endereço de e-mail para acessar todos os recursos"
 #: src/components/routes/welcome/index.tsx:123
 msgid "Please wait before requesting another code"
 msgstr "Por favor, aguarde antes de solicitar outro código"
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:61
+msgid "Please wait while we log you in."
+msgstr ""
 
 #: src/components/routes/event/Affiliates/index.tsx:43
 msgid "Please wait while we prepare your affiliates for export..."
@@ -6550,7 +6607,7 @@ msgstr "Categoria de produto atualizada com sucesso."
 msgid "Product Created"
 msgstr "Produto criado"
 
-#: src/components/forms/WebhookForm/index.tsx:46
+#: src/components/forms/WebhookForm/index.tsx:64
 msgid "Product Deleted"
 msgstr "Produto excluído"
 
@@ -6580,7 +6637,7 @@ msgstr "Nível do Produto"
 msgid "Product Type"
 msgstr "Tipo de Produto"
 
-#: src/components/forms/WebhookForm/index.tsx:40
+#: src/components/forms/WebhookForm/index.tsx:58
 msgid "Product Updated"
 msgstr "Produto atualizado"
 
@@ -6763,7 +6820,7 @@ msgstr "Análises em Tempo Real"
 
 #. placeholder {0}: getConfig("VITE_APP_NAME", "Hi.Events")
 #: src/components/routes/auth/AcceptInvitation/index.tsx:157
-#: src/components/routes/auth/Register/index.tsx:133
+#: src/components/routes/auth/Register/index.tsx:142
 #: src/components/routes/profile/ManageProfile/index.tsx:209
 msgid "Receive product updates from {0}."
 msgstr "Receber atualizações de produtos do {0}."
@@ -6806,6 +6863,10 @@ msgstr "Reconectar Stripe →"
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:80
 msgid "Reddit"
 msgstr "Reddit"
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:67
+msgid "Redirecting back to login..."
+msgstr ""
 
 #: src/components/common/StripeConnectButton/index.tsx:59
 #: src/components/common/StripeConnectButton/index.tsx:74
@@ -6879,7 +6940,7 @@ msgstr "Reembolsos"
 msgid "Regional Settings"
 msgstr "Configurações regionais"
 
-#: src/components/routes/auth/Register/index.tsx:137
+#: src/components/routes/auth/Register/index.tsx:146
 msgid "Register"
 msgstr "Registro"
 
@@ -6912,7 +6973,7 @@ msgid "Report not found"
 msgstr "Relatório não encontrado"
 
 #: src/components/layouts/Event/index.tsx:97
-#: src/components/layouts/OrganizerLayout/index.tsx:78
+#: src/components/layouts/OrganizerLayout/index.tsx:79
 #: src/components/routes/event/Reports/index.tsx:39
 #: src/components/routes/organizer/Reports/index.tsx:51
 msgid "Reports"
@@ -6938,7 +6999,7 @@ msgstr "Reenviar código"
 msgid "Resend Confirmation"
 msgstr "Reenviar confirmação"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:292
+#: src/components/layouts/OrganizerLayout/index.tsx:294
 msgid "Resend Confirmation Email"
 msgstr "Reenviar e-mail de confirmação"
 
@@ -7359,7 +7420,7 @@ msgstr "Selecionar hora de fim"
 msgid "Select event category"
 msgstr "Selecionar categoria do evento"
 
-#: src/components/forms/WebhookForm/index.tsx:124
+#: src/components/forms/WebhookForm/index.tsx:142
 msgid "Select event types"
 msgstr "Selecionar tipos de eventos"
 
@@ -7427,7 +7488,7 @@ msgstr "Selecionar fuso horário"
 msgid "Select which attendees should receive this message"
 msgstr "Selecione quais participantes devem receber esta mensagem"
 
-#: src/components/forms/WebhookForm/index.tsx:123
+#: src/components/forms/WebhookForm/index.tsx:141
 msgid "Select which events will trigger this webhook"
 msgstr "Selecione quais eventos acionarão este webhook"
 
@@ -7448,7 +7509,7 @@ msgstr "Selecionado"
 msgid "Selling fast 🔥"
 msgstr "Vendendo rápido 🔥"
 
-#: src/components/routes/auth/Login/index.tsx:160
+#: src/components/routes/auth/Login/index.tsx:219
 #: src/components/routes/my-tickets/index.tsx:202
 msgid "Send"
 msgstr "Enviar"
@@ -7594,7 +7655,7 @@ msgstr "Configuração atualizada"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:81
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
-#: src/components/layouts/OrganizerLayout/index.tsx:85
+#: src/components/layouts/OrganizerLayout/index.tsx:86
 #: src/components/modals/DuplicateEventModal/index.tsx:26
 msgid "Settings"
 msgstr "Configurações"
@@ -7605,7 +7666,7 @@ msgstr "Configuração e design"
 
 #: src/components/common/ShareIcon/index.tsx:30
 #: src/components/layouts/EventHomepage/index.tsx:279
-#: src/components/layouts/OrganizerLayout/index.tsx:228
+#: src/components/layouts/OrganizerLayout/index.tsx:230
 #: src/components/modals/ShareModal/index.tsx:37
 #: src/components/modals/ShareModal/index.tsx:165
 #: src/components/modals/ShareModal/index.tsx:186
@@ -7624,8 +7685,8 @@ msgstr "Partilhar link de afiliado"
 msgid "Share Event"
 msgstr "Compartilhar evento"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:225
-#: src/components/layouts/OrganizerLayout/index.tsx:260
+#: src/components/layouts/OrganizerLayout/index.tsx:227
+#: src/components/layouts/OrganizerLayout/index.tsx:262
 msgid "Share Organizer Page"
 msgstr "Compartilhar página do organizador"
 
@@ -7701,7 +7762,7 @@ msgid "Skip this step"
 msgstr "Pular esta etapa"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:103
-#: src/components/routes/auth/Register/index.tsx:97
+#: src/components/routes/auth/Register/index.tsx:106
 msgid "Smith"
 msgstr "Smith"
 
@@ -7774,8 +7835,8 @@ msgid "Something went wrong. Please try again later."
 msgstr "Algo correu mal. Por favor, tente novamente mais tarde."
 
 #: src/components/layouts/Event/index.tsx:78
-#: src/components/layouts/OrganizerLayout/index.tsx:100
-#: src/components/routes/auth/Login/index.tsx:72
+#: src/components/layouts/OrganizerLayout/index.tsx:102
+#: src/components/routes/auth/Login/index.tsx:110
 #: src/components/routes/my-tickets/index.tsx:145
 #: src/components/routes/profile/ManageProfile/index.tsx:90
 #: src/components/routes/profile/ManageProfile/index.tsx:104
@@ -7851,11 +7912,12 @@ msgstr "As estatísticas são baseadas na data de criação da conta"
 #: src/components/common/AttendeeTable/index.tsx:274
 #: src/components/common/OrderDetails/index.tsx:51
 #: src/components/common/OrdersTable/index.tsx:396
+#: src/components/common/OrganizerWebhookTable/index.tsx:238
 #: src/components/common/WaitlistTable/index.tsx:164
 #: src/components/common/WebhookTable/index.tsx:238
 #: src/components/forms/AffiliateForm/index.tsx:98
 #: src/components/forms/CapaciyAssigmentForm/index.tsx:56
-#: src/components/forms/WebhookForm/index.tsx:133
+#: src/components/forms/WebhookForm/index.tsx:151
 #: src/components/modals/EditUserModal/index.tsx:103
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:157
 #: src/components/routes/admin/Dashboard/index.tsx:405
@@ -8083,6 +8145,7 @@ msgstr "Definições atualizadas com sucesso"
 msgid "Successfully Updated Social Links"
 msgstr "Links sociais atualizados com sucesso"
 
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:44
 #: src/components/modals/EditWebhookModal/index.tsx:44
 msgid "Successfully updated Webhook"
 msgstr "Webhook atualizado com sucesso"
@@ -8118,7 +8181,7 @@ msgstr "E-mail de suporte"
 msgid "Swedish"
 msgstr "Sueco"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:68
+#: src/components/layouts/OrganizerLayout/index.tsx:69
 #: src/components/modals/SwitchOrganizerModal/index.tsx:33
 msgid "Switch Organizer"
 msgstr "Trocar organizador"
@@ -8807,7 +8870,7 @@ msgstr "Para receber pagamentos com cartão de crédito, você precisa conectar 
 msgid "Toggle columns"
 msgstr "Alternar colunas"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:87
+#: src/components/layouts/OrganizerLayout/index.tsx:88
 msgid "Tools"
 msgstr "Ferramentas"
 
@@ -8915,7 +8978,7 @@ msgstr "Verdadeiro se pagamento offline"
 msgid "True if payment pending"
 msgstr "Verdadeiro se pagamento pendente"
 
-#: src/components/routes/auth/Login/index.tsx:141
+#: src/components/routes/auth/Login/index.tsx:200
 #: src/components/routes/my-tickets/index.tsx:183
 msgid "Try another email"
 msgstr "Tentar outro e-mail"
@@ -9099,6 +9162,7 @@ msgstr "Carregar imagem"
 msgid "Uploading image..."
 msgstr "Enviando imagem..."
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:236
 #: src/components/common/WebhookTable/index.tsx:236
 msgid "URL"
 msgstr "URL"
@@ -9107,6 +9171,7 @@ msgstr "URL"
 msgid "URL copied to clipboard"
 msgstr "URL copiado para a área de transferência"
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:25
 #: src/components/modals/CreateWebhookModal/index.tsx:25
 msgid "URL is required"
 msgstr "A URL é obrigatória"
@@ -9372,6 +9437,7 @@ msgstr "Ver página do evento"
 msgid "View Event Page"
 msgstr "Ver página do evento"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:113
 #: src/components/common/WebhookTable/index.tsx:113
 msgid "View logs"
 msgstr "Ver logs"
@@ -9404,8 +9470,8 @@ msgstr "Ver detalhes do pedido"
 msgid "View order details, issue refunds, and resend confirmations."
 msgstr "Veja detalhes de pedidos, emita reembolsos e reenvie confirmações."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:243
-#: src/components/layouts/OrganizerLayout/index.tsx:246
+#: src/components/layouts/OrganizerLayout/index.tsx:245
+#: src/components/layouts/OrganizerLayout/index.tsx:248
 msgid "View Organizer Homepage"
 msgstr "Ver página inicial do organizador"
 
@@ -9563,19 +9629,22 @@ msgstr "Mudámos a nossa sede para a Irlanda. Como resultado, precisamos que rec
 msgid "We've sent a 5-digit verification code to:"
 msgstr "Enviámos um código de verificação de 5 dígitos para:"
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:45
 #: src/components/modals/CreateWebhookModal/index.tsx:45
 msgid "Webhook created successfully"
 msgstr "Webhook criado com sucesso"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:53
 #: src/components/common/WebhookTable/index.tsx:53
 msgid "Webhook deleted successfully"
 msgstr "Webhook excluído com sucesso"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:151
 #: src/components/modals/WebhookLogsModal/index.tsx:151
 msgid "Webhook Logs"
 msgstr "Logs do Webhook"
 
-#: src/components/forms/WebhookForm/index.tsx:117
+#: src/components/forms/WebhookForm/index.tsx:135
 msgid "Webhook URL"
 msgstr "URL do Webhook"
 
@@ -9588,8 +9657,10 @@ msgid "Webhook will send notifications"
 msgstr "O webhook enviará notificações"
 
 #: src/components/layouts/Event/index.tsx:127
+#: src/components/layouts/OrganizerLayout/index.tsx:90
 #: src/components/modals/DuplicateEventModal/index.tsx:32
 #: src/components/routes/event/Webhooks/index.tsx:32
+#: src/components/routes/organizer/Webhooks/index.tsx:30
 msgid "Webhooks"
 msgstr "Webhooks"
 
@@ -9605,7 +9676,7 @@ msgstr "Weibo"
 msgid "Welcome aboard! Please login to continue."
 msgstr "Bem vindo a bordo! Por favor faça o login para continuar."
 
-#: src/components/routes/auth/Login/index.tsx:80
+#: src/components/routes/auth/Login/index.tsx:118
 msgid "Welcome back"
 msgstr "Bem-vindo de volta"
 
@@ -9665,15 +9736,19 @@ msgstr "O que precisa fazer:"
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
-#: src/components/forms/WebhookForm/index.tsx:108
+#: src/components/forms/WebhookForm/index.tsx:126
 msgid "When a check-in is deleted"
 msgstr "Quando um check-in é excluído"
 
-#: src/components/forms/WebhookForm/index.tsx:84
+#: src/components/forms/WebhookForm/index.tsx:102
 msgid "When a new attendee is created"
 msgstr "Quando um novo participante é criado"
 
-#: src/components/forms/WebhookForm/index.tsx:54
+#: src/components/forms/WebhookForm/index.tsx:42
+msgid "When a new event is created"
+msgstr ""
+
+#: src/components/forms/WebhookForm/index.tsx:72
 msgid "When a new order is created"
 msgstr "Quando um novo pedido é criado"
 
@@ -9681,11 +9756,11 @@ msgstr "Quando um novo pedido é criado"
 msgid "When a new product is created"
 msgstr "Quando um novo produto é criado"
 
-#: src/components/forms/WebhookForm/index.tsx:48
+#: src/components/forms/WebhookForm/index.tsx:66
 msgid "When a product is deleted"
 msgstr "Quando um produto é excluído"
 
-#: src/components/forms/WebhookForm/index.tsx:42
+#: src/components/forms/WebhookForm/index.tsx:60
 msgid "When a product is updated"
 msgstr "Quando um produto é atualizado"
 
@@ -9700,31 +9775,39 @@ msgid ""
 ""
 msgstr ""
 
-#: src/components/forms/WebhookForm/index.tsx:96
+#: src/components/forms/WebhookForm/index.tsx:114
 msgid "When an attendee is cancelled"
 msgstr "Quando um participante é cancelado"
 
-#: src/components/forms/WebhookForm/index.tsx:102
+#: src/components/forms/WebhookForm/index.tsx:120
 msgid "When an attendee is checked in"
 msgstr "Quando um participante faz check-in"
 
-#: src/components/forms/WebhookForm/index.tsx:90
+#: src/components/forms/WebhookForm/index.tsx:108
 msgid "When an attendee is updated"
 msgstr "Quando um participante é atualizado"
 
-#: src/components/forms/WebhookForm/index.tsx:78
+#: src/components/forms/WebhookForm/index.tsx:54
+msgid "When an event is archived"
+msgstr ""
+
+#: src/components/forms/WebhookForm/index.tsx:48
+msgid "When an event is updated"
+msgstr ""
+
+#: src/components/forms/WebhookForm/index.tsx:96
 msgid "When an order is cancelled"
 msgstr "Quando um pedido é cancelado"
 
-#: src/components/forms/WebhookForm/index.tsx:66
+#: src/components/forms/WebhookForm/index.tsx:84
 msgid "When an order is marked as paid"
 msgstr "Quando um pedido é marcado como pago"
 
-#: src/components/forms/WebhookForm/index.tsx:72
+#: src/components/forms/WebhookForm/index.tsx:90
 msgid "When an order is refunded"
 msgstr "Quando um pedido é reembolsado"
 
-#: src/components/forms/WebhookForm/index.tsx:60
+#: src/components/forms/WebhookForm/index.tsx:78
 msgid "When an order is updated"
 msgstr "Quando um pedido é atualizado"
 
@@ -9801,7 +9884,7 @@ msgstr "Trabalhando"
 #: src/components/modals/JoinWaitlistModal/index.tsx:218
 #: src/components/modals/ManageAttendeeModal/index.tsx:231
 #: src/components/modals/ManageOrderModal/index.tsx:175
-#: src/components/routes/auth/Register/index.tsx:137
+#: src/components/routes/auth/Register/index.tsx:146
 msgid "Working..."
 msgstr "Trabalhando..."
 
@@ -9942,7 +10025,7 @@ msgstr "Você deve criar um ticket antes de poder adicionar manualmente um parti
 msgid "You must have at least one price tier"
 msgstr "Você deve ter pelo menos uma faixa de preço"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:281
+#: src/components/layouts/OrganizerLayout/index.tsx:283
 msgid "You must verify your email address before you can update the organizer status."
 msgstr "Você precisa verificar seu e-mail antes de atualizar o status do organizador."
 
@@ -10104,8 +10187,8 @@ msgstr "Seus pedidos aparecerão aqui assim que começarem a chegar."
 msgid "Your organizer address"
 msgstr "Endereço do seu organizador"
 
-#: src/components/routes/auth/Login/index.tsx:99
-#: src/components/routes/auth/Register/index.tsx:113
+#: src/components/routes/auth/Login/index.tsx:157
+#: src/components/routes/auth/Register/index.tsx:122
 msgid "Your password"
 msgstr "Sua senha"
 

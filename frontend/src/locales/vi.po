@@ -14,12 +14,12 @@ msgstr ""
 "Plural-Forms: \n"
 
 #: src/components/layouts/Event/index.tsx:192
-#: src/components/layouts/OrganizerLayout/index.tsx:207
+#: src/components/layouts/OrganizerLayout/index.tsx:209
 msgid "- Click to Publish"
 msgstr "- Nhấp để xuất bản"
 
 #: src/components/layouts/Event/index.tsx:194
-#: src/components/layouts/OrganizerLayout/index.tsx:209
+#: src/components/layouts/OrganizerLayout/index.tsx:211
 msgid "- Click to Unpublish"
 msgstr "- Nhấp để gỡ bỏ"
 
@@ -64,6 +64,7 @@ msgstr "{0} <0>checked out</0> thành công"
 
 #. placeholder {0}: webhooks.length
 #: src/components/routes/event/Webhooks/index.tsx:24
+#: src/components/routes/organizer/Webhooks/index.tsx:25
 msgid "{0} Active Webhooks"
 msgstr "{0} Webhook đang hoạt động"
 
@@ -117,6 +118,7 @@ msgstr "{availableCount} trong số {totalCount} có sẵn"
 msgid "{days} days, {hours} hours, {minutes} minutes, and {seconds} seconds"
 msgstr "{ngày} ngày, {giờ} giờ, {phút} phút và {giây} giây"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:79
 #: src/components/common/WebhookTable/index.tsx:79
 msgid "{eventCount} events"
 msgstr "{EventCount} Sự kiện"
@@ -165,6 +167,7 @@ msgstr "<0>Đặt giới hạn tổng số người tham dự áp dụng cho nhi
 msgid "<0>The number of products available for this product</0><1>This value can be overridden if there are <2>Capacity Limits</2> associated with this product.</1>"
 msgstr "<0> Số lượng sản phẩm có sẵn cho sản phẩm này </0> <1> Giá trị này có thể được ghi đè nếu có giới hạn công suất <2>"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:205
 #: src/components/common/WebhookTable/index.tsx:205
 msgid "<0>Webhooks instantly notify external services when events happen, like adding a new attendee to your CRM or mailing list upon registration, ensuring seamless automation.</0><1>Use third-party services like <2>Zapier</2>, <3>IFTTT</3> or <4>Make</4> to create custom workflows and automate tasks.</1>"
 msgstr "<0>Webhooks thông báo ngay lập tức cho các dịch vụ bên ngoài khi sự kiện diễn ra, chẳng hạn như thêm người tham dự mới vào CRM hoặc danh sách email khi đăng ký, đảm bảo tự động hóa mượt mà.</0><1>Sử dụng các dịch vụ bên thứ ba như <2>Zapier</2>, <3>IFTTT</3> hoặc <4>Make</4> để tạo quy trình làm việc tùy chỉnh và tự động hóa công việc.</1>"
@@ -199,6 +202,7 @@ msgid "0 minutes and 0 seconds"
 msgstr "0 phút và 0 giây"
 
 #: src/components/routes/event/Webhooks/index.tsx:23
+#: src/components/routes/organizer/Webhooks/index.tsx:24
 msgid "1 Active Webhook"
 msgstr "1 Webhook đang hoạt động"
 
@@ -542,8 +546,10 @@ msgstr "Thêm tầng"
 msgid "Add to Calendar"
 msgstr "Thêm vào lịch"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:223
 #: src/components/common/WebhookTable/index.tsx:223
 #: src/components/routes/event/Webhooks/index.tsx:37
+#: src/components/routes/organizer/Webhooks/index.tsx:35
 msgid "Add Webhook"
 msgstr "Thêm Webhook"
 
@@ -727,8 +733,8 @@ msgstr "Gần xong rồi! Hoàn thành kết nối tài khoản Stripe để b�
 msgid "Almost there! We're just waiting for your payment to be processed. This should only take a few seconds."
 msgstr "Sắp xong rồi! Chúng tôi đang chờ thanh toán của bạn được xử lý. Quá trình này chỉ mất vài giây."
 
-#. placeholder {0}: import {Button, Checkbox, PasswordInput, SimpleGrid, TextInput} from "@mantine/core"; import {hasLength, isEmail, matchesField, useForm} from "@mantine/form"; import {RegisterAccountRequest} from "../../../../types.ts"; import {useFormErrorResponseHandler} from "../../../../hooks/useFormErrorResponseHandler.tsx"; import {useRegisterAccount} from "../../../../mutations/useRegisterAccount.ts"; import {NavLink, useLocation, useNavigate} from "react-router"; import {t, Trans} from "@lingui/macro"; import classes from "./Register.module.scss"; import {getClientLocale} from "../../../../locales.ts"; import {useEffect} from "react"; import {getUserCurrency} from "../../../../utilites/currency.ts"; import {getConfig} from "../../../../utilites/config.ts"; import {captureUtmData, getStoredUtmData, clearStoredUtmData} from "../../../../utilites/utm.ts"; export const Register = () => { const navigate = useNavigate(); const location = useLocation(); const form = useForm({ validateInputOnBlur: true, initialValues: { first_name: '', last_name: '', email: '', password: '', password_confirmation: '', timezone: typeof window !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC', locale: getClientLocale(), invite_token: '', currency_code: getUserCurrency(), marketing_opt_in: false, }, validate: { password: hasLength({min: 8}, t`Password must be at least 8 characters`), password_confirmation: matchesField('password', t`Passwords are not the same`), email: isEmail(t`Please check your email is valid`), }, }); const errorHandler = useFormErrorResponseHandler(); const mutate = useRegisterAccount(); const registerUser = (data: RegisterAccountRequest) => { const utmData = getStoredUtmData(); const registrationData = utmData ? {...data, ...utmData} : data; mutate.mutate({registerData: registrationData}, { onSuccess: () => { clearStoredUtmData(); navigate(`/welcome${location.search}`); }, onError: (error: any) => { errorHandler(form, error, error.response?.data?.message); }, }); } useEffect(() => { captureUtmData(); const searchParams = new URLSearchParams(location.search); const token = searchParams.get('invite_token'); if (token) { form.setFieldValue('invite_token', token); } }, [location.search]); return ( <> <header className={classes.header}> <h2>{t`Get started`}</h2> <p> <Trans> Already have an account?{' '} <NavLink to={`/auth/login${location.search}`}> {t`Log in`} </NavLink> </Trans> </p> </header> <div className={classes.registerCard}> <form onSubmit={form.onSubmit((values) => registerUser(values as RegisterAccountRequest))}> <SimpleGrid verticalSpacing={{base: "md", sm: 0}} cols={{base: 1, sm: 2}} mb="md"> <TextInput {...form.getInputProps('first_name')} label={t`First Name`} placeholder={t`John`} required /> <TextInput {...form.getInputProps('last_name')} label={t`Last Name`} placeholder={t`Smith`} /> </SimpleGrid> <TextInput mb={0} {...form.getInputProps('email')} label={t`Email`} placeholder={'your@email.com'} required /> <SimpleGrid verticalSpacing={{base: "md", sm: 0}} cols={{base: 1, sm: 2}} mt="md" mb="md"> <PasswordInput {...form.getInputProps('password')} label={t`Password`} placeholder={t`Your password`} required /> <PasswordInput {...form.getInputProps('password_confirmation')} label={t`Confirm Password`} placeholder={t`Confirm password`} required /> </SimpleGrid> <TextInput style={{display: 'none'}} {...form.getInputProps('timezone')} type="hidden" /> <Checkbox mb="md" {...form.getInputProps('marketing_opt_in', {type: 'checkbox'})} label={<Trans>Receive product updates from {getConfig("VITE_APP_NAME", "Hi.Events")}.</Trans>} /> <Button color="secondary.5" type="submit" fullWidth disabled={mutate.isPending}> {mutate.isPending ? t`Working...` : t`Register`} </Button> </form> <footer> <Trans> By registering you agree to our <NavLink target={'_blank'} to={getConfig("VITE_TOS_URL", "https://hi.events/terms-of-service?utm_source=app-register-footer") as string}>Terms of Service</NavLink> and <NavLink target={'_blank'} to={getConfig("VITE_PRIVACY_URL", 'https://hi.events/privacy-policy?utm_source=app-register-footer') as string}>Privacy Policy</NavLink>. </Trans> </footer> </div> </> ) } export default Register; 
-#: src/components/routes/auth/Register/index.tsx:75
+#. placeholder {0}: import { Button, Checkbox, PasswordInput, SimpleGrid, TextInput } from "@mantine/core"; import { hasLength, isEmail, matchesField, useForm } from "@mantine/form"; import { RegisterAccountRequest } from "../../../../types.ts"; import { useFormErrorResponseHandler } from "../../../../hooks/useFormErrorResponseHandler.tsx"; import { useRegisterAccount } from "../../../../mutations/useRegisterAccount.ts"; import { Navigate, NavLink, useLocation, useNavigate, useSearchParams } from "react-router"; import { useAuthConfigQuery } from "../../../../queries/useAuthConfigQuery.ts"; import { t, Trans } from "@lingui/macro"; import classes from "./Register.module.scss"; import { getClientLocale } from "../../../../locales.ts"; import { useEffect } from "react"; import { getUserCurrency } from "../../../../utilites/currency.ts"; import { getConfig } from "../../../../utilites/config.ts"; import { captureUtmData, getStoredUtmData, clearStoredUtmData } from "../../../../utilites/utm.ts"; export const Register = () => { const navigate = useNavigate(); const location = useLocation(); const [searchParamsHook] = useSearchParams(); const showLoginBackdoor = searchParamsHook.get('show_login') === '1'; const { data: authConfig, isLoading: isConfigLoading } = useAuthConfigQuery(); const hideDefaultForms = authConfig?.auth_disable_default && !showLoginBackdoor; const form = useForm({ validateInputOnBlur: true, initialValues: { first_name: '', last_name: '', email: '', password: '', password_confirmation: '', timezone: typeof window !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC', locale: getClientLocale(), invite_token: '', currency_code: getUserCurrency(), marketing_opt_in: false, }, validate: { password: hasLength({ min: 8 }, t`Password must be at least 8 characters`), password_confirmation: matchesField('password', t`Passwords are not the same`), email: isEmail(t`Please check your email is valid`), }, }); const errorHandler = useFormErrorResponseHandler(); const mutate = useRegisterAccount(); const registerUser = (data: RegisterAccountRequest) => { const utmData = getStoredUtmData(); const registrationData = utmData ? { ...data, ...utmData } : data; mutate.mutate({ registerData: registrationData }, { onSuccess: () => { clearStoredUtmData(); navigate(`/welcome${location.search}`); }, onError: (error: any) => { errorHandler(form, error, error.response?.data?.message); }, }); } useEffect(() => { captureUtmData(); const searchParams = new URLSearchParams(location.search); const token = searchParams.get('invite_token'); if (token) { form.setFieldValue('invite_token', token); } }, [location.search]); return ( <> {hideDefaultForms && !isConfigLoading && ( <Navigate replace to={`/auth/login${location.search}`} /> )} <header className={classes.header}> <h2>{t`Get started`}</h2> <p> <Trans> Already have an account?{' '} <NavLink to={`/auth/login${location.search}`}> {t`Log in`} </NavLink> </Trans> </p> </header> <div className={classes.registerCard}> <form onSubmit={form.onSubmit((values) => registerUser(values as RegisterAccountRequest))}> <SimpleGrid verticalSpacing={{ base: "md", sm: 0 }} cols={{ base: 1, sm: 2 }} mb="md"> <TextInput {...form.getInputProps('first_name')} label={t`First Name`} placeholder={t`John`} required /> <TextInput {...form.getInputProps('last_name')} label={t`Last Name`} placeholder={t`Smith`} /> </SimpleGrid> <TextInput mb={0} {...form.getInputProps('email')} label={t`Email`} placeholder={'your@email.com'} required /> <SimpleGrid verticalSpacing={{ base: "md", sm: 0 }} cols={{ base: 1, sm: 2 }} mt="md" mb="md"> <PasswordInput {...form.getInputProps('password')} label={t`Password`} placeholder={t`Your password`} required /> <PasswordInput {...form.getInputProps('password_confirmation')} label={t`Confirm Password`} placeholder={t`Confirm password`} required /> </SimpleGrid> <TextInput style={{ display: 'none' }} {...form.getInputProps('timezone')} type="hidden" /> <Checkbox mb="md" {...form.getInputProps('marketing_opt_in', { type: 'checkbox' })} label={<Trans>Receive product updates from {getConfig("VITE_APP_NAME", "Hi.Events")}.</Trans>} /> <Button color="secondary.5" type="submit" fullWidth disabled={mutate.isPending}> {mutate.isPending ? t`Working...` : t`Register`} </Button> </form> <footer> <Trans> By registering you agree to our <NavLink target={'_blank'} to={getConfig("VITE_TOS_URL", "https://hi.events/terms-of-service?utm_source=app-register-footer") as string}>Terms of Service</NavLink> and <NavLink target={'_blank'} to={getConfig("VITE_PRIVACY_URL", 'https://hi.events/privacy-policy?utm_source=app-register-footer') as string}>Privacy Policy</NavLink>. </Trans> </footer> </div> </> ) } export default Register; 
+#: src/components/routes/auth/Register/index.tsx:84
 msgid "Already have an account? <0>{0}</0>"
 msgstr "Đã có tài khoản? <0>{0}</0>"
 
@@ -891,6 +897,7 @@ msgstr "Bạn có chắc chắn muốn xóa mẫu này không? Hành động nà
 msgid "Are you sure you want to delete this template? This action cannot be undone and emails will fall back to the organizer or default template."
 msgstr "Bạn có chắc chắn muốn xóa mẫu này không? Hành động này không thể hoàn tác và email sẽ quay về mẫu của tổ chức hoặc mẫu mặc định."
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:122
 #: src/components/common/WebhookTable/index.tsx:122
 msgid "Are you sure you want to delete this webhook?"
 msgstr "Bạn có chắc là bạn muốn xóa webhook này không?"
@@ -909,11 +916,11 @@ msgstr "Bạn có chắc chắn muốn chuyển sự kiện này thành bản nh
 msgid "Are you sure you want to make this event public? This will make the event visible to the public"
 msgstr "Bạn có chắc mình muốn công khai sự kiện này không? "
 
-#: src/components/layouts/OrganizerLayout/index.tsx:123
+#: src/components/layouts/OrganizerLayout/index.tsx:125
 msgid "Are you sure you want to make this organizer draft? This will make the organizer page invisible to the public"
 msgstr "Bạn có chắc muốn chuyển nhà tổ chức này sang bản nháp không? Trang của nhà tổ chức sẽ không hiển thị công khai."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:124
+#: src/components/layouts/OrganizerLayout/index.tsx:126
 msgid "Are you sure you want to make this organizer public? This will make the organizer page visible to the public"
 msgstr "Bạn có chắc muốn công khai nhà tổ chức này không? Trang của nhà tổ chức sẽ hiển thị công khai."
 
@@ -1000,6 +1007,7 @@ msgstr "Cấu hình được chỉ định"
 msgid "Assigned Tier"
 msgstr "Cấp độ được gán"
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:33
 #: src/components/modals/CreateWebhookModal/index.tsx:33
 msgid "At least one event type must be selected"
 msgstr "Ít nhất một loại sự kiện phải được chọn"
@@ -1020,11 +1028,11 @@ msgstr "Tỷ lệ tham dự và check-in cho tất cả sự kiện"
 msgid "Attendee"
 msgstr "Người tham dự"
 
-#: src/components/forms/WebhookForm/index.tsx:94
+#: src/components/forms/WebhookForm/index.tsx:112
 msgid "Attendee Cancelled"
 msgstr "Người tham dự đã hủy bỏ"
 
-#: src/components/forms/WebhookForm/index.tsx:82
+#: src/components/forms/WebhookForm/index.tsx:100
 msgid "Attendee Created"
 msgstr "Người tham dự đã tạo ra"
 
@@ -1075,7 +1083,7 @@ msgstr "Trạng Thái Người Tham Dự"
 msgid "Attendee Ticket"
 msgstr "Vé tham dự"
 
-#: src/components/forms/WebhookForm/index.tsx:88
+#: src/components/forms/WebhookForm/index.tsx:106
 msgid "Attendee Updated"
 msgstr "Người tham dự cập nhật"
 
@@ -1130,6 +1138,14 @@ msgstr "Chi tiết phân bổ"
 #: src/components/routes/admin/Attribution/index.tsx:131
 msgid "Attribution Value"
 msgstr "Giá trị phân bổ"
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:66
+msgid "Authentication Failed"
+msgstr ""
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:38
+msgid "Authentication failed. Please try again."
+msgstr ""
 
 #: src/components/common/WidgetEditor/index.tsx:236
 msgid "Auto Resize"
@@ -1321,7 +1337,7 @@ msgstr "Người mua thấy giá rõ ràng. Phí nền tảng được khấu tr
 msgid "By continuing, you agree to the <0>{0} Terms of Service</0>"
 msgstr "Bằng cách tiếp tục, bạn đồng ý với <0>Điều khoản dịch vụ của {0}</0>"
 
-#: src/components/routes/auth/Register/index.tsx:141
+#: src/components/routes/auth/Register/index.tsx:150
 msgid "By registering you agree to our <0>Terms of Service</0> and <1>Privacy Policy</1>."
 msgstr "Bằng cách đăng ký, bạn đồng ý với các <0>Điều khoản dịch vụ của chúng tôi</0> và <1>Chính sách bảo mật</1>."
 
@@ -1502,16 +1518,16 @@ msgstr "Xác nhận rời khỏi sự kiện này!"
 msgid "Check your email"
 msgstr "Kiểm tra email của bạn"
 
-#: src/components/routes/auth/Login/index.tsx:133
+#: src/components/routes/auth/Login/index.tsx:192
 #: src/components/routes/my-tickets/index.tsx:174
 msgid "Check your inbox! If tickets are associated with this email, you'll receive a link to view them."
 msgstr "Kiểm tra hộp thư của bạn! Nếu có vé liên kết với email này, bạn sẽ nhận được liên kết để xem."
 
-#: src/components/forms/WebhookForm/index.tsx:100
+#: src/components/forms/WebhookForm/index.tsx:118
 msgid "Check-in Created"
 msgstr "Check-in đã được tạo"
 
-#: src/components/forms/WebhookForm/index.tsx:106
+#: src/components/forms/WebhookForm/index.tsx:124
 msgid "Check-in Deleted"
 msgstr "Check-in đã bị xóa"
 
@@ -1705,7 +1721,7 @@ msgstr "Mã phải dài từ 3 đến 50 ký tự"
 msgid "Code must be no more than 20 characters"
 msgstr "Mã không được quá 20 ký tự"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:162
+#: src/components/layouts/OrganizerLayout/index.tsx:164
 msgid "Collaborate with your team to create amazing events together."
 msgstr "Hợp tác với nhóm của bạn để tạo nên những sự kiện tuyệt vời."
 
@@ -1815,6 +1831,10 @@ msgstr "Đơn hàng đã hoàn thành"
 msgid "Completed Orders"
 msgstr "Đơn hàng đã hoàn thành"
 
+#: src/components/routes/auth/ProviderCallback/index.tsx:60
+msgid "Completing authentication..."
+msgstr ""
+
 #: src/components/common/WidgetEditor/index.tsx:293
 msgid "Component Code"
 msgstr "Mã component"
@@ -1899,12 +1919,12 @@ msgid "Confirm New Password"
 msgstr "Xác nhận mật khẩu mới"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:134
-#: src/components/routes/auth/Register/index.tsx:119
+#: src/components/routes/auth/Register/index.tsx:128
 msgid "Confirm password"
 msgstr "Xác nhận mật khẩu"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:133
-#: src/components/routes/auth/Register/index.tsx:118
+#: src/components/routes/auth/Register/index.tsx:127
 #: src/components/routes/auth/ResetPassword/index.tsx:70
 msgid "Confirm Password"
 msgstr "Xác nhận mật khẩu"
@@ -1913,7 +1933,7 @@ msgstr "Xác nhận mật khẩu"
 msgid "Confirm your email to access all features."
 msgstr "Xác nhận email của bạn để sử dụng đầy đủ tính năng."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:296
+#: src/components/layouts/OrganizerLayout/index.tsx:298
 msgid "Confirmation email sent! Please check your inbox."
 msgstr "Email xác nhận đã được gửi! Vui lòng kiểm tra hộp thư đến của bạn."
 
@@ -1945,8 +1965,8 @@ msgstr "Tài liệu kết nối"
 msgid "Connect payment processing"
 msgstr "Kết nối xử lý thanh toán"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:175
-#: src/components/layouts/OrganizerLayout/index.tsx:183
+#: src/components/layouts/OrganizerLayout/index.tsx:177
+#: src/components/layouts/OrganizerLayout/index.tsx:185
 msgid "Connect Stripe"
 msgstr "Kết nối Stripe"
 
@@ -1970,7 +1990,7 @@ msgstr "Kết nối với Stripe"
 msgid "Connect with Stripe"
 msgstr "Kết nối với Stripe"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:176
+#: src/components/layouts/OrganizerLayout/index.tsx:178
 msgid "Connect your Stripe account to accept payments for tickets and products."
 msgstr "Kết nối tài khoản Stripe để chấp nhận thanh toán cho vé và sản phẩm."
 
@@ -2263,7 +2283,7 @@ msgid "Create discounts, access codes for hidden tickets, and special offers."
 msgstr "Tạo giảm giá, mã truy cập cho vé ẩn và ưu đãi đặc biệt."
 
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
-#: src/components/layouts/OrganizerLayout/index.tsx:152
+#: src/components/layouts/OrganizerLayout/index.tsx:154
 #: src/components/routes/organizer/Events/index.tsx:62
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:257
 msgid "Create Event"
@@ -2314,6 +2334,8 @@ msgstr "Tạo vé cho sự kiện của bạn, đặt giá và quản lý số l
 msgid "Create trackable links to reward partners who promote your event."
 msgstr "Tạo liên kết có thể theo dõi để thưởng cho các đối tác quảng bá sự kiện của bạn."
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:56
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:66
 #: src/components/modals/CreateWebhookModal/index.tsx:56
 #: src/components/modals/CreateWebhookModal/index.tsx:66
 msgid "Create Webhook"
@@ -2517,6 +2539,7 @@ msgstr "Chi tiết doanh số hàng ngày, thuế và phí"
 #: src/components/common/CapacityAssignmentList/index.tsx:153
 #: src/components/common/CheckInListList/index.tsx:174
 #: src/components/common/OrdersTable/index.tsx:182
+#: src/components/common/OrganizerWebhookTable/index.tsx:116
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:492
 #: src/components/common/PromoCodeTable/index.tsx:181
 #: src/components/common/WebhookTable/index.tsx:116
@@ -2631,6 +2654,7 @@ msgstr "Xóa mẫu"
 msgid "Delete this question? This cannot be undone."
 msgstr "Xóa câu hỏi này? Hành động này không thể hoàn tác."
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:127
 #: src/components/common/WebhookTable/index.tsx:127
 msgid "Delete webhook"
 msgstr "Xóa webhook"
@@ -2709,7 +2733,7 @@ msgstr "Tài liệu"
 msgid "Don't forget!"
 msgstr "Đừng quên!"
 
-#: src/components/routes/auth/Login/index.tsx:82
+#: src/components/routes/auth/Login/index.tsx:121
 msgid "Don't have an account? <0>Sign up</0>"
 msgstr "Chưa có tài khoản? <0>Đăng ký</0>"
 
@@ -2757,7 +2781,7 @@ msgstr "Tải xuống hóa đơn"
 
 #: src/components/common/EventCard/index.tsx:84
 #: src/components/layouts/Event/index.tsx:191
-#: src/components/layouts/OrganizerLayout/index.tsx:206
+#: src/components/layouts/OrganizerLayout/index.tsx:208
 msgid "Draft"
 msgstr "Bản nháp"
 
@@ -2945,10 +2969,13 @@ msgstr "Chỉnh sửa người dùng"
 msgid "Edit VAT Settings"
 msgstr "Chỉnh sửa cài đặt VAT"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:104
 #: src/components/common/WebhookTable/index.tsx:104
 msgid "Edit webhook"
 msgstr "Chỉnh sửa webhook"
 
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:66
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:87
 #: src/components/modals/EditWebhookModal/index.tsx:66
 #: src/components/modals/EditWebhookModal/index.tsx:87
 msgid "Edit Webhook"
@@ -2989,8 +3016,8 @@ msgstr "Danh Sách Đăng Ký Đủ Điều Kiện"
 #: src/components/routes/admin/Dashboard/index.tsx:401
 #: src/components/routes/auth/AcceptInvitation/index.tsx:112
 #: src/components/routes/auth/ForgotPassword/index.tsx:65
-#: src/components/routes/auth/Login/index.tsx:93
-#: src/components/routes/auth/Register/index.tsx:104
+#: src/components/routes/auth/Login/index.tsx:151
+#: src/components/routes/auth/Register/index.tsx:113
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:78
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:68
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:68
@@ -3047,7 +3074,7 @@ msgid "Email confirmation resent"
 msgstr "Xác nhận email đã được gửi lại"
 
 #: src/components/layouts/Event/index.tsx:74
-#: src/components/layouts/OrganizerLayout/index.tsx:96
+#: src/components/layouts/OrganizerLayout/index.tsx:98
 #: src/components/routes/profile/ManageProfile/index.tsx:100
 msgid "Email confirmation resent successfully"
 msgstr "Xác nhận email đã được gửi lại thành công"
@@ -3075,7 +3102,7 @@ msgstr "Xem trước email"
 msgid "Email Templates"
 msgstr "Mẫu email"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:275
+#: src/components/layouts/OrganizerLayout/index.tsx:277
 msgid "Email Verification Required"
 msgstr "Yêu cầu xác minh email"
 
@@ -3213,7 +3240,7 @@ msgid "Enter unique affiliate code"
 msgstr "Nhập mã đối tác duy nhất"
 
 #: src/components/common/ContactOrganizerModal/index.tsx:80
-#: src/components/routes/auth/Login/index.tsx:150
+#: src/components/routes/auth/Login/index.tsx:209
 #: src/components/routes/my-tickets/index.tsx:192
 msgid "Enter your email"
 msgstr "Nhập email của bạn"
@@ -3247,6 +3274,7 @@ msgstr "Lỗi xác nhận địa chỉ email"
 msgid "Error confirming email change"
 msgstr "Lỗi xác nhận thay đổi email"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:166
 #: src/components/modals/WebhookLogsModal/index.tsx:166
 msgid "Error loading logs"
 msgstr "Lỗi khi tải nhật ký"
@@ -3289,6 +3317,10 @@ msgstr "EUR"
 msgid "Event"
 msgstr "Sự kiện"
 
+#: src/components/forms/WebhookForm/index.tsx:52
+msgid "Event Archived"
+msgstr ""
+
 #: src/components/modals/CreateEventModal/index.tsx:185
 msgid "Event Category"
 msgstr "Danh mục sự kiện"
@@ -3296,6 +3328,10 @@ msgstr "Danh mục sự kiện"
 #: src/components/modals/DuplicateEventModal/index.tsx:30
 msgid "Event Cover Image"
 msgstr "Ảnh bìa sự kiện"
+
+#: src/components/forms/WebhookForm/index.tsx:40
+msgid "Event Created"
+msgstr ""
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:223
 msgid "Event custom template"
@@ -3432,10 +3468,15 @@ msgstr "Tiêu đề sự kiện"
 msgid "Event Too New"
 msgstr "Sự kiện quá mới"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:237
 #: src/components/common/WebhookTable/index.tsx:237
-#: src/components/forms/WebhookForm/index.tsx:122
+#: src/components/forms/WebhookForm/index.tsx:140
 msgid "Event Types"
 msgstr "Loại sự kiện"
+
+#: src/components/forms/WebhookForm/index.tsx:46
+msgid "Event Updated"
+msgstr ""
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:40
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:74
@@ -3444,7 +3485,7 @@ msgstr "Địa Điểm Sự Kiện"
 
 #: src/components/common/AdminAccountsTable/index.tsx:82
 #: src/components/layouts/Admin/index.tsx:16
-#: src/components/layouts/OrganizerLayout/index.tsx:84
+#: src/components/layouts/OrganizerLayout/index.tsx:85
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:159
 #: src/components/routes/admin/Attribution/index.tsx:133
 #: src/components/routes/admin/Dashboard/index.tsx:403
@@ -3639,6 +3680,7 @@ msgstr "Không thể tải danh sách check-in"
 msgid "Failed to load recipients"
 msgstr "Không thể tải người nhận"
 
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:75
 #: src/components/modals/EditWebhookModal/index.tsx:75
 msgid "Failed to load Webhook"
 msgstr "Không thể tải Webhook"
@@ -3861,7 +3903,7 @@ msgstr "Tên"
 #: src/components/modals/InviteUserModal/index.tsx:57
 #: src/components/modals/JoinWaitlistModal/index.tsx:191
 #: src/components/routes/auth/AcceptInvitation/index.tsx:97
-#: src/components/routes/auth/Register/index.tsx:90
+#: src/components/routes/auth/Register/index.tsx:99
 #: src/components/routes/product-widget/CollectInformation/index.tsx:427
 #: src/components/routes/product-widget/CollectInformation/index.tsx:639
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:53
@@ -3932,7 +3974,7 @@ msgstr "Ẩm thực"
 msgid "Footer Text"
 msgstr "Văn bản chân trang"
 
-#: src/components/routes/auth/Login/index.tsx:108
+#: src/components/routes/auth/Login/index.tsx:166
 msgid "Forgot password?"
 msgstr "Quên mật khẩu?"
 
@@ -4000,7 +4042,7 @@ msgstr "Tiếng Đức"
 msgid "Get paid immediately via Stripe Connect"
 msgstr "Nhận thanh toán ngay lập tức qua Stripe Connect"
 
-#: src/components/routes/auth/Register/index.tsx:73
+#: src/components/routes/auth/Register/index.tsx:82
 msgid "Get started"
 msgstr "Bắt đầu"
 
@@ -4212,7 +4254,7 @@ msgid "Homepage Design"
 msgstr "Thiết kế trang sự kiện"
 
 #: src/components/layouts/Event/index.tsx:105
-#: src/components/layouts/OrganizerLayout/index.tsx:88
+#: src/components/layouts/OrganizerLayout/index.tsx:89
 msgid "Homepage Designer"
 msgstr "Thiết kế trang chủ"
 
@@ -4255,7 +4297,7 @@ msgstr "https://awesome-events.com"
 msgid "https://example-maps-service.com/..."
 msgstr "https://example-maps-service.com/..."
 
-#: src/components/forms/WebhookForm/index.tsx:118
+#: src/components/forms/WebhookForm/index.tsx:136
 msgid "https://webhook-domain.com/webhook"
 msgstr "https://webhook-domain.com/webhook"
 
@@ -4470,7 +4512,7 @@ msgstr "Mời thành viên nhóm"
 msgid "Invite Team Member"
 msgstr "Mời thành viên nhóm"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:164
+#: src/components/layouts/OrganizerLayout/index.tsx:166
 msgid "Invite Team Members"
 msgstr "Mời các thành viên nhóm"
 
@@ -4482,7 +4524,7 @@ msgstr "Mời không giới hạn thành viên nhóm với vai trò tùy chỉnh
 msgid "Invite User"
 msgstr "Mời người dùng"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:161
+#: src/components/layouts/OrganizerLayout/index.tsx:163
 msgid "Invite Your Team"
 msgstr "Mời nhóm của bạn"
 
@@ -4552,7 +4594,7 @@ msgid "Job queued for retry"
 msgstr "Công việc đã được xếp hàng để thử lại"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:98
-#: src/components/routes/auth/Register/index.tsx:91
+#: src/components/routes/auth/Register/index.tsx:100
 msgid "John"
 msgstr "John"
 
@@ -4586,7 +4628,7 @@ msgstr "Đã tham gia"
 msgid "Just click the button below to reconnect your Stripe account."
 msgstr "Chỉ cần nhấn nút bên dưới để kết nối lại tài khoản Stripe của bạn."
 
-#: src/components/routes/auth/Login/index.tsx:121
+#: src/components/routes/auth/Login/index.tsx:180
 msgid "Just looking for your tickets?"
 msgstr "Chỉ đang tìm vé của bạn?"
 
@@ -4664,7 +4706,7 @@ msgstr "Họ"
 #: src/components/modals/InviteUserModal/index.tsx:58
 #: src/components/modals/JoinWaitlistModal/index.tsx:196
 #: src/components/routes/auth/AcceptInvitation/index.tsx:102
-#: src/components/routes/auth/Register/index.tsx:96
+#: src/components/routes/auth/Register/index.tsx:105
 #: src/components/routes/product-widget/CollectInformation/index.tsx:433
 #: src/components/routes/product-widget/CollectInformation/index.tsx:434
 #: src/components/routes/product-widget/CollectInformation/index.tsx:645
@@ -4680,10 +4722,12 @@ msgstr "Họ"
 msgid "Last name is required"
 msgstr "Họ là bắt buộc"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:239
 #: src/components/common/WebhookTable/index.tsx:239
 msgid "Last Response"
 msgstr "Phản hồi cuối cùng"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:240
 #: src/components/common/WebhookTable/index.tsx:240
 msgid "Last Triggered"
 msgstr "Trình kích hoạt cuối cùng"
@@ -4730,7 +4774,7 @@ msgstr "Liên kết được phép"
 
 #: src/components/common/EventCard/index.tsx:87
 #: src/components/layouts/Event/index.tsx:193
-#: src/components/layouts/OrganizerLayout/index.tsx:208
+#: src/components/layouts/OrganizerLayout/index.tsx:210
 msgid "Live"
 msgstr "Trực tiếp"
 
@@ -4753,6 +4797,7 @@ msgid "Loading tokens..."
 msgstr "Đang tải token..."
 
 #: src/components/routes/event/Webhooks/index.tsx:21
+#: src/components/routes/organizer/Webhooks/index.tsx:22
 msgid "Loading Webhooks"
 msgstr "Đang tải Webhooks"
 
@@ -4770,12 +4815,12 @@ msgstr "Đang tải ..."
 msgid "Location"
 msgstr "Vị trí"
 
-#: src/components/routes/auth/Login/index.tsx:104
-#: src/components/routes/auth/Register/index.tsx:78
+#: src/components/routes/auth/Login/index.tsx:162
+#: src/components/routes/auth/Register/index.tsx:87
 msgid "Log in"
 msgstr "Đăng nhập"
 
-#: src/components/routes/auth/Login/index.tsx:104
+#: src/components/routes/auth/Login/index.tsx:162
 msgid "Logging in"
 msgstr "Đăng nhập"
 
@@ -4830,7 +4875,7 @@ msgstr "Làm cho sự kiện của bạn hoạt động"
 #: src/components/common/OrdersTable/index.tsx:150
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:461
 #: src/components/common/PromoCodeTable/index.tsx:167
-#: src/components/layouts/OrganizerLayout/index.tsx:83
+#: src/components/layouts/OrganizerLayout/index.tsx:84
 msgid "Manage"
 msgstr "Quản lý"
 
@@ -5116,6 +5161,7 @@ msgstr "Đi tới người tham dự"
 msgid "Net Revenue"
 msgstr "Doanh thu ròng"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:266
 #: src/components/common/PromoCodeTable/index.tsx:158
 #: src/components/common/WebhookTable/index.tsx:266
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:101
@@ -5153,6 +5199,7 @@ msgid "No accounts found"
 msgstr "Không tìm thấy tài khoản"
 
 #: src/components/routes/event/Webhooks/index.tsx:22
+#: src/components/routes/organizer/Webhooks/index.tsx:23
 msgid "No Active Webhooks"
 msgstr "Không có Webhook hoạt động"
 
@@ -5260,6 +5307,7 @@ msgstr "Không ảnh hưởng đến giao dịch hiện tại hoặc quá khứ 
 msgid "No invoice"
 msgstr "Không có hóa đơn"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:177
 #: src/components/modals/WebhookLogsModal/index.tsx:177
 msgid "No logs found"
 msgstr "Không tìm thấy nhật ký"
@@ -5356,10 +5404,12 @@ msgstr "Không có đăng ký tài khoản gần đây"
 msgid "No recipients found"
 msgstr "Không tìm thấy người nhận"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:174
 #: src/components/common/WebhookTable/index.tsx:174
 msgid "No response"
 msgstr "Không có phản hồi"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:141
 #: src/components/common/WebhookTable/index.tsx:141
 msgid "No responses yet"
 msgstr "Chưa có phản hồi"
@@ -5404,10 +5454,12 @@ msgstr "Không có sự kiện được xem trong 14 ngày qua"
 msgid "No waitlist entries"
 msgstr "Không có mục trong danh sách chờ"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:180
 #: src/components/modals/WebhookLogsModal/index.tsx:180
 msgid "No webhook events have been recorded for this endpoint yet. Events will appear here once they are triggered."
 msgstr "Chưa có sự kiện webhook nào được ghi nhận cho điểm cuối này. Sự kiện sẽ xuất hiện ở đây khi chúng được kích hoạt."
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:201
 #: src/components/common/WebhookTable/index.tsx:201
 msgid "No Webhooks"
 msgstr "Không có webhooks"
@@ -5664,7 +5716,7 @@ msgstr "Đơn hàng & Vé"
 msgid "Order cancelled"
 msgstr "Đơn hàng đã hủy"
 
-#: src/components/forms/WebhookForm/index.tsx:76
+#: src/components/forms/WebhookForm/index.tsx:94
 msgid "Order Cancelled"
 msgstr "Đơn hàng bị hủy"
 
@@ -5682,7 +5734,7 @@ msgstr "Xác nhận đơn hàng"
 msgid "Order confirmation resent successfully"
 msgstr "Xác nhận đơn hàng đã được gửi lại thành công"
 
-#: src/components/forms/WebhookForm/index.tsx:52
+#: src/components/forms/WebhookForm/index.tsx:70
 msgid "Order Created"
 msgstr "Đơn hàng được tạo"
 
@@ -5751,7 +5803,7 @@ msgstr "Ngôn Ngữ Đơn Hàng"
 msgid "Order marked as paid"
 msgstr "Đơn hàng được đánh dấu là đã thanh toán"
 
-#: src/components/forms/WebhookForm/index.tsx:64
+#: src/components/forms/WebhookForm/index.tsx:82
 msgid "Order Marked as Paid"
 msgstr "Đơn hàng được đánh dấu là đã trả"
 
@@ -5795,7 +5847,7 @@ msgstr "Mã đơn hàng"
 msgid "Order Reference"
 msgstr "Mã đơn hàng"
 
-#: src/components/forms/WebhookForm/index.tsx:70
+#: src/components/forms/WebhookForm/index.tsx:88
 msgid "Order Refunded"
 msgstr "Đơn hàng đã hoàn lại"
 
@@ -5823,7 +5875,7 @@ msgstr "Thời gian chờ đơn hàng"
 msgid "Order Total"
 msgstr "Tổng đơn hàng"
 
-#: src/components/forms/WebhookForm/index.tsx:58
+#: src/components/forms/WebhookForm/index.tsx:76
 msgid "Order Updated"
 msgstr "Đơn hàng cập nhật"
 
@@ -5903,7 +5955,7 @@ msgid "Organizer"
 msgstr "Người tổ chức"
 
 #: src/components/layouts/Event/index.tsx:84
-#: src/components/layouts/OrganizerLayout/index.tsx:75
+#: src/components/layouts/OrganizerLayout/index.tsx:76
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:160
 msgid "Organizer Dashboard"
 msgstr "Bảng điều khiển nhà tổ chức"
@@ -5942,12 +5994,12 @@ msgid "Organizer statistics are not available for the selected currency or an er
 msgstr "Không có thống kê nào cho nhà tổ chức với loại tiền tệ đã chọn hoặc đã xảy ra lỗi."
 
 #: src/components/common/StatusToggle/index.tsx:76
-#: src/components/layouts/OrganizerLayout/index.tsx:135
+#: src/components/layouts/OrganizerLayout/index.tsx:137
 msgid "Organizer status update failed. Please try again later"
 msgstr "Cập nhật trạng thái nhà tổ chức thất bại. Vui lòng thử lại sau"
 
 #: src/components/common/StatusToggle/index.tsx:68
-#: src/components/layouts/OrganizerLayout/index.tsx:132
+#: src/components/layouts/OrganizerLayout/index.tsx:134
 msgid "Organizer status updated"
 msgstr "Trạng thái nhà tổ chức đã được cập nhật"
 
@@ -6045,8 +6097,8 @@ msgid "Pass to Buyer"
 msgstr "Chuyển cho người mua"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:127
-#: src/components/routes/auth/Login/index.tsx:98
-#: src/components/routes/auth/Register/index.tsx:112
+#: src/components/routes/auth/Login/index.tsx:156
+#: src/components/routes/auth/Register/index.tsx:121
 #: src/components/routes/profile/ManageProfile/index.tsx:119
 msgid "Password"
 msgstr "Mật khẩu"
@@ -6055,7 +6107,7 @@ msgstr "Mật khẩu"
 msgid "Password must be a minimum  of 8 characters"
 msgstr "Mật khẩu phải tối thiểu 8 ký tự"
 
-#: src/components/routes/auth/Register/index.tsx:36
+#: src/components/routes/auth/Register/index.tsx:42
 msgid "Password must be at least 8 characters"
 msgstr "Mật khẩu phải có ít nhất 8 ký tự"
 
@@ -6064,7 +6116,7 @@ msgid "Password reset successfully. Please login with your new password."
 msgstr "Đặt lại mật khẩu thành công. Vui lòng sử dụng mật khẩu mới để đăng nhập."
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:32
-#: src/components/routes/auth/Register/index.tsx:37
+#: src/components/routes/auth/Register/index.tsx:43
 msgid "Passwords are not the same"
 msgstr "Mật khẩu không giống nhau"
 
@@ -6304,12 +6356,12 @@ msgstr "Vui lòng thêm ít nhất một tùy chọn"
 msgid "Please check the provided information is correct"
 msgstr "Vui lòng kiểm tra thông tin được cung cấp là chính xác"
 
-#: src/components/routes/auth/Login/index.tsx:53
+#: src/components/routes/auth/Login/index.tsx:91
 msgid "Please check your email and password and try again"
 msgstr "Vui lòng kiểm tra email và mật khẩu của bạn và thử lại"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:33
-#: src/components/routes/auth/Register/index.tsx:38
+#: src/components/routes/auth/Register/index.tsx:44
 msgid "Please check your email is valid"
 msgstr "Vui lòng kiểm tra email của bạn là hợp lệ"
 
@@ -6337,6 +6389,7 @@ msgstr "Vui lòng nhập địa chỉ email hợp lệ"
 msgid "Please enter a valid image URL that points to an image."
 msgstr "Vui lòng nhập URL hình ảnh hợp lệ trỏ đến một hình ảnh."
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:30
 #: src/components/modals/CreateWebhookModal/index.tsx:30
 msgid "Please enter a valid URL"
 msgstr "Vui lòng nhập URL hợp lệ"
@@ -6390,6 +6443,10 @@ msgstr "Vui lòng xác minh địa chỉ email của bạn để truy cập tấ
 #: src/components/routes/welcome/index.tsx:123
 msgid "Please wait before requesting another code"
 msgstr "Vui lòng đợi trước khi yêu cầu mã khác"
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:61
+msgid "Please wait while we log you in."
+msgstr ""
 
 #: src/components/routes/event/Affiliates/index.tsx:43
 msgid "Please wait while we prepare your affiliates for export..."
@@ -6550,7 +6607,7 @@ msgstr "Danh mục sản phẩm được cập nhật thành công."
 msgid "Product Created"
 msgstr "Sản phẩm được tạo ra"
 
-#: src/components/forms/WebhookForm/index.tsx:46
+#: src/components/forms/WebhookForm/index.tsx:64
 msgid "Product Deleted"
 msgstr "Xóa sản phẩm"
 
@@ -6580,7 +6637,7 @@ msgstr "Cấp sản phẩm"
 msgid "Product Type"
 msgstr "Loại sản phẩm"
 
-#: src/components/forms/WebhookForm/index.tsx:40
+#: src/components/forms/WebhookForm/index.tsx:58
 msgid "Product Updated"
 msgstr "Cập nhật sản phẩm"
 
@@ -6765,7 +6822,7 @@ msgstr "Phân tích thời gian thực"
 
 #. placeholder {0}: getConfig("VITE_APP_NAME", "Hi.Events")
 #: src/components/routes/auth/AcceptInvitation/index.tsx:157
-#: src/components/routes/auth/Register/index.tsx:133
+#: src/components/routes/auth/Register/index.tsx:142
 #: src/components/routes/profile/ManageProfile/index.tsx:209
 msgid "Receive product updates from {0}."
 msgstr "Nhận cập nhật sản phẩm từ {0}."
@@ -6808,6 +6865,10 @@ msgstr "Kết nối lại Stripe →"
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:80
 msgid "Reddit"
 msgstr "Reddit"
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:67
+msgid "Redirecting back to login..."
+msgstr ""
 
 #: src/components/common/StripeConnectButton/index.tsx:59
 #: src/components/common/StripeConnectButton/index.tsx:74
@@ -6881,7 +6942,7 @@ msgstr "Hoàn tiền"
 msgid "Regional Settings"
 msgstr "Cài đặt khu vực"
 
-#: src/components/routes/auth/Register/index.tsx:137
+#: src/components/routes/auth/Register/index.tsx:146
 msgid "Register"
 msgstr "Đăng ký"
 
@@ -6914,7 +6975,7 @@ msgid "Report not found"
 msgstr "Không tìm thấy báo cáo"
 
 #: src/components/layouts/Event/index.tsx:97
-#: src/components/layouts/OrganizerLayout/index.tsx:78
+#: src/components/layouts/OrganizerLayout/index.tsx:79
 #: src/components/routes/event/Reports/index.tsx:39
 #: src/components/routes/organizer/Reports/index.tsx:51
 msgid "Reports"
@@ -6940,7 +7001,7 @@ msgstr "Gửi lại mã"
 msgid "Resend Confirmation"
 msgstr "Gửi lại xác nhận"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:292
+#: src/components/layouts/OrganizerLayout/index.tsx:294
 msgid "Resend Confirmation Email"
 msgstr "Gửi lại email xác nhận"
 
@@ -7361,7 +7422,7 @@ msgstr "Chọn thời gian kết thúc"
 msgid "Select event category"
 msgstr "Chọn danh mục sự kiện"
 
-#: src/components/forms/WebhookForm/index.tsx:124
+#: src/components/forms/WebhookForm/index.tsx:142
 msgid "Select event types"
 msgstr "Chọn loại sự kiện"
 
@@ -7429,7 +7490,7 @@ msgstr "Chọn múi giờ"
 msgid "Select which attendees should receive this message"
 msgstr "Chọn người tham dự nào sẽ nhận tin nhắn này"
 
-#: src/components/forms/WebhookForm/index.tsx:123
+#: src/components/forms/WebhookForm/index.tsx:141
 msgid "Select which events will trigger this webhook"
 msgstr "Chọn những sự kiện nào sẽ kích hoạt webhook này"
 
@@ -7450,7 +7511,7 @@ msgstr "Đã chọn"
 msgid "Selling fast 🔥"
 msgstr "Bán chạy 🔥"
 
-#: src/components/routes/auth/Login/index.tsx:160
+#: src/components/routes/auth/Login/index.tsx:219
 #: src/components/routes/my-tickets/index.tsx:202
 msgid "Send"
 msgstr "Gửi"
@@ -7596,7 +7657,7 @@ msgstr "Đã cập nhật cài đặt"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:81
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
-#: src/components/layouts/OrganizerLayout/index.tsx:85
+#: src/components/layouts/OrganizerLayout/index.tsx:86
 #: src/components/modals/DuplicateEventModal/index.tsx:26
 msgid "Settings"
 msgstr "Cài đặt"
@@ -7607,7 +7668,7 @@ msgstr "Thiết lập & thiết kế"
 
 #: src/components/common/ShareIcon/index.tsx:30
 #: src/components/layouts/EventHomepage/index.tsx:279
-#: src/components/layouts/OrganizerLayout/index.tsx:228
+#: src/components/layouts/OrganizerLayout/index.tsx:230
 #: src/components/modals/ShareModal/index.tsx:37
 #: src/components/modals/ShareModal/index.tsx:165
 #: src/components/modals/ShareModal/index.tsx:186
@@ -7626,8 +7687,8 @@ msgstr "Chia sẻ liên kết đối tác"
 msgid "Share Event"
 msgstr "Chia sẻ sự kiện"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:225
-#: src/components/layouts/OrganizerLayout/index.tsx:260
+#: src/components/layouts/OrganizerLayout/index.tsx:227
+#: src/components/layouts/OrganizerLayout/index.tsx:262
 msgid "Share Organizer Page"
 msgstr "Chia sẻ trang nhà tổ chức"
 
@@ -7703,7 +7764,7 @@ msgid "Skip this step"
 msgstr "Bỏ qua bước này"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:103
-#: src/components/routes/auth/Register/index.tsx:97
+#: src/components/routes/auth/Register/index.tsx:106
 msgid "Smith"
 msgstr "Smith"
 
@@ -7776,8 +7837,8 @@ msgid "Something went wrong. Please try again later."
 msgstr "Đã xảy ra lỗi. Vui lòng thử lại sau."
 
 #: src/components/layouts/Event/index.tsx:78
-#: src/components/layouts/OrganizerLayout/index.tsx:100
-#: src/components/routes/auth/Login/index.tsx:72
+#: src/components/layouts/OrganizerLayout/index.tsx:102
+#: src/components/routes/auth/Login/index.tsx:110
 #: src/components/routes/my-tickets/index.tsx:145
 #: src/components/routes/profile/ManageProfile/index.tsx:90
 #: src/components/routes/profile/ManageProfile/index.tsx:104
@@ -7853,11 +7914,12 @@ msgstr "Thống kê dựa trên ngày tạo tài khoản"
 #: src/components/common/AttendeeTable/index.tsx:274
 #: src/components/common/OrderDetails/index.tsx:51
 #: src/components/common/OrdersTable/index.tsx:396
+#: src/components/common/OrganizerWebhookTable/index.tsx:238
 #: src/components/common/WaitlistTable/index.tsx:164
 #: src/components/common/WebhookTable/index.tsx:238
 #: src/components/forms/AffiliateForm/index.tsx:98
 #: src/components/forms/CapaciyAssigmentForm/index.tsx:56
-#: src/components/forms/WebhookForm/index.tsx:133
+#: src/components/forms/WebhookForm/index.tsx:151
 #: src/components/modals/EditUserModal/index.tsx:103
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:157
 #: src/components/routes/admin/Dashboard/index.tsx:405
@@ -8085,6 +8147,7 @@ msgstr "Cập nhật cài đặt thành công"
 msgid "Successfully Updated Social Links"
 msgstr "Cập nhật liên kết mạng xã hội thành công"
 
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:44
 #: src/components/modals/EditWebhookModal/index.tsx:44
 msgid "Successfully updated Webhook"
 msgstr "Cập nhật Webhook thành công"
@@ -8120,7 +8183,7 @@ msgstr "Email hỗ trợ"
 msgid "Swedish"
 msgstr "Tiếng Thụy Điển"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:68
+#: src/components/layouts/OrganizerLayout/index.tsx:69
 #: src/components/modals/SwitchOrganizerModal/index.tsx:33
 msgid "Switch Organizer"
 msgstr "Chuyển đổi nhà tổ chức"
@@ -8809,7 +8872,7 @@ msgstr "Để nhận thanh toán bằng thẻ tín dụng, bạn cần kết n�
 msgid "Toggle columns"
 msgstr "Chuyển đổi cột"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:87
+#: src/components/layouts/OrganizerLayout/index.tsx:88
 msgid "Tools"
 msgstr "Công cụ"
 
@@ -8917,7 +8980,7 @@ msgstr "Đúng nếu thanh toán ngoại tuyến"
 msgid "True if payment pending"
 msgstr "Đúng nếu thanh toán đang chờ xử lý"
 
-#: src/components/routes/auth/Login/index.tsx:141
+#: src/components/routes/auth/Login/index.tsx:200
 #: src/components/routes/my-tickets/index.tsx:183
 msgid "Try another email"
 msgstr "Thử email khác"
@@ -9101,6 +9164,7 @@ msgstr "Tải ảnh lên"
 msgid "Uploading image..."
 msgstr "Đang tải ảnh..."
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:236
 #: src/components/common/WebhookTable/index.tsx:236
 msgid "URL"
 msgstr "URL"
@@ -9109,6 +9173,7 @@ msgstr "URL"
 msgid "URL copied to clipboard"
 msgstr "URL được sao chép vào bảng tạm"
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:25
 #: src/components/modals/CreateWebhookModal/index.tsx:25
 msgid "URL is required"
 msgstr "URL là bắt buộc"
@@ -9374,6 +9439,7 @@ msgstr "Xem trang sự kiện"
 msgid "View Event Page"
 msgstr "Xem trang sự kiện"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:113
 #: src/components/common/WebhookTable/index.tsx:113
 msgid "View logs"
 msgstr "Xem nhật ký"
@@ -9406,8 +9472,8 @@ msgstr "Xem chi tiết đơn hàng"
 msgid "View order details, issue refunds, and resend confirmations."
 msgstr "Xem chi tiết đơn hàng, hoàn tiền và gửi lại xác nhận."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:243
-#: src/components/layouts/OrganizerLayout/index.tsx:246
+#: src/components/layouts/OrganizerLayout/index.tsx:245
+#: src/components/layouts/OrganizerLayout/index.tsx:248
 msgid "View Organizer Homepage"
 msgstr "Xem trang chủ nhà tổ chức"
 
@@ -9565,19 +9631,22 @@ msgstr "Chúng tôi đã chuyển trụ sở chính đến Ireland. Do đó, ch�
 msgid "We've sent a 5-digit verification code to:"
 msgstr "Chúng tôi đã gửi mã xác thực 5 chữ số đến:"
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:45
 #: src/components/modals/CreateWebhookModal/index.tsx:45
 msgid "Webhook created successfully"
 msgstr "Webhook tạo thành công"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:53
 #: src/components/common/WebhookTable/index.tsx:53
 msgid "Webhook deleted successfully"
 msgstr "Webhook đã xóa thành công"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:151
 #: src/components/modals/WebhookLogsModal/index.tsx:151
 msgid "Webhook Logs"
 msgstr "Nhật ký webhook"
 
-#: src/components/forms/WebhookForm/index.tsx:117
+#: src/components/forms/WebhookForm/index.tsx:135
 msgid "Webhook URL"
 msgstr "URL Webhook"
 
@@ -9590,8 +9659,10 @@ msgid "Webhook will send notifications"
 msgstr "Webhook sẽ gửi thông báo"
 
 #: src/components/layouts/Event/index.tsx:127
+#: src/components/layouts/OrganizerLayout/index.tsx:90
 #: src/components/modals/DuplicateEventModal/index.tsx:32
 #: src/components/routes/event/Webhooks/index.tsx:32
+#: src/components/routes/organizer/Webhooks/index.tsx:30
 msgid "Webhooks"
 msgstr "Webhooks"
 
@@ -9607,7 +9678,7 @@ msgstr "Weibo"
 msgid "Welcome aboard! Please login to continue."
 msgstr "Chào mừng bạn! Vui lòng đăng nhập để tiếp tục."
 
-#: src/components/routes/auth/Login/index.tsx:80
+#: src/components/routes/auth/Login/index.tsx:118
 msgid "Welcome back"
 msgstr "Chào mừng trở lại"
 
@@ -9667,15 +9738,19 @@ msgstr "Những gì bạn cần làm:"
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
-#: src/components/forms/WebhookForm/index.tsx:108
+#: src/components/forms/WebhookForm/index.tsx:126
 msgid "When a check-in is deleted"
 msgstr "Khi một lượt check-in bị xóa"
 
-#: src/components/forms/WebhookForm/index.tsx:84
+#: src/components/forms/WebhookForm/index.tsx:102
 msgid "When a new attendee is created"
 msgstr "Khi một người tham dự mới được tạo ra"
 
-#: src/components/forms/WebhookForm/index.tsx:54
+#: src/components/forms/WebhookForm/index.tsx:42
+msgid "When a new event is created"
+msgstr ""
+
+#: src/components/forms/WebhookForm/index.tsx:72
 msgid "When a new order is created"
 msgstr "Khi một đơn hàng mới được tạo"
 
@@ -9683,11 +9758,11 @@ msgstr "Khi một đơn hàng mới được tạo"
 msgid "When a new product is created"
 msgstr "Khi một sản phẩm mới được tạo ra"
 
-#: src/components/forms/WebhookForm/index.tsx:48
+#: src/components/forms/WebhookForm/index.tsx:66
 msgid "When a product is deleted"
 msgstr "Khi một sản phẩm bị xóa"
 
-#: src/components/forms/WebhookForm/index.tsx:42
+#: src/components/forms/WebhookForm/index.tsx:60
 msgid "When a product is updated"
 msgstr "Khi một sản phẩm được cập nhật"
 
@@ -9702,31 +9777,39 @@ msgid ""
 ""
 msgstr ""
 
-#: src/components/forms/WebhookForm/index.tsx:96
+#: src/components/forms/WebhookForm/index.tsx:114
 msgid "When an attendee is cancelled"
 msgstr "Khi một người tham dự bị hủy"
 
-#: src/components/forms/WebhookForm/index.tsx:102
+#: src/components/forms/WebhookForm/index.tsx:120
 msgid "When an attendee is checked in"
 msgstr "Khi một người tham dự được check-in"
 
-#: src/components/forms/WebhookForm/index.tsx:90
+#: src/components/forms/WebhookForm/index.tsx:108
 msgid "When an attendee is updated"
 msgstr "Khi một người tham dự được cập nhật"
 
-#: src/components/forms/WebhookForm/index.tsx:78
+#: src/components/forms/WebhookForm/index.tsx:54
+msgid "When an event is archived"
+msgstr ""
+
+#: src/components/forms/WebhookForm/index.tsx:48
+msgid "When an event is updated"
+msgstr ""
+
+#: src/components/forms/WebhookForm/index.tsx:96
 msgid "When an order is cancelled"
 msgstr "Khi một đơn hàng bị hủy"
 
-#: src/components/forms/WebhookForm/index.tsx:66
+#: src/components/forms/WebhookForm/index.tsx:84
 msgid "When an order is marked as paid"
 msgstr "Khi một đơn hàng được đánh dấu là đã thanh toán"
 
-#: src/components/forms/WebhookForm/index.tsx:72
+#: src/components/forms/WebhookForm/index.tsx:90
 msgid "When an order is refunded"
 msgstr "Khi một đơn hàng được hoàn trả"
 
-#: src/components/forms/WebhookForm/index.tsx:60
+#: src/components/forms/WebhookForm/index.tsx:78
 msgid "When an order is updated"
 msgstr "Khi một đơn hàng được cập nhật"
 
@@ -9803,7 +9886,7 @@ msgstr "Làm việc"
 #: src/components/modals/JoinWaitlistModal/index.tsx:218
 #: src/components/modals/ManageAttendeeModal/index.tsx:231
 #: src/components/modals/ManageOrderModal/index.tsx:175
-#: src/components/routes/auth/Register/index.tsx:137
+#: src/components/routes/auth/Register/index.tsx:146
 msgid "Working..."
 msgstr "Làm việc ..."
 
@@ -9944,7 +10027,7 @@ msgstr "Bạn phải tạo một vé trước khi bạn có thể thêm một ng
 msgid "You must have at least one price tier"
 msgstr "Bạn phải có ít nhất một cấp giá"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:281
+#: src/components/layouts/OrganizerLayout/index.tsx:283
 msgid "You must verify your email address before you can update the organizer status."
 msgstr "Bạn phải xác minh địa chỉ email trước khi cập nhật trạng thái nhà tổ chức."
 
@@ -10106,8 +10189,8 @@ msgstr "Đơn hàng của bạn sẽ xuất hiện ở đây sau khi chúng bắ
 msgid "Your organizer address"
 msgstr "Địa chỉ nhà tổ chức của bạn"
 
-#: src/components/routes/auth/Login/index.tsx:99
-#: src/components/routes/auth/Register/index.tsx:113
+#: src/components/routes/auth/Login/index.tsx:157
+#: src/components/routes/auth/Register/index.tsx:122
 msgid "Your password"
 msgstr "Mật khẩu của bạn"
 

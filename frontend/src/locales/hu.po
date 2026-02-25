@@ -14,12 +14,12 @@ msgstr ""
 "Plural-Forms: \n"
 
 #: src/components/layouts/Event/index.tsx:192
-#: src/components/layouts/OrganizerLayout/index.tsx:207
+#: src/components/layouts/OrganizerLayout/index.tsx:209
 msgid "- Click to Publish"
 msgstr "- Kattintson a közzétételhez"
 
 #: src/components/layouts/Event/index.tsx:194
-#: src/components/layouts/OrganizerLayout/index.tsx:209
+#: src/components/layouts/OrganizerLayout/index.tsx:211
 msgid "- Click to Unpublish"
 msgstr "- Kattintson a visszavonáshoz"
 
@@ -64,6 +64,7 @@ msgstr "{0} <0>sikeresen kijelentkezett</0>"
 
 #. placeholder {0}: webhooks.length
 #: src/components/routes/event/Webhooks/index.tsx:24
+#: src/components/routes/organizer/Webhooks/index.tsx:25
 msgid "{0} Active Webhooks"
 msgstr "{0} aktív webhook"
 
@@ -117,6 +118,7 @@ msgstr "{availableCount} / {totalCount} elérhető"
 msgid "{days} days, {hours} hours, {minutes} minutes, and {seconds} seconds"
 msgstr "{days} nap, {hours} óra, {minutes} perc, és {seconds} másodperc"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:79
 #: src/components/common/WebhookTable/index.tsx:79
 msgid "{eventCount} events"
 msgstr "{eventCount} esemény"
@@ -165,6 +167,7 @@ msgstr "<0>Állítson be egyetlen összesített látogatói limitet, amely egysz
 msgid "<0>The number of products available for this product</0><1>This value can be overridden if there are <2>Capacity Limits</2> associated with this product.</1>"
 msgstr "<0>A termékhez elérhető termékek száma</0><1>Ez az érték felülírható, ha a termékhez <2>Kapacitáskorlátok</2> vannak társítva.</1>"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:205
 #: src/components/common/WebhookTable/index.tsx:205
 msgid "<0>Webhooks instantly notify external services when events happen, like adding a new attendee to your CRM or mailing list upon registration, ensuring seamless automation.</0><1>Use third-party services like <2>Zapier</2>, <3>IFTTT</3> or <4>Make</4> to create custom workflows and automate tasks.</1>"
 msgstr "<0>A webhookok azonnal értesítik a külső szolgáltatásokat, amikor események történnek, például új résztvevő hozzáadása a CRM-hez vagy levelezési listához regisztrációkor, biztosítva a zökkenőmentes automatizálást.</0><1>Használjon harmadik féltől származó szolgáltatásokat, mint a <2>Zapier</2>, <3>IFTTT</3> vagy <4>Make</4> egyedi munkafolyamatok létrehozásához és feladatok automatizálásához.</1>"
@@ -199,6 +202,7 @@ msgid "0 minutes and 0 seconds"
 msgstr "0 perc és 0 másodperc"
 
 #: src/components/routes/event/Webhooks/index.tsx:23
+#: src/components/routes/organizer/Webhooks/index.tsx:24
 msgid "1 Active Webhook"
 msgstr "1 aktív webhook"
 
@@ -542,8 +546,10 @@ msgstr "Szint hozzáadása"
 msgid "Add to Calendar"
 msgstr "Hozzáadás a naptárhoz"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:223
 #: src/components/common/WebhookTable/index.tsx:223
 #: src/components/routes/event/Webhooks/index.tsx:37
+#: src/components/routes/organizer/Webhooks/index.tsx:35
 msgid "Add Webhook"
 msgstr "Webhook hozzáadása"
 
@@ -727,8 +733,8 @@ msgstr "Majdnem kész! Fejezze be Stripe fiókja csatlakoztatását a kifizetés
 msgid "Almost there! We're just waiting for your payment to be processed. This should only take a few seconds."
 msgstr "Majdnem kész! Csak a fizetés feldolgozására várunk. Ez csak néhány másodpercet vesz igénybe."
 
-#. placeholder {0}: import {Button, Checkbox, PasswordInput, SimpleGrid, TextInput} from "@mantine/core"; import {hasLength, isEmail, matchesField, useForm} from "@mantine/form"; import {RegisterAccountRequest} from "../../../../types.ts"; import {useFormErrorResponseHandler} from "../../../../hooks/useFormErrorResponseHandler.tsx"; import {useRegisterAccount} from "../../../../mutations/useRegisterAccount.ts"; import {NavLink, useLocation, useNavigate} from "react-router"; import {t, Trans} from "@lingui/macro"; import classes from "./Register.module.scss"; import {getClientLocale} from "../../../../locales.ts"; import {useEffect} from "react"; import {getUserCurrency} from "../../../../utilites/currency.ts"; import {getConfig} from "../../../../utilites/config.ts"; import {captureUtmData, getStoredUtmData, clearStoredUtmData} from "../../../../utilites/utm.ts"; export const Register = () => { const navigate = useNavigate(); const location = useLocation(); const form = useForm({ validateInputOnBlur: true, initialValues: { first_name: '', last_name: '', email: '', password: '', password_confirmation: '', timezone: typeof window !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC', locale: getClientLocale(), invite_token: '', currency_code: getUserCurrency(), marketing_opt_in: false, }, validate: { password: hasLength({min: 8}, t`Password must be at least 8 characters`), password_confirmation: matchesField('password', t`Passwords are not the same`), email: isEmail(t`Please check your email is valid`), }, }); const errorHandler = useFormErrorResponseHandler(); const mutate = useRegisterAccount(); const registerUser = (data: RegisterAccountRequest) => { const utmData = getStoredUtmData(); const registrationData = utmData ? {...data, ...utmData} : data; mutate.mutate({registerData: registrationData}, { onSuccess: () => { clearStoredUtmData(); navigate(`/welcome${location.search}`); }, onError: (error: any) => { errorHandler(form, error, error.response?.data?.message); }, }); } useEffect(() => { captureUtmData(); const searchParams = new URLSearchParams(location.search); const token = searchParams.get('invite_token'); if (token) { form.setFieldValue('invite_token', token); } }, [location.search]); return ( <> <header className={classes.header}> <h2>{t`Get started`}</h2> <p> <Trans> Already have an account?{' '} <NavLink to={`/auth/login${location.search}`}> {t`Log in`} </NavLink> </Trans> </p> </header> <div className={classes.registerCard}> <form onSubmit={form.onSubmit((values) => registerUser(values as RegisterAccountRequest))}> <SimpleGrid verticalSpacing={{base: "md", sm: 0}} cols={{base: 1, sm: 2}} mb="md"> <TextInput {...form.getInputProps('first_name')} label={t`First Name`} placeholder={t`John`} required /> <TextInput {...form.getInputProps('last_name')} label={t`Last Name`} placeholder={t`Smith`} /> </SimpleGrid> <TextInput mb={0} {...form.getInputProps('email')} label={t`Email`} placeholder={'your@email.com'} required /> <SimpleGrid verticalSpacing={{base: "md", sm: 0}} cols={{base: 1, sm: 2}} mt="md" mb="md"> <PasswordInput {...form.getInputProps('password')} label={t`Password`} placeholder={t`Your password`} required /> <PasswordInput {...form.getInputProps('password_confirmation')} label={t`Confirm Password`} placeholder={t`Confirm password`} required /> </SimpleGrid> <TextInput style={{display: 'none'}} {...form.getInputProps('timezone')} type="hidden" /> <Checkbox mb="md" {...form.getInputProps('marketing_opt_in', {type: 'checkbox'})} label={<Trans>Receive product updates from {getConfig("VITE_APP_NAME", "Hi.Events")}.</Trans>} /> <Button color="secondary.5" type="submit" fullWidth disabled={mutate.isPending}> {mutate.isPending ? t`Working...` : t`Register`} </Button> </form> <footer> <Trans> By registering you agree to our <NavLink target={'_blank'} to={getConfig("VITE_TOS_URL", "https://hi.events/terms-of-service?utm_source=app-register-footer") as string}>Terms of Service</NavLink> and <NavLink target={'_blank'} to={getConfig("VITE_PRIVACY_URL", 'https://hi.events/privacy-policy?utm_source=app-register-footer') as string}>Privacy Policy</NavLink>. </Trans> </footer> </div> </> ) } export default Register; 
-#: src/components/routes/auth/Register/index.tsx:75
+#. placeholder {0}: import { Button, Checkbox, PasswordInput, SimpleGrid, TextInput } from "@mantine/core"; import { hasLength, isEmail, matchesField, useForm } from "@mantine/form"; import { RegisterAccountRequest } from "../../../../types.ts"; import { useFormErrorResponseHandler } from "../../../../hooks/useFormErrorResponseHandler.tsx"; import { useRegisterAccount } from "../../../../mutations/useRegisterAccount.ts"; import { Navigate, NavLink, useLocation, useNavigate, useSearchParams } from "react-router"; import { useAuthConfigQuery } from "../../../../queries/useAuthConfigQuery.ts"; import { t, Trans } from "@lingui/macro"; import classes from "./Register.module.scss"; import { getClientLocale } from "../../../../locales.ts"; import { useEffect } from "react"; import { getUserCurrency } from "../../../../utilites/currency.ts"; import { getConfig } from "../../../../utilites/config.ts"; import { captureUtmData, getStoredUtmData, clearStoredUtmData } from "../../../../utilites/utm.ts"; export const Register = () => { const navigate = useNavigate(); const location = useLocation(); const [searchParamsHook] = useSearchParams(); const showLoginBackdoor = searchParamsHook.get('show_login') === '1'; const { data: authConfig, isLoading: isConfigLoading } = useAuthConfigQuery(); const hideDefaultForms = authConfig?.auth_disable_default && !showLoginBackdoor; const form = useForm({ validateInputOnBlur: true, initialValues: { first_name: '', last_name: '', email: '', password: '', password_confirmation: '', timezone: typeof window !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC', locale: getClientLocale(), invite_token: '', currency_code: getUserCurrency(), marketing_opt_in: false, }, validate: { password: hasLength({ min: 8 }, t`Password must be at least 8 characters`), password_confirmation: matchesField('password', t`Passwords are not the same`), email: isEmail(t`Please check your email is valid`), }, }); const errorHandler = useFormErrorResponseHandler(); const mutate = useRegisterAccount(); const registerUser = (data: RegisterAccountRequest) => { const utmData = getStoredUtmData(); const registrationData = utmData ? { ...data, ...utmData } : data; mutate.mutate({ registerData: registrationData }, { onSuccess: () => { clearStoredUtmData(); navigate(`/welcome${location.search}`); }, onError: (error: any) => { errorHandler(form, error, error.response?.data?.message); }, }); } useEffect(() => { captureUtmData(); const searchParams = new URLSearchParams(location.search); const token = searchParams.get('invite_token'); if (token) { form.setFieldValue('invite_token', token); } }, [location.search]); return ( <> {hideDefaultForms && !isConfigLoading && ( <Navigate replace to={`/auth/login${location.search}`} /> )} <header className={classes.header}> <h2>{t`Get started`}</h2> <p> <Trans> Already have an account?{' '} <NavLink to={`/auth/login${location.search}`}> {t`Log in`} </NavLink> </Trans> </p> </header> <div className={classes.registerCard}> <form onSubmit={form.onSubmit((values) => registerUser(values as RegisterAccountRequest))}> <SimpleGrid verticalSpacing={{ base: "md", sm: 0 }} cols={{ base: 1, sm: 2 }} mb="md"> <TextInput {...form.getInputProps('first_name')} label={t`First Name`} placeholder={t`John`} required /> <TextInput {...form.getInputProps('last_name')} label={t`Last Name`} placeholder={t`Smith`} /> </SimpleGrid> <TextInput mb={0} {...form.getInputProps('email')} label={t`Email`} placeholder={'your@email.com'} required /> <SimpleGrid verticalSpacing={{ base: "md", sm: 0 }} cols={{ base: 1, sm: 2 }} mt="md" mb="md"> <PasswordInput {...form.getInputProps('password')} label={t`Password`} placeholder={t`Your password`} required /> <PasswordInput {...form.getInputProps('password_confirmation')} label={t`Confirm Password`} placeholder={t`Confirm password`} required /> </SimpleGrid> <TextInput style={{ display: 'none' }} {...form.getInputProps('timezone')} type="hidden" /> <Checkbox mb="md" {...form.getInputProps('marketing_opt_in', { type: 'checkbox' })} label={<Trans>Receive product updates from {getConfig("VITE_APP_NAME", "Hi.Events")}.</Trans>} /> <Button color="secondary.5" type="submit" fullWidth disabled={mutate.isPending}> {mutate.isPending ? t`Working...` : t`Register`} </Button> </form> <footer> <Trans> By registering you agree to our <NavLink target={'_blank'} to={getConfig("VITE_TOS_URL", "https://hi.events/terms-of-service?utm_source=app-register-footer") as string}>Terms of Service</NavLink> and <NavLink target={'_blank'} to={getConfig("VITE_PRIVACY_URL", 'https://hi.events/privacy-policy?utm_source=app-register-footer') as string}>Privacy Policy</NavLink>. </Trans> </footer> </div> </> ) } export default Register; 
+#: src/components/routes/auth/Register/index.tsx:84
 msgid "Already have an account? <0>{0}</0>"
 msgstr "Már van fiókja? <0>{0}</0>"
 
@@ -891,6 +897,7 @@ msgstr "Biztosan törli ezt a sablont? Ez a művelet nem vonható vissza, és az
 msgid "Are you sure you want to delete this template? This action cannot be undone and emails will fall back to the organizer or default template."
 msgstr "Biztosan törli ezt a sablont? Ez a művelet nem vonható vissza, és az e-mailek a szervező vagy az alapértelmezett sablont fogják használni."
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:122
 #: src/components/common/WebhookTable/index.tsx:122
 msgid "Are you sure you want to delete this webhook?"
 msgstr "Biztosan törölni szeretné ezt a webhookot?"
@@ -909,11 +916,11 @@ msgstr "Biztosan piszkozatba szeretné tenni ezt az eseményt? Ezzel az esemény
 msgid "Are you sure you want to make this event public? This will make the event visible to the public"
 msgstr "Biztosan nyilvánossá szeretné tenni ezt az eseményt? Ezzel az esemény láthatóvá válik a nyilvánosság számára."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:123
+#: src/components/layouts/OrganizerLayout/index.tsx:125
 msgid "Are you sure you want to make this organizer draft? This will make the organizer page invisible to the public"
 msgstr "Biztosan piszkozatba szeretné tenni ezt a szervezőt? Ezzel a szervezői oldal láthatatlanná válik a nyilvánosság számára."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:124
+#: src/components/layouts/OrganizerLayout/index.tsx:126
 msgid "Are you sure you want to make this organizer public? This will make the organizer page visible to the public"
 msgstr "Biztosan nyilvánossá szeretné tenni ezt a szervezőt? Ezzel a szervezői oldal láthatóvá válik a nyilvánosság számára."
 
@@ -1000,6 +1007,7 @@ msgstr "Hozzárendelt konfiguráció"
 msgid "Assigned Tier"
 msgstr "Hozzárendelt szint"
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:33
 #: src/components/modals/CreateWebhookModal/index.tsx:33
 msgid "At least one event type must be selected"
 msgstr "Legalább egy eseménytípust ki kell választani."
@@ -1020,11 +1028,11 @@ msgstr "Részvétel és bejelentkezési arányok minden eseményen"
 msgid "Attendee"
 msgstr "Résztvevő"
 
-#: src/components/forms/WebhookForm/index.tsx:94
+#: src/components/forms/WebhookForm/index.tsx:112
 msgid "Attendee Cancelled"
 msgstr "Résztvevő törölve"
 
-#: src/components/forms/WebhookForm/index.tsx:82
+#: src/components/forms/WebhookForm/index.tsx:100
 msgid "Attendee Created"
 msgstr "Résztvevő létrehozva"
 
@@ -1075,7 +1083,7 @@ msgstr "Résztvevő állapota"
 msgid "Attendee Ticket"
 msgstr "Résztvevői jegy"
 
-#: src/components/forms/WebhookForm/index.tsx:88
+#: src/components/forms/WebhookForm/index.tsx:106
 msgid "Attendee Updated"
 msgstr "Résztvevő frissítve"
 
@@ -1130,6 +1138,14 @@ msgstr "Hozzárendelési bontás"
 #: src/components/routes/admin/Attribution/index.tsx:131
 msgid "Attribution Value"
 msgstr "Hozzárendelési érték"
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:66
+msgid "Authentication Failed"
+msgstr ""
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:38
+msgid "Authentication failed. Please try again."
+msgstr ""
 
 #: src/components/common/WidgetEditor/index.tsx:236
 msgid "Auto Resize"
@@ -1321,7 +1337,7 @@ msgstr "A vevők tiszta árat látnak. A platformdíjat a kifizetésből vonjuk 
 msgid "By continuing, you agree to the <0>{0} Terms of Service</0>"
 msgstr "A folytatással elfogadja a(z) <0>{0} Szolgáltatási feltételeket</0>"
 
-#: src/components/routes/auth/Register/index.tsx:141
+#: src/components/routes/auth/Register/index.tsx:150
 msgid "By registering you agree to our <0>Terms of Service</0> and <1>Privacy Policy</1>."
 msgstr "A regisztrációval elfogadja <0>Szolgáltatási feltételeinket</0> és <1>Adatvédelmi irányelveinket</1>."
 
@@ -1502,16 +1518,16 @@ msgstr "Nézze meg ezt az eseményt!"
 msgid "Check your email"
 msgstr "Ellenőrizze e-mail címét"
 
-#: src/components/routes/auth/Login/index.tsx:133
+#: src/components/routes/auth/Login/index.tsx:192
 #: src/components/routes/my-tickets/index.tsx:174
 msgid "Check your inbox! If tickets are associated with this email, you'll receive a link to view them."
 msgstr "Nézze meg a postafiókját! Ha ehhez az e-mail címhez jegyek tartoznak, kap egy linket a megtekintésükhöz."
 
-#: src/components/forms/WebhookForm/index.tsx:100
+#: src/components/forms/WebhookForm/index.tsx:118
 msgid "Check-in Created"
 msgstr "Bejelentkezés létrehozva"
 
-#: src/components/forms/WebhookForm/index.tsx:106
+#: src/components/forms/WebhookForm/index.tsx:124
 msgid "Check-in Deleted"
 msgstr "Bejelentkezés törölve"
 
@@ -1705,7 +1721,7 @@ msgstr "A kódnak 3 és 50 karakter között kell lennie"
 msgid "Code must be no more than 20 characters"
 msgstr "A kód legfeljebb 20 karakter hosszúságú lehet"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:162
+#: src/components/layouts/OrganizerLayout/index.tsx:164
 msgid "Collaborate with your team to create amazing events together."
 msgstr "Kollaboráljon csapatával, hogy csodálatos eseményeket hozzanak létre együtt."
 
@@ -1815,6 +1831,10 @@ msgstr "Befejezett megrendelések"
 msgid "Completed Orders"
 msgstr "Befejezett megrendelések"
 
+#: src/components/routes/auth/ProviderCallback/index.tsx:60
+msgid "Completing authentication..."
+msgstr ""
+
 #: src/components/common/WidgetEditor/index.tsx:293
 msgid "Component Code"
 msgstr "Komponens kód"
@@ -1899,12 +1919,12 @@ msgid "Confirm New Password"
 msgstr "Új jelszó megerősítése"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:134
-#: src/components/routes/auth/Register/index.tsx:119
+#: src/components/routes/auth/Register/index.tsx:128
 msgid "Confirm password"
 msgstr "Jelszó megerősítése"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:133
-#: src/components/routes/auth/Register/index.tsx:118
+#: src/components/routes/auth/Register/index.tsx:127
 #: src/components/routes/auth/ResetPassword/index.tsx:70
 msgid "Confirm Password"
 msgstr "Jelszó megerősítése"
@@ -1913,7 +1933,7 @@ msgstr "Jelszó megerősítése"
 msgid "Confirm your email to access all features."
 msgstr "Erősítse meg e-mail címét az összes funkció eléréséhez."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:296
+#: src/components/layouts/OrganizerLayout/index.tsx:298
 msgid "Confirmation email sent! Please check your inbox."
 msgstr "Megerősítő e-mail elküldve! Kérjük, ellenőrizze postaládáját."
 
@@ -1945,8 +1965,8 @@ msgstr "Dokumentáció csatlakoztatása"
 msgid "Connect payment processing"
 msgstr "Fizetésfeldolgozás csatlakoztatása"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:175
-#: src/components/layouts/OrganizerLayout/index.tsx:183
+#: src/components/layouts/OrganizerLayout/index.tsx:177
+#: src/components/layouts/OrganizerLayout/index.tsx:185
 msgid "Connect Stripe"
 msgstr "Stripe csatlakoztatása"
 
@@ -1970,7 +1990,7 @@ msgstr "Csatlakozás a Stripe-hoz"
 msgid "Connect with Stripe"
 msgstr "Csatlakozás a Stripe-hoz"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:176
+#: src/components/layouts/OrganizerLayout/index.tsx:178
 msgid "Connect your Stripe account to accept payments for tickets and products."
 msgstr "Csatlakoztassa Stripe fiókját, hogy elfogadja a jegyek és termékek fizetését."
 
@@ -2263,7 +2283,7 @@ msgid "Create discounts, access codes for hidden tickets, and special offers."
 msgstr "Kedvezmények, hozzáférési kódok rejtett jegyekhez és különleges ajánlatok létrehozása."
 
 #: src/components/common/NoEventsBlankSlate/index.tsx:27
-#: src/components/layouts/OrganizerLayout/index.tsx:152
+#: src/components/layouts/OrganizerLayout/index.tsx:154
 #: src/components/routes/organizer/Events/index.tsx:62
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:257
 msgid "Create Event"
@@ -2314,6 +2334,8 @@ msgstr "Hozzon létre jegyeket az eseményéhez, állítsa be az árakat és kez
 msgid "Create trackable links to reward partners who promote your event."
 msgstr "Követhető linkek létrehozása a partnerek jutalmazásához, akik népszerűsítik az eseményét."
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:56
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:66
 #: src/components/modals/CreateWebhookModal/index.tsx:56
 #: src/components/modals/CreateWebhookModal/index.tsx:66
 msgid "Create Webhook"
@@ -2517,6 +2539,7 @@ msgstr "Napi értékesítési, adó- és díj bontás."
 #: src/components/common/CapacityAssignmentList/index.tsx:153
 #: src/components/common/CheckInListList/index.tsx:174
 #: src/components/common/OrdersTable/index.tsx:182
+#: src/components/common/OrganizerWebhookTable/index.tsx:116
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:492
 #: src/components/common/PromoCodeTable/index.tsx:181
 #: src/components/common/WebhookTable/index.tsx:116
@@ -2631,6 +2654,7 @@ msgstr "Sablon törlése"
 msgid "Delete this question? This cannot be undone."
 msgstr "Törli ezt a kérdést? Ez nem vonható vissza."
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:127
 #: src/components/common/WebhookTable/index.tsx:127
 msgid "Delete webhook"
 msgstr "Webhook törlése"
@@ -2709,7 +2733,7 @@ msgstr "Dokumentáció"
 msgid "Don't forget!"
 msgstr "Ne felejtse el!"
 
-#: src/components/routes/auth/Login/index.tsx:82
+#: src/components/routes/auth/Login/index.tsx:121
 msgid "Don't have an account? <0>Sign up</0>"
 msgstr "Nincs fiókja? <0>Regisztráljon</0>"
 
@@ -2757,7 +2781,7 @@ msgstr "Számla letöltése"
 
 #: src/components/common/EventCard/index.tsx:84
 #: src/components/layouts/Event/index.tsx:191
-#: src/components/layouts/OrganizerLayout/index.tsx:206
+#: src/components/layouts/OrganizerLayout/index.tsx:208
 msgid "Draft"
 msgstr "Piszkozat"
 
@@ -2945,10 +2969,13 @@ msgstr "Felhasználó szerkesztése"
 msgid "Edit VAT Settings"
 msgstr "ÁFA beállítások szerkesztése"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:104
 #: src/components/common/WebhookTable/index.tsx:104
 msgid "Edit webhook"
 msgstr "Webhook szerkesztése"
 
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:66
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:87
 #: src/components/modals/EditWebhookModal/index.tsx:66
 #: src/components/modals/EditWebhookModal/index.tsx:87
 msgid "Edit Webhook"
@@ -2989,8 +3016,8 @@ msgstr "Jogosult bejelentkezési listák"
 #: src/components/routes/admin/Dashboard/index.tsx:401
 #: src/components/routes/auth/AcceptInvitation/index.tsx:112
 #: src/components/routes/auth/ForgotPassword/index.tsx:65
-#: src/components/routes/auth/Login/index.tsx:93
-#: src/components/routes/auth/Register/index.tsx:104
+#: src/components/routes/auth/Login/index.tsx:151
+#: src/components/routes/auth/Register/index.tsx:113
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:78
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:68
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:68
@@ -3047,7 +3074,7 @@ msgid "Email confirmation resent"
 msgstr "E-mail megerősítés újraküldve"
 
 #: src/components/layouts/Event/index.tsx:74
-#: src/components/layouts/OrganizerLayout/index.tsx:96
+#: src/components/layouts/OrganizerLayout/index.tsx:98
 #: src/components/routes/profile/ManageProfile/index.tsx:100
 msgid "Email confirmation resent successfully"
 msgstr "E-mail megerősítés sikeresen újraküldve"
@@ -3075,7 +3102,7 @@ msgstr "E-mail előnézet"
 msgid "Email Templates"
 msgstr "E-mail sablonok"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:275
+#: src/components/layouts/OrganizerLayout/index.tsx:277
 msgid "Email Verification Required"
 msgstr "E-mail ellenőrzés szükséges"
 
@@ -3213,7 +3240,7 @@ msgid "Enter unique affiliate code"
 msgstr "Adjon meg egyedi partnerkódot"
 
 #: src/components/common/ContactOrganizerModal/index.tsx:80
-#: src/components/routes/auth/Login/index.tsx:150
+#: src/components/routes/auth/Login/index.tsx:209
 #: src/components/routes/my-tickets/index.tsx:192
 msgid "Enter your email"
 msgstr "Adja meg e-mail címét"
@@ -3247,6 +3274,7 @@ msgstr "Hiba az e-mail cím megerősítésekor"
 msgid "Error confirming email change"
 msgstr "Hiba az e-mail cím módosításának megerősítésekor"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:166
 #: src/components/modals/WebhookLogsModal/index.tsx:166
 msgid "Error loading logs"
 msgstr "Hiba a naplók betöltésekor"
@@ -3289,6 +3317,10 @@ msgstr "EUR"
 msgid "Event"
 msgstr "Esemény"
 
+#: src/components/forms/WebhookForm/index.tsx:52
+msgid "Event Archived"
+msgstr ""
+
 #: src/components/modals/CreateEventModal/index.tsx:185
 msgid "Event Category"
 msgstr "Eseménykategória"
@@ -3296,6 +3328,10 @@ msgstr "Eseménykategória"
 #: src/components/modals/DuplicateEventModal/index.tsx:30
 msgid "Event Cover Image"
 msgstr "Esemény borítóképe"
+
+#: src/components/forms/WebhookForm/index.tsx:40
+msgid "Event Created"
+msgstr ""
 
 #: src/components/common/EmailTemplateSettings/EmailTemplateSettingsBase.tsx:223
 msgid "Event custom template"
@@ -3432,10 +3468,15 @@ msgstr "Esemény címe"
 msgid "Event Too New"
 msgstr "Az esemény túl új"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:237
 #: src/components/common/WebhookTable/index.tsx:237
-#: src/components/forms/WebhookForm/index.tsx:122
+#: src/components/forms/WebhookForm/index.tsx:140
 msgid "Event Types"
 msgstr "Eseménytípusok"
+
+#: src/components/forms/WebhookForm/index.tsx:46
+msgid "Event Updated"
+msgstr ""
 
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:40
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:74
@@ -3444,7 +3485,7 @@ msgstr "Esemény helyszíne"
 
 #: src/components/common/AdminAccountsTable/index.tsx:82
 #: src/components/layouts/Admin/index.tsx:16
-#: src/components/layouts/OrganizerLayout/index.tsx:84
+#: src/components/layouts/OrganizerLayout/index.tsx:85
 #: src/components/routes/admin/Accounts/AccountDetail/index.tsx:159
 #: src/components/routes/admin/Attribution/index.tsx:133
 #: src/components/routes/admin/Dashboard/index.tsx:403
@@ -3639,6 +3680,7 @@ msgstr "Bejelentkezési lista betöltése sikertelen"
 msgid "Failed to load recipients"
 msgstr "Nem sikerült betölteni a címzetteket"
 
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:75
 #: src/components/modals/EditWebhookModal/index.tsx:75
 msgid "Failed to load Webhook"
 msgstr "Webhook betöltése sikertelen"
@@ -3861,7 +3903,7 @@ msgstr "Keresztnév"
 #: src/components/modals/InviteUserModal/index.tsx:57
 #: src/components/modals/JoinWaitlistModal/index.tsx:191
 #: src/components/routes/auth/AcceptInvitation/index.tsx:97
-#: src/components/routes/auth/Register/index.tsx:90
+#: src/components/routes/auth/Register/index.tsx:99
 #: src/components/routes/product-widget/CollectInformation/index.tsx:427
 #: src/components/routes/product-widget/CollectInformation/index.tsx:639
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:53
@@ -3932,7 +3974,7 @@ msgstr "Étel és ital"
 msgid "Footer Text"
 msgstr "Lábléc szövege"
 
-#: src/components/routes/auth/Login/index.tsx:108
+#: src/components/routes/auth/Login/index.tsx:166
 msgid "Forgot password?"
 msgstr "Elfelejtette jelszavát?"
 
@@ -4000,7 +4042,7 @@ msgstr "Német"
 msgid "Get paid immediately via Stripe Connect"
 msgstr "Azonnali kifizetés Stripe Connect-en keresztül"
 
-#: src/components/routes/auth/Register/index.tsx:73
+#: src/components/routes/auth/Register/index.tsx:82
 msgid "Get started"
 msgstr "Kezdés"
 
@@ -4212,7 +4254,7 @@ msgid "Homepage Design"
 msgstr "Honlaptervezés"
 
 #: src/components/layouts/Event/index.tsx:105
-#: src/components/layouts/OrganizerLayout/index.tsx:88
+#: src/components/layouts/OrganizerLayout/index.tsx:89
 msgid "Homepage Designer"
 msgstr "Honlaptervező"
 
@@ -4255,7 +4297,7 @@ msgstr "https://awesome-events.com"
 msgid "https://example-maps-service.com/..."
 msgstr "https://example-maps-service.com/..."
 
-#: src/components/forms/WebhookForm/index.tsx:118
+#: src/components/forms/WebhookForm/index.tsx:136
 msgid "https://webhook-domain.com/webhook"
 msgstr "https://webhook-domain.com/webhook"
 
@@ -4470,7 +4512,7 @@ msgstr "Csapattag meghívása"
 msgid "Invite Team Member"
 msgstr "Csapattag meghívása"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:164
+#: src/components/layouts/OrganizerLayout/index.tsx:166
 msgid "Invite Team Members"
 msgstr "Csapattagok meghívása"
 
@@ -4482,7 +4524,7 @@ msgstr "Korlátlan számú csapattag meghívása egyedi szerepkörökkel"
 msgid "Invite User"
 msgstr "Felhasználó meghívása"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:161
+#: src/components/layouts/OrganizerLayout/index.tsx:163
 msgid "Invite Your Team"
 msgstr "Hívja meg csapatát"
 
@@ -4552,7 +4594,7 @@ msgid "Job queued for retry"
 msgstr "Feladat újrapróbálásra sorba állítva"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:98
-#: src/components/routes/auth/Register/index.tsx:91
+#: src/components/routes/auth/Register/index.tsx:100
 msgid "John"
 msgstr "János"
 
@@ -4586,7 +4628,7 @@ msgstr "Csatlakozott"
 msgid "Just click the button below to reconnect your Stripe account."
 msgstr "Csak kattintson az alábbi gombra a Stripe fiók újracsatlakoztatásához."
 
-#: src/components/routes/auth/Login/index.tsx:121
+#: src/components/routes/auth/Login/index.tsx:180
 msgid "Just looking for your tickets?"
 msgstr "Csak a jegyeit keresi?"
 
@@ -4664,7 +4706,7 @@ msgstr "Vezetéknév"
 #: src/components/modals/InviteUserModal/index.tsx:58
 #: src/components/modals/JoinWaitlistModal/index.tsx:196
 #: src/components/routes/auth/AcceptInvitation/index.tsx:102
-#: src/components/routes/auth/Register/index.tsx:96
+#: src/components/routes/auth/Register/index.tsx:105
 #: src/components/routes/product-widget/CollectInformation/index.tsx:433
 #: src/components/routes/product-widget/CollectInformation/index.tsx:434
 #: src/components/routes/product-widget/CollectInformation/index.tsx:645
@@ -4680,10 +4722,12 @@ msgstr "Vezetéknév"
 msgid "Last name is required"
 msgstr "A vezetéknév kötelező"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:239
 #: src/components/common/WebhookTable/index.tsx:239
 msgid "Last Response"
 msgstr "Utolsó válasz"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:240
 #: src/components/common/WebhookTable/index.tsx:240
 msgid "Last Triggered"
 msgstr "Utoljára aktiválva"
@@ -4730,7 +4774,7 @@ msgstr "Linkek engedélyezve"
 
 #: src/components/common/EventCard/index.tsx:87
 #: src/components/layouts/Event/index.tsx:193
-#: src/components/layouts/OrganizerLayout/index.tsx:208
+#: src/components/layouts/OrganizerLayout/index.tsx:210
 msgid "Live"
 msgstr "Élő"
 
@@ -4753,6 +4797,7 @@ msgid "Loading tokens..."
 msgstr "Tokenek betöltése..."
 
 #: src/components/routes/event/Webhooks/index.tsx:21
+#: src/components/routes/organizer/Webhooks/index.tsx:22
 msgid "Loading Webhooks"
 msgstr "Webhookok betöltése"
 
@@ -4770,12 +4815,12 @@ msgstr "Betöltés..."
 msgid "Location"
 msgstr "Helyszín"
 
-#: src/components/routes/auth/Login/index.tsx:104
-#: src/components/routes/auth/Register/index.tsx:78
+#: src/components/routes/auth/Login/index.tsx:162
+#: src/components/routes/auth/Register/index.tsx:87
 msgid "Log in"
 msgstr "Bejelentkezés"
 
-#: src/components/routes/auth/Login/index.tsx:104
+#: src/components/routes/auth/Login/index.tsx:162
 msgid "Logging in"
 msgstr "Bejelentkezés..."
 
@@ -4830,7 +4875,7 @@ msgstr "Tegye élővé eseményét"
 #: src/components/common/OrdersTable/index.tsx:150
 #: src/components/common/ProductsTable/SortableProduct/index.tsx:461
 #: src/components/common/PromoCodeTable/index.tsx:167
-#: src/components/layouts/OrganizerLayout/index.tsx:83
+#: src/components/layouts/OrganizerLayout/index.tsx:84
 msgid "Manage"
 msgstr "Kezelés"
 
@@ -5116,6 +5161,7 @@ msgstr "Navigálás a résztvevőhöz"
 msgid "Net Revenue"
 msgstr "Nettó bevétel"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:266
 #: src/components/common/PromoCodeTable/index.tsx:158
 #: src/components/common/WebhookTable/index.tsx:266
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:101
@@ -5153,6 +5199,7 @@ msgid "No accounts found"
 msgstr "Nem találhatók fiókok"
 
 #: src/components/routes/event/Webhooks/index.tsx:22
+#: src/components/routes/organizer/Webhooks/index.tsx:23
 msgid "No Active Webhooks"
 msgstr "Nincsenek aktív webhookok"
 
@@ -5260,6 +5307,7 @@ msgstr "Nincs hatása a jelenlegi vagy múltbeli tranzakciókra"
 msgid "No invoice"
 msgstr "Nincs számla"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:177
 #: src/components/modals/WebhookLogsModal/index.tsx:177
 msgid "No logs found"
 msgstr "Nem található napló"
@@ -5356,10 +5404,12 @@ msgstr "Nincs új fiók regisztráció"
 msgid "No recipients found"
 msgstr "Nem találhatók címzettek"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:174
 #: src/components/common/WebhookTable/index.tsx:174
 msgid "No response"
 msgstr "Nincs válasz"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:141
 #: src/components/common/WebhookTable/index.tsx:141
 msgid "No responses yet"
 msgstr "Még nincsenek válaszok"
@@ -5404,10 +5454,12 @@ msgstr "Nincs megtekintett esemény az elmúlt 14 napban"
 msgid "No waitlist entries"
 msgstr "Nincsenek várólistás bejegyzések"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:180
 #: src/components/modals/WebhookLogsModal/index.tsx:180
 msgid "No webhook events have been recorded for this endpoint yet. Events will appear here once they are triggered."
 msgstr "Ehhez a végponthoz még nem rögzítettek webhook eseményeket. Az események itt jelennek meg, amint aktiválódnak."
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:201
 #: src/components/common/WebhookTable/index.tsx:201
 msgid "No Webhooks"
 msgstr "Nincsenek Webhookok"
@@ -5664,7 +5716,7 @@ msgstr "Rendelés és jegy"
 msgid "Order cancelled"
 msgstr "Rendelés törölve"
 
-#: src/components/forms/WebhookForm/index.tsx:76
+#: src/components/forms/WebhookForm/index.tsx:94
 msgid "Order Cancelled"
 msgstr "Megrendelés törölve"
 
@@ -5682,7 +5734,7 @@ msgstr "Rendelés megerősítése"
 msgid "Order confirmation resent successfully"
 msgstr "Rendelés visszaigazolása sikeresen újraküldve"
 
-#: src/components/forms/WebhookForm/index.tsx:52
+#: src/components/forms/WebhookForm/index.tsx:70
 msgid "Order Created"
 msgstr "Megrendelés létrehozva"
 
@@ -5751,7 +5803,7 @@ msgstr "Rendelés nyelve"
 msgid "Order marked as paid"
 msgstr "Megrendelés fizetettként megjelölve"
 
-#: src/components/forms/WebhookForm/index.tsx:64
+#: src/components/forms/WebhookForm/index.tsx:82
 msgid "Order Marked as Paid"
 msgstr "Megrendelés fizetettként megjelölve"
 
@@ -5795,7 +5847,7 @@ msgstr "Rendelés hiv."
 msgid "Order Reference"
 msgstr "Rendelésszám"
 
-#: src/components/forms/WebhookForm/index.tsx:70
+#: src/components/forms/WebhookForm/index.tsx:88
 msgid "Order Refunded"
 msgstr "Megrendelés visszatérítve"
 
@@ -5823,7 +5875,7 @@ msgstr "Megrendelés időtúllépés"
 msgid "Order Total"
 msgstr "Rendelés összege"
 
-#: src/components/forms/WebhookForm/index.tsx:58
+#: src/components/forms/WebhookForm/index.tsx:76
 msgid "Order Updated"
 msgstr "Megrendelés frissítve"
 
@@ -5903,7 +5955,7 @@ msgid "Organizer"
 msgstr "Szervező"
 
 #: src/components/layouts/Event/index.tsx:84
-#: src/components/layouts/OrganizerLayout/index.tsx:75
+#: src/components/layouts/OrganizerLayout/index.tsx:76
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:160
 msgid "Organizer Dashboard"
 msgstr "Szervezői irányítópult"
@@ -5942,12 +5994,12 @@ msgid "Organizer statistics are not available for the selected currency or an er
 msgstr "A szervezői statisztikák nem érhetők el a kiválasztott pénznemhez, vagy hiba történt."
 
 #: src/components/common/StatusToggle/index.tsx:76
-#: src/components/layouts/OrganizerLayout/index.tsx:135
+#: src/components/layouts/OrganizerLayout/index.tsx:137
 msgid "Organizer status update failed. Please try again later"
 msgstr "Szervező állapotának frissítése sikertelen. Kérjük, próbálja újra később."
 
 #: src/components/common/StatusToggle/index.tsx:68
-#: src/components/layouts/OrganizerLayout/index.tsx:132
+#: src/components/layouts/OrganizerLayout/index.tsx:134
 msgid "Organizer status updated"
 msgstr "Szervező állapota frissítve"
 
@@ -6045,8 +6097,8 @@ msgid "Pass to Buyer"
 msgstr "Áthárítás a vevőre"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:127
-#: src/components/routes/auth/Login/index.tsx:98
-#: src/components/routes/auth/Register/index.tsx:112
+#: src/components/routes/auth/Login/index.tsx:156
+#: src/components/routes/auth/Register/index.tsx:121
 #: src/components/routes/profile/ManageProfile/index.tsx:119
 msgid "Password"
 msgstr "Jelszó"
@@ -6055,7 +6107,7 @@ msgstr "Jelszó"
 msgid "Password must be a minimum  of 8 characters"
 msgstr "A jelszónak legalább 8 karakterből kell állnia"
 
-#: src/components/routes/auth/Register/index.tsx:36
+#: src/components/routes/auth/Register/index.tsx:42
 msgid "Password must be at least 8 characters"
 msgstr "A jelszónak legalább 8 karakter hosszúnak kell lennie."
 
@@ -6064,7 +6116,7 @@ msgid "Password reset successfully. Please login with your new password."
 msgstr "Jelszó sikeresen visszaállítva. Kérjük, jelentkezzen be új jelszavával."
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:32
-#: src/components/routes/auth/Register/index.tsx:37
+#: src/components/routes/auth/Register/index.tsx:43
 msgid "Passwords are not the same"
 msgstr "A jelszavak nem egyeznek."
 
@@ -6304,12 +6356,12 @@ msgstr "Kérjük, adjon hozzá legalább egy opciót."
 msgid "Please check the provided information is correct"
 msgstr "Kérjük, ellenőrizze, hogy a megadott információk helyesek-e."
 
-#: src/components/routes/auth/Login/index.tsx:53
+#: src/components/routes/auth/Login/index.tsx:91
 msgid "Please check your email and password and try again"
 msgstr "Kérjük, ellenőrizze e-mail címét és jelszavát, majd próbálja újra."
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:33
-#: src/components/routes/auth/Register/index.tsx:38
+#: src/components/routes/auth/Register/index.tsx:44
 msgid "Please check your email is valid"
 msgstr "Kérjük, ellenőrizze, hogy az e-mail címe érvényes-e."
 
@@ -6337,6 +6389,7 @@ msgstr "Kérjük, adjon meg egy érvényes e-mail címet"
 msgid "Please enter a valid image URL that points to an image."
 msgstr "Kérjük, adjon meg egy érvényes kép URL-t, amely egy képre mutat."
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:30
 #: src/components/modals/CreateWebhookModal/index.tsx:30
 msgid "Please enter a valid URL"
 msgstr "Kérjük, adjon meg érvényes URL-t."
@@ -6390,6 +6443,10 @@ msgstr "Kérjük, erősítse meg e-mail címét az összes funkció eléréséhe
 #: src/components/routes/welcome/index.tsx:123
 msgid "Please wait before requesting another code"
 msgstr "Kérjük, várjon, mielőtt újabb kódot kér."
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:61
+msgid "Please wait while we log you in."
+msgstr ""
 
 #: src/components/routes/event/Affiliates/index.tsx:43
 msgid "Please wait while we prepare your affiliates for export..."
@@ -6550,7 +6607,7 @@ msgstr "Termékkategória sikeresen frissítve."
 msgid "Product Created"
 msgstr "Termék létrehozva"
 
-#: src/components/forms/WebhookForm/index.tsx:46
+#: src/components/forms/WebhookForm/index.tsx:64
 msgid "Product Deleted"
 msgstr "Termék törölve"
 
@@ -6580,7 +6637,7 @@ msgstr "Terméksor"
 msgid "Product Type"
 msgstr "Termék típusa"
 
-#: src/components/forms/WebhookForm/index.tsx:40
+#: src/components/forms/WebhookForm/index.tsx:58
 msgid "Product Updated"
 msgstr "Termék frissítve"
 
@@ -6763,7 +6820,7 @@ msgstr "Valós idejű elemzések"
 
 #. placeholder {0}: getConfig("VITE_APP_NAME", "Hi.Events")
 #: src/components/routes/auth/AcceptInvitation/index.tsx:157
-#: src/components/routes/auth/Register/index.tsx:133
+#: src/components/routes/auth/Register/index.tsx:142
 #: src/components/routes/profile/ManageProfile/index.tsx:209
 msgid "Receive product updates from {0}."
 msgstr "Termékfrissítések fogadása a {0}-től."
@@ -6806,6 +6863,10 @@ msgstr "Stripe újracsatlakoztatása →"
 #: src/components/routes/organizer/Settings/Sections/SocialLinks/index.tsx:80
 msgid "Reddit"
 msgstr "Reddit"
+
+#: src/components/routes/auth/ProviderCallback/index.tsx:67
+msgid "Redirecting back to login..."
+msgstr ""
 
 #: src/components/common/StripeConnectButton/index.tsx:59
 #: src/components/common/StripeConnectButton/index.tsx:74
@@ -6879,7 +6940,7 @@ msgstr "Visszatérítések"
 msgid "Regional Settings"
 msgstr "Regionális beállítások"
 
-#: src/components/routes/auth/Register/index.tsx:137
+#: src/components/routes/auth/Register/index.tsx:146
 msgid "Register"
 msgstr "Regisztráció"
 
@@ -6912,7 +6973,7 @@ msgid "Report not found"
 msgstr "Jelentés nem található"
 
 #: src/components/layouts/Event/index.tsx:97
-#: src/components/layouts/OrganizerLayout/index.tsx:78
+#: src/components/layouts/OrganizerLayout/index.tsx:79
 #: src/components/routes/event/Reports/index.tsx:39
 #: src/components/routes/organizer/Reports/index.tsx:51
 msgid "Reports"
@@ -6938,7 +6999,7 @@ msgstr "Kód újraküldése"
 msgid "Resend Confirmation"
 msgstr "Visszaigazolás újraküldése"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:292
+#: src/components/layouts/OrganizerLayout/index.tsx:294
 msgid "Resend Confirmation Email"
 msgstr "Megerősítő e-mail újraküldése"
 
@@ -7359,7 +7420,7 @@ msgstr "Befejezési idő kiválasztása"
 msgid "Select event category"
 msgstr "Eseménykategória kiválasztása"
 
-#: src/components/forms/WebhookForm/index.tsx:124
+#: src/components/forms/WebhookForm/index.tsx:142
 msgid "Select event types"
 msgstr "Eseménytípusok kiválasztása"
 
@@ -7427,7 +7488,7 @@ msgstr "Időzóna kiválasztása"
 msgid "Select which attendees should receive this message"
 msgstr "Válassza ki, mely résztvevők kapják meg ezt az üzenetet"
 
-#: src/components/forms/WebhookForm/index.tsx:123
+#: src/components/forms/WebhookForm/index.tsx:141
 msgid "Select which events will trigger this webhook"
 msgstr "Válassza ki, mely események indítják el ezt a webhookot."
 
@@ -7448,7 +7509,7 @@ msgstr "Kiválasztva"
 msgid "Selling fast 🔥"
 msgstr "Gyorsan fogy 🔥"
 
-#: src/components/routes/auth/Login/index.tsx:160
+#: src/components/routes/auth/Login/index.tsx:219
 #: src/components/routes/my-tickets/index.tsx:202
 msgid "Send"
 msgstr "Küldés"
@@ -7594,7 +7655,7 @@ msgstr "Beállítás frissítve"
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:81
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:82
 #: src/components/common/Editor/Controls/InsertLiquidVariableControl.tsx:83
-#: src/components/layouts/OrganizerLayout/index.tsx:85
+#: src/components/layouts/OrganizerLayout/index.tsx:86
 #: src/components/modals/DuplicateEventModal/index.tsx:26
 msgid "Settings"
 msgstr "Beállítások"
@@ -7605,7 +7666,7 @@ msgstr "Beállítás és tervezés"
 
 #: src/components/common/ShareIcon/index.tsx:30
 #: src/components/layouts/EventHomepage/index.tsx:279
-#: src/components/layouts/OrganizerLayout/index.tsx:228
+#: src/components/layouts/OrganizerLayout/index.tsx:230
 #: src/components/modals/ShareModal/index.tsx:37
 #: src/components/modals/ShareModal/index.tsx:165
 #: src/components/modals/ShareModal/index.tsx:186
@@ -7624,8 +7685,8 @@ msgstr "Partnerlink megosztása"
 msgid "Share Event"
 msgstr "Esemény megosztása"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:225
-#: src/components/layouts/OrganizerLayout/index.tsx:260
+#: src/components/layouts/OrganizerLayout/index.tsx:227
+#: src/components/layouts/OrganizerLayout/index.tsx:262
 msgid "Share Organizer Page"
 msgstr "Szervezői oldal megosztása"
 
@@ -7701,7 +7762,7 @@ msgid "Skip this step"
 msgstr "Lépés kihagyása"
 
 #: src/components/routes/auth/AcceptInvitation/index.tsx:103
-#: src/components/routes/auth/Register/index.tsx:97
+#: src/components/routes/auth/Register/index.tsx:106
 msgid "Smith"
 msgstr "Smith"
 
@@ -7774,8 +7835,8 @@ msgid "Something went wrong. Please try again later."
 msgstr "Valami hiba történt. Kérjük, próbálja újra később."
 
 #: src/components/layouts/Event/index.tsx:78
-#: src/components/layouts/OrganizerLayout/index.tsx:100
-#: src/components/routes/auth/Login/index.tsx:72
+#: src/components/layouts/OrganizerLayout/index.tsx:102
+#: src/components/routes/auth/Login/index.tsx:110
 #: src/components/routes/my-tickets/index.tsx:145
 #: src/components/routes/profile/ManageProfile/index.tsx:90
 #: src/components/routes/profile/ManageProfile/index.tsx:104
@@ -7851,11 +7912,12 @@ msgstr "A statisztikák a fiók létrehozásának dátumán alapulnak"
 #: src/components/common/AttendeeTable/index.tsx:274
 #: src/components/common/OrderDetails/index.tsx:51
 #: src/components/common/OrdersTable/index.tsx:396
+#: src/components/common/OrganizerWebhookTable/index.tsx:238
 #: src/components/common/WaitlistTable/index.tsx:164
 #: src/components/common/WebhookTable/index.tsx:238
 #: src/components/forms/AffiliateForm/index.tsx:98
 #: src/components/forms/CapaciyAssigmentForm/index.tsx:56
-#: src/components/forms/WebhookForm/index.tsx:133
+#: src/components/forms/WebhookForm/index.tsx:151
 #: src/components/modals/EditUserModal/index.tsx:103
 #: src/components/routes/account/ManageAccount/sections/Users/index.tsx:157
 #: src/components/routes/admin/Dashboard/index.tsx:405
@@ -8083,6 +8145,7 @@ msgstr "Beállítások sikeresen frissítve"
 msgid "Successfully Updated Social Links"
 msgstr "Közösségi linkek sikeresen frissítve"
 
+#: src/components/modals/EditOrganizerWebhookModal/index.tsx:44
 #: src/components/modals/EditWebhookModal/index.tsx:44
 msgid "Successfully updated Webhook"
 msgstr "Webhook sikeresen frissítve"
@@ -8118,7 +8181,7 @@ msgstr "Támogatási e-mail"
 msgid "Swedish"
 msgstr "Svéd"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:68
+#: src/components/layouts/OrganizerLayout/index.tsx:69
 #: src/components/modals/SwitchOrganizerModal/index.tsx:33
 msgid "Switch Organizer"
 msgstr "Szervező váltása"
@@ -8807,7 +8870,7 @@ msgstr "Hitelkártyás fizetések fogadásához csatlakoztatnia kell Stripe-fió
 msgid "Toggle columns"
 msgstr "Oszlopok kapcsolása"
 
-#: src/components/layouts/OrganizerLayout/index.tsx:87
+#: src/components/layouts/OrganizerLayout/index.tsx:88
 msgid "Tools"
 msgstr "Eszközök"
 
@@ -8915,7 +8978,7 @@ msgstr "Igaz, ha offline fizetés"
 msgid "True if payment pending"
 msgstr "Igaz, ha fizetés folyamatban"
 
-#: src/components/routes/auth/Login/index.tsx:141
+#: src/components/routes/auth/Login/index.tsx:200
 #: src/components/routes/my-tickets/index.tsx:183
 msgid "Try another email"
 msgstr "Próbáljon másik e-mailt"
@@ -9099,6 +9162,7 @@ msgstr "Kép feltöltése"
 msgid "Uploading image..."
 msgstr "Kép feltöltése..."
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:236
 #: src/components/common/WebhookTable/index.tsx:236
 msgid "URL"
 msgstr "URL"
@@ -9107,6 +9171,7 @@ msgstr "URL"
 msgid "URL copied to clipboard"
 msgstr "URL a vágólapra másolva"
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:25
 #: src/components/modals/CreateWebhookModal/index.tsx:25
 msgid "URL is required"
 msgstr "URL kötelező"
@@ -9372,6 +9437,7 @@ msgstr "Eseményoldal megtekintése"
 msgid "View Event Page"
 msgstr "Esemény oldal megtekintése"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:113
 #: src/components/common/WebhookTable/index.tsx:113
 msgid "View logs"
 msgstr "Naplók megtekintése"
@@ -9404,8 +9470,8 @@ msgstr "Rendelés részleteinek megtekintése"
 msgid "View order details, issue refunds, and resend confirmations."
 msgstr "Rendelési részletek megtekintése, visszatérítések kibocsátása és megerősítések újraküldése."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:243
-#: src/components/layouts/OrganizerLayout/index.tsx:246
+#: src/components/layouts/OrganizerLayout/index.tsx:245
+#: src/components/layouts/OrganizerLayout/index.tsx:248
 msgid "View Organizer Homepage"
 msgstr "Szervezői honlap megtekintése"
 
@@ -9563,19 +9629,22 @@ msgstr "Átköltöztettük a székhelyünket Írországba. Ennek eredményeként
 msgid "We've sent a 5-digit verification code to:"
 msgstr "Öt számjegyű ellenőrző kódot küldtünk ide:"
 
+#: src/components/modals/CreateOrganizerWebhookModal/index.tsx:45
 #: src/components/modals/CreateWebhookModal/index.tsx:45
 msgid "Webhook created successfully"
 msgstr "Webhook sikeresen létrehozva"
 
+#: src/components/common/OrganizerWebhookTable/index.tsx:53
 #: src/components/common/WebhookTable/index.tsx:53
 msgid "Webhook deleted successfully"
 msgstr "Webhook sikeresen törölve"
 
+#: src/components/modals/OrganizerWebhookLogsModal/index.tsx:151
 #: src/components/modals/WebhookLogsModal/index.tsx:151
 msgid "Webhook Logs"
 msgstr "Webhook naplók"
 
-#: src/components/forms/WebhookForm/index.tsx:117
+#: src/components/forms/WebhookForm/index.tsx:135
 msgid "Webhook URL"
 msgstr "Webhook URL"
 
@@ -9588,8 +9657,10 @@ msgid "Webhook will send notifications"
 msgstr "A Webhook értesítéseket küld."
 
 #: src/components/layouts/Event/index.tsx:127
+#: src/components/layouts/OrganizerLayout/index.tsx:90
 #: src/components/modals/DuplicateEventModal/index.tsx:32
 #: src/components/routes/event/Webhooks/index.tsx:32
+#: src/components/routes/organizer/Webhooks/index.tsx:30
 msgid "Webhooks"
 msgstr "Webhookok"
 
@@ -9605,7 +9676,7 @@ msgstr "Weibo"
 msgid "Welcome aboard! Please login to continue."
 msgstr "Üdv a fedélzeten! Kérjük, jelentkezzen be a folytatáshoz."
 
-#: src/components/routes/auth/Login/index.tsx:80
+#: src/components/routes/auth/Login/index.tsx:118
 msgid "Welcome back"
 msgstr "Üdvözöljük újra"
 
@@ -9665,15 +9736,19 @@ msgstr "Mit kell tennie:"
 msgid "WhatsApp"
 msgstr "WhatsApp"
 
-#: src/components/forms/WebhookForm/index.tsx:108
+#: src/components/forms/WebhookForm/index.tsx:126
 msgid "When a check-in is deleted"
 msgstr "Amikor egy bejelentkezés törölve lett"
 
-#: src/components/forms/WebhookForm/index.tsx:84
+#: src/components/forms/WebhookForm/index.tsx:102
 msgid "When a new attendee is created"
 msgstr "Amikor új résztvevő jön létre"
 
-#: src/components/forms/WebhookForm/index.tsx:54
+#: src/components/forms/WebhookForm/index.tsx:42
+msgid "When a new event is created"
+msgstr ""
+
+#: src/components/forms/WebhookForm/index.tsx:72
 msgid "When a new order is created"
 msgstr "Amikor új megrendelés jön létre"
 
@@ -9681,11 +9756,11 @@ msgstr "Amikor új megrendelés jön létre"
 msgid "When a new product is created"
 msgstr "Amikor új termék jön létre"
 
-#: src/components/forms/WebhookForm/index.tsx:48
+#: src/components/forms/WebhookForm/index.tsx:66
 msgid "When a product is deleted"
 msgstr "Amikor egy termék törölve lett"
 
-#: src/components/forms/WebhookForm/index.tsx:42
+#: src/components/forms/WebhookForm/index.tsx:60
 msgid "When a product is updated"
 msgstr "Amikor egy termék frissül"
 
@@ -9700,31 +9775,39 @@ msgid ""
 ""
 msgstr ""
 
-#: src/components/forms/WebhookForm/index.tsx:96
+#: src/components/forms/WebhookForm/index.tsx:114
 msgid "When an attendee is cancelled"
 msgstr "Amikor egy résztvevő le lett mondva"
 
-#: src/components/forms/WebhookForm/index.tsx:102
+#: src/components/forms/WebhookForm/index.tsx:120
 msgid "When an attendee is checked in"
 msgstr "Amikor egy résztvevő bejelentkezett"
 
-#: src/components/forms/WebhookForm/index.tsx:90
+#: src/components/forms/WebhookForm/index.tsx:108
 msgid "When an attendee is updated"
 msgstr "Amikor egy résztvevő frissül"
 
-#: src/components/forms/WebhookForm/index.tsx:78
+#: src/components/forms/WebhookForm/index.tsx:54
+msgid "When an event is archived"
+msgstr ""
+
+#: src/components/forms/WebhookForm/index.tsx:48
+msgid "When an event is updated"
+msgstr ""
+
+#: src/components/forms/WebhookForm/index.tsx:96
 msgid "When an order is cancelled"
 msgstr "Amikor egy megrendelés törölve lett"
 
-#: src/components/forms/WebhookForm/index.tsx:66
+#: src/components/forms/WebhookForm/index.tsx:84
 msgid "When an order is marked as paid"
 msgstr "Amikor egy megrendelés fizetettként lett megjelölve"
 
-#: src/components/forms/WebhookForm/index.tsx:72
+#: src/components/forms/WebhookForm/index.tsx:90
 msgid "When an order is refunded"
 msgstr "Amikor egy megrendelés visszatérítésre került"
 
-#: src/components/forms/WebhookForm/index.tsx:60
+#: src/components/forms/WebhookForm/index.tsx:78
 msgid "When an order is updated"
 msgstr "Amikor egy megrendelés frissül"
 
@@ -9801,7 +9884,7 @@ msgstr "Dolgozik"
 #: src/components/modals/JoinWaitlistModal/index.tsx:218
 #: src/components/modals/ManageAttendeeModal/index.tsx:231
 #: src/components/modals/ManageOrderModal/index.tsx:175
-#: src/components/routes/auth/Register/index.tsx:137
+#: src/components/routes/auth/Register/index.tsx:146
 msgid "Working..."
 msgstr "Dolgozik..."
 
@@ -9942,7 +10025,7 @@ msgstr "Jegy létrehozása kötelező, mielőtt manuálisan hozzáadhatna egy r�
 msgid "You must have at least one price tier"
 msgstr "Legalább egy árszintre szüksége van."
 
-#: src/components/layouts/OrganizerLayout/index.tsx:281
+#: src/components/layouts/OrganizerLayout/index.tsx:283
 msgid "You must verify your email address before you can update the organizer status."
 msgstr "Megerősítenie kell e-mail címét, mielőtt frissítheti a szervezői státuszt."
 
@@ -10104,8 +10187,8 @@ msgstr "Megrendelései itt fognak megjelenni, amint beérkeznek."
 msgid "Your organizer address"
 msgstr "Szervezői címe"
 
-#: src/components/routes/auth/Login/index.tsx:99
-#: src/components/routes/auth/Register/index.tsx:113
+#: src/components/routes/auth/Login/index.tsx:157
+#: src/components/routes/auth/Register/index.tsx:122
 msgid "Your password"
 msgstr "Az Ön jelszava"
 
