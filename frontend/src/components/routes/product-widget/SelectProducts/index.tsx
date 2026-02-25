@@ -80,7 +80,9 @@ interface SelectProductsProps {
 
 const TextSpoiler = ({ html, isDarkMode, lineClampClass = "line-clamp-3" }: { html: string, isDarkMode: boolean, lineClampClass?: string }) => {
     const [expanded, setExpanded] = useState(false);
-    const [isTruncated, setIsTruncated] = useState(false);
+    // Start as `true` so the button is present in the SSR HTML — preventing CLS.
+    // After hydration, the ResizeObserver will set this to false if text isn't actually truncated.
+    const [mayBeTruncated, setMayBeTruncated] = useState(true);
     const contentRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -88,8 +90,7 @@ const TextSpoiler = ({ html, isDarkMode, lineClampClass = "line-clamp-3" }: { ht
 
         const checkTruncation = () => {
             if (contentRef.current && !expanded) {
-                // Ensure text is considered truncated if it overflows visually
-                setIsTruncated(contentRef.current.scrollHeight > contentRef.current.clientHeight + 2);
+                setMayBeTruncated(contentRef.current.scrollHeight > contentRef.current.clientHeight + 2);
             }
         };
 
@@ -109,8 +110,8 @@ const TextSpoiler = ({ html, isDarkMode, lineClampClass = "line-clamp-3" }: { ht
                 className={classNames('w-full', !expanded ? lineClampClass : '')}
                 dangerouslySetInnerHTML={{ __html: html }}
             />
-            <div className={classNames('w-full', (isTruncated || expanded) ? 'mt-2' : '')}>
-                {(isTruncated || expanded) && (
+            <div className={classNames('w-full', (mayBeTruncated || expanded) ? 'mt-2' : '')}>
+                {(mayBeTruncated || expanded) && (
                     <button
                         type="button"
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); setExpanded(!expanded); }}

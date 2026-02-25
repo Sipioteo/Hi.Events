@@ -506,9 +506,10 @@ export const router: RouteObject[] = [
     },
     {
         path: "/e/:eventId/:eventSlug",
+        loader: publicEventRouteLoader,
         async lazy() {
-            const EventHomepage = await import("./components/layouts/EventHomepage");
-            return { Component: EventHomepage.default };
+            const PublicEvent = await import("./components/layouts/PublicEvent");
+            return { Component: PublicEvent.default };
         },
         errorElement: <ErrorPage />,
     },
