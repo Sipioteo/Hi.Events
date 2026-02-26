@@ -41,7 +41,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   build-frontend-ssr:
-    name: Build Frontend
+    name: Build Frontend SSR
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -73,7 +73,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   build-frontend-csr:
-    name: Build Frontend
+    name: Build Frontend CSR
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
