@@ -515,22 +515,22 @@ const SelectProducts = (props: SelectProductsProps) => {
 
                                                         <div className="flex flex-col w-full gap-0">
                                                             {/* Header Row */}
-                                                            <div className="flex flex-row justify-between items-center w-full">
-                                                                {/* Title & Toggle */}
+                                                            <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center w-full gap-3 sm:gap-0">
+                                                                {/* Title & Chevron Group - full width on mobile (title left, chevron right), auto on desktop */}
                                                                 <div
-                                                                    className={classNames("flex flex-row items-center gap-2 flex-1", hasCollapsibleContent ? "cursor-pointer group/title" : "")}
+                                                                    className={classNames("flex flex-row justify-between sm:justify-start items-center w-full sm:w-auto gap-2", hasCollapsibleContent ? "cursor-pointer group/title" : "")}
                                                                     onClick={hasCollapsibleContent ? toggleExpanded : undefined}
                                                                 >
-                                                                    <h3 className={`text-lg font-bold ${textPrimaryClass} tracking-tight m-0`}>
+                                                                    <h3 className={`text-lg font-bold ${textPrimaryClass} tracking-tight m-0 break-words min-w-0`}>
                                                                         {product.title}
                                                                     </h3>
                                                                     {hasCollapsibleContent && (
-                                                                        <IconChevronDown size={18} className={classNames("transition-transform duration-300", textSecondaryClass, isExpanded ? "rotate-180" : "rotate-0", "group-hover/title:text-gray-900", isDarkMode && "group-hover/title:text-white")} />
+                                                                        <IconChevronDown size={18} className={classNames("transition-transform duration-300 shrink-0", textSecondaryClass, isExpanded ? "rotate-180" : "rotate-0", "group-hover/title:text-gray-900", isDarkMode && "group-hover/title:text-white")} />
                                                                     )}
                                                                 </div>
 
-                                                                {/* Controls - Only rendered in header if single price */}
-                                                                <div className="flex flex-row items-center gap-4 shrink-0">
+                                                                {/* Price & Controls Group - full width on mobile (price left, buttons right), auto on desktop */}
+                                                                <div className="flex flex-row justify-between sm:justify-end items-center w-full sm:w-auto gap-4">
                                                                     {!hasMultiplePrices && (
                                                                         <TieredPricing
                                                                             productIndex={currentProductIndex}
