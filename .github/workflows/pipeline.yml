@@ -3,7 +3,7 @@ name: pipeline
 # Pipeline unica del repo. Cosa succede lo decide il ref, non il nome del file:
 # il livello lo calcola plan.yml e tutti gli altri job leggono i suoi output.
 #
-#   pull_request / push su un branch -> check     controlli base, niente pubblicazione
+#   pull_request / push su un branch -> check     controlli base + segreti
 #   push su main/mensa               -> dev       base + immagini :dev
 #   tag bX.Y.Z                       -> staging   base + immagini :staging
 #   tag vX.Y.Z                       -> release   base + scansioni complete + Release firmata
@@ -16,9 +16,15 @@ name: pipeline
 # trigger di soli controlli, non pubblica niente.
 
 on:
+  # Nessun filtro sul branch di destinazione, ed e' voluto: unit-tests.yml
+  # girava su `pull_request:` senza filtro, quindi anche sulle PR verso i
+  # branch feature/* che stanno su origin. Restringere a [main/mensa, develop]
+  # avrebbe tolto phpunit alle PR fra branch di lavoro, che e' esattamente
+  # quando serve.
   pull_request:
-    branches: [main/mensa, develop]
   push:
+    # Sui branch di lavoro il push non serve: la PR copre gli stessi commit e
+    # con lo stesso livello. unit-tests.yml si comportava allo stesso modo.
     branches: [main/mensa, develop]
     tags: ['v*', 'b*']
   schedule:
@@ -161,17 +167,46 @@ jobs:
       - name: ESLint
         run: yarn lint
 
+  # La scansione segreti gira a OGNI livello, non solo a release: un segreto
+  # committato va intercettato prima del merge. Costa pochi secondi ed e'
+  # l'unica parte di scan.yml che ha senso su una PR, quindi qui si chiama
+  # scan.yml con dipendenze e SBOM spenti e a release lo si richiama con
+  # l'inverso, cosi' gitleaks non gira due volte nella stessa esecuzione.
+  #
+  # La storia di questo repo comincia da upstream e contiene tredici segnalazioni
+  # di gitleaks anteriori al fork: sono nell'allowlist di .gitleaks.toml, che
+  # scan.yml raccoglie da solo. Senza quel file questo job e' rosso sempre.
+  secrets-scan:
+    needs: plan
+    permissions:
+      contents: read
+    uses: Mensa-Italia/.github/.github/workflows/scan.yml@main
+    with:
+      secrets-scan: true
+      deps-scan: false
+      sbom: false
+
+  # Le scansioni pesanti: vulnerabilita' note delle dipendenze e SBOM. Solo
+  # release e audit.
+  #
+  # Solo contents: read. security-events: write serviva quando scan.yml
+  # delegava a google/osv-scanner-action, che caricava un SARIF; ora usa il
+  # binario e non carica niente, quindi il permesso in piu' sarebbe soltanto
+  # un permesso in piu'.
   deep:
     needs: plan
     if: needs.plan.outputs.deep == 'true'
     permissions:
       contents: read
-      # osv-scanner, dentro scan.yml, dichiara security-events: write.
-      security-events: write
     uses: Mensa-Italia/.github/.github/workflows/scan.yml@main
+    with:
+      secrets-scan: false
+      deps-scan: true
+      sbom: true
 
   # plan.yml calcola i tag per una sola immagine, questo repo ne pubblica tre.
-  # Le regole per livello sono le stesse di plan.yml, applicate ai tre nomi.
+  # Le regole per livello sono le stesse di plan.yml, applicate ai tre nomi:
+  # se plan.yml cambia le sue, questo blocco va riallineato a mano.
   tags:
     name: tag immagini
     needs: plan
@@ -193,6 +228,18 @@ jobs:
           short="${SHA:0:7}"
           summary=""
 
+          # staging e release prendono la versione dal tag. plan.yml ora si
+          # ferma se qualcuno forza quei livelli da workflow_dispatch stando su
+          # un branch, ma il controllo lo rifacciamo qui: un tag ':' vuoto
+          # pubblicato per errore non si ritira.
+          case "$TIER" in
+            staging|release)
+              if [ -z "$VERSION" ]; then
+                echo "::error::Livello '$TIER' senza versione: serve un tag (vX.Y.Z o bX.Y.Z), non un livello forzato da un branch."
+                exit 1
+              fi ;;
+          esac
+
           emit() {
             out="$1"; comp="$2"
             reg="ghcr.io/mensa-italia/mensa-events/${comp}"
@@ -202,7 +249,14 @@ jobs:
               staging)
                 tags="${reg}:staging"$'\n'"${reg}:${VERSION}"$'\n'"${reg}:sha-${short}" ;;
               release)
-                tags="${reg}:latest"$'\n'"${reg}:${VERSION}"$'\n'"${reg}:${VERSION%.*}"$'\n'"${reg}:sha-${short}" ;;
+                tags="${reg}:${VERSION}"$'\n'"${reg}:sha-${short}"
+                # Stessa regola di plan.yml: una prerelease (v1.3.0-rc1) non e'
+                # l'ultima stabile, quindi niente :latest e niente :X.Y. Chi
+                # punta a quei due tag vuole la stabile, non l'ultima caricata.
+                case "$VERSION" in
+                  *-*) : ;;
+                  *)   tags="${reg}:latest"$'\n'"$tags"$'\n'"${reg}:${VERSION%.*}" ;;
+                esac ;;
               *)
                 echo "::error::Livello '$TIER' non pubblica immagini: il job 'tags' non doveva partire."
                 exit 1 ;;
@@ -219,6 +273,10 @@ jobs:
           emit frontend_ssr frontend-ssr
           emit frontend_csr frontend-csr
 
+          case "$TIER:$VERSION" in
+            release:*-*) echo "::notice::Prerelease $VERSION: niente :latest ne' :${VERSION%.*}." ;;
+          esac
+
           {
             echo "### Tag immagine (livello \`$TIER\`)"
             echo ""
@@ -227,20 +285,21 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
-  # Niente esce prima dei controlli: i tre job immagine hanno needs veri verso
-  # entrambi i check e verso deep. deep non gira sotto il livello release, e
-  # 'saltato' non e' 'fallito': per questo la condizione e' esplicita invece
-  # del success() implicito.
+  # Niente esce prima dei controlli.
+  #
+  # I job immagine sono sdoppiati per livello invece di essere uno solo con una
+  # condizione furba. Un job che ha fra i needs qualcosa di 'skipped' viene
+  # saltato a sua volta, a meno di scriverci sopra un if con !cancelled(); ma
+  # quell'if disattiva il success() implicito, e da quel momento ogni singolo
+  # needs va riverificato a mano con needs.X.result. Basta dimenticarne uno e
+  # si pubblica con i test rossi. Sdoppiando, l'elenco dei needs E' il
+  # cancelletto: dev/staging aspettano i controlli base e i segreti, release
+  # aspetta anche deep.
+
   image-backend:
-    needs: [plan, check-backend, check-frontend, deep, tags]
-    if: >-
-      !cancelled()
-      && needs.plan.outputs.publish == 'true'
-      && needs.check-backend.result == 'success'
-      && needs.check-frontend.result == 'success'
-      && needs.tags.result == 'success'
-      && needs.deep.result != 'failure'
-      && needs.deep.result != 'cancelled'
+    name: immagine backend (dev/staging)
+    needs: [plan, check-backend, check-frontend, secrets-scan, tags]
+    if: needs.plan.outputs.publish == 'true' && needs.plan.outputs.tier != 'release'
     permissions:
       contents: read
       packages: write
@@ -250,17 +309,12 @@ jobs:
       tags: ${{ needs.tags.outputs.backend }}
       context: ./backend
       file: ./backend/Dockerfile
+      license: AGPL-3.0-only
 
   image-frontend-ssr:
-    needs: [plan, check-backend, check-frontend, deep, tags]
-    if: >-
-      !cancelled()
-      && needs.plan.outputs.publish == 'true'
-      && needs.check-backend.result == 'success'
-      && needs.check-frontend.result == 'success'
-      && needs.tags.result == 'success'
-      && needs.deep.result != 'failure'
-      && needs.deep.result != 'cancelled'
+    name: immagine frontend-ssr (dev/staging)
+    needs: [plan, check-backend, check-frontend, secrets-scan, tags]
+    if: needs.plan.outputs.publish == 'true' && needs.plan.outputs.tier != 'release'
     permissions:
       contents: read
       packages: write
@@ -270,17 +324,12 @@ jobs:
       tags: ${{ needs.tags.outputs.frontend_ssr }}
       context: ./frontend
       file: ./frontend/Dockerfile.ssr
+      license: AGPL-3.0-only
 
   image-frontend-csr:
-    needs: [plan, check-backend, check-frontend, deep, tags]
-    if: >-
-      !cancelled()
-      && needs.plan.outputs.publish == 'true'
-      && needs.check-backend.result == 'success'
-      && needs.check-frontend.result == 'success'
-      && needs.tags.result == 'success'
-      && needs.deep.result != 'failure'
-      && needs.deep.result != 'cancelled'
+    name: immagine frontend-csr (dev/staging)
+    needs: [plan, check-backend, check-frontend, secrets-scan, tags]
+    if: needs.plan.outputs.publish == 'true' && needs.plan.outputs.tier != 'release'
     permissions:
       contents: read
       packages: write
@@ -290,9 +339,106 @@ jobs:
       tags: ${{ needs.tags.outputs.frontend_csr }}
       context: ./frontend
       file: ./frontend/Dockerfile.csr
+      license: AGPL-3.0-only
 
+  # Le stesse tre immagini al livello release. L'unica differenza e' 'deep' fra
+  # i needs: qui le scansioni pesanti sono gia' passate, altrimenti questi job
+  # non partono e senza di loro non parte 'publish'.
+  image-backend-release:
+    name: immagine backend (release)
+    needs: [plan, check-backend, check-frontend, secrets-scan, deep, tags]
+    if: needs.plan.outputs.tier == 'release'
+    permissions:
+      contents: read
+      packages: write
+    uses: Mensa-Italia/.github/.github/workflows/image.yml@main
+    with:
+      image: mensa-italia/mensa-events/backend
+      tags: ${{ needs.tags.outputs.backend }}
+      context: ./backend
+      file: ./backend/Dockerfile
+      license: AGPL-3.0-only
+
+  image-frontend-ssr-release:
+    name: immagine frontend-ssr (release)
+    needs: [plan, check-backend, check-frontend, secrets-scan, deep, tags]
+    if: needs.plan.outputs.tier == 'release'
+    permissions:
+      contents: read
+      packages: write
+    uses: Mensa-Italia/.github/.github/workflows/image.yml@main
+    with:
+      image: mensa-italia/mensa-events/frontend-ssr
+      tags: ${{ needs.tags.outputs.frontend_ssr }}
+      context: ./frontend
+      file: ./frontend/Dockerfile.ssr
+      license: AGPL-3.0-only
+
+  image-frontend-csr-release:
+    name: immagine frontend-csr (release)
+    needs: [plan, check-backend, check-frontend, secrets-scan, deep, tags]
+    if: needs.plan.outputs.tier == 'release'
+    permissions:
+      contents: read
+      packages: write
+    uses: Mensa-Italia/.github/.github/workflows/image.yml@main
+    with:
+      image: mensa-italia/mensa-events/frontend-csr
+      tags: ${{ needs.tags.outputs.frontend_csr }}
+      context: ./frontend
+      file: ./frontend/Dockerfile.csr
+      license: AGPL-3.0-only
+
+  # Dockerfile.all-in-one sta ancora alla radice e dalla cancellazione di
+  # post-release-push-images.yml non lo costruiva piu' nessuno: si sarebbe
+  # rotto in silenzio. Non lo pubblichiamo (upstream lo spingeva su
+  # docker.io/daveearley, un account che non e' nostro), quindi push: false, e
+  # attest: false perche' provenance e SBOM hanno senso solo su un'immagine che
+  # viene davvero caricata.
+  #
+  # Gira all'audit del lunedi', non a release, e non e' fra i needs di
+  # 'publish'. E' voluto: e' un'immagine che non spediamo, costruita da un
+  # Dockerfile che nel fork non e' mai stato costruito con successo (i segreti
+  # di Docker Hub non esistevano) e che parte da un tag beta di
+  # serversideup/php. Se e' rotto va saputo, ma non deve tenere ferma una
+  # Release. Un 'uses:' non accetta continue-on-error, quindi l'unico modo di
+  # renderlo non bloccante e' tenerlo fuori dalla catena.
+  image-all-in-one:
+    name: immagine all-in-one (solo build, audit)
+    needs: [plan, secrets-scan]
+    if: needs.plan.outputs.tier == 'audit'
+    permissions:
+      contents: read
+      packages: write
+    uses: Mensa-Italia/.github/.github/workflows/image.yml@main
+    with:
+      image: mensa-italia/mensa-events/all-in-one
+      tags: ghcr.io/mensa-italia/mensa-events/all-in-one:audit
+      context: .
+      file: ./Dockerfile.all-in-one
+      push: false
+      attest: false
+      license: AGPL-3.0-only
+
+  # La Release esce per ultima, dopo che le tre immagini sono su GHCR.
+  # L'if non contiene funzioni di stato, quindi vale il success() implicito:
+  # basta che uno dei needs fallisca o venga saltato perche' la Release non
+  # esista. 'tags' non e' nell'elenco perche' ci arriva attraverso i tre job
+  # immagine, che senza di lui non partono.
+  #
+  # artifact: sbom allega alla Release l'SBOM prodotto da deep e lo firma con
+  # cosign keyless. Senza, id-token: write non firmava niente e la Release era
+  # una pagina di note e basta.
   publish:
-    needs: [plan, check-backend, check-frontend, deep, image-backend, image-frontend-ssr, image-frontend-csr]
+    needs:
+      - plan
+      - check-backend
+      - check-frontend
+      - secrets-scan
+      - deep
+      - image-backend-release
+      - image-frontend-ssr-release
+      - image-frontend-csr-release
     if: needs.plan.outputs.tier == 'release'
     uses: Mensa-Italia/.github/.github/workflows/release.yml@main
     permissions:
@@ -300,3 +446,5 @@ jobs:
       id-token: write
     with:
       version: ${{ needs.plan.outputs.version }}
+      artifact: sbom
+      prerelease: ${{ contains(needs.plan.outputs.version, '-') }}
