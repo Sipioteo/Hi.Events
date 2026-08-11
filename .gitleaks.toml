@@ -1,0 +1,42 @@
+# Configurazione gitleaks del repo. scan.yml la usa da solo se questo file
+# esiste: `gitleaks detect --source . --config .gitleaks.toml`.
+#
+# Serve perche' questo repo e' un fork di HiEventsDev/Hi.Events e la scansione
+# segreti gira sull'intera storia (fetch-depth: 0). Nella storia di upstream, in
+# commit anteriori al fork, ci sono tredici valori che gitleaks classifica come
+# generic-api-key: chiavi Stripe di esempio, un JWT_SECRET di default e un
+# docker/all-in-one/.env che upstream ha poi rimosso. Senza questa allowlist il
+# job segreti fallisce a ogni esecuzione e, avendo i job di pubblicazione un
+# needs verso di lui, nessuna release potrebbe piu' uscire.
+#
+# L'allowlist e' per COMMIT, non per regola: tutto cio' che verra' aggiunto da
+# qui in avanti resta scansionato. Se un nuovo commit viene segnalato, si guarda
+# il segreto, non si allarga questo file.
+
+title = "mensa-events"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Commit di HiEventsDev anteriori al fork, gia' pubblici su upstream."
+commits = [
+  # first commit - backend/.env.example, frontend/.env.example, frontend/.env,
+  # docker/all-in-one/docker-compose.yml (JWT_SECRET e chiave Stripe di esempio)
+  "aea151683ed1590e78c47eb216c4215848d93a77",
+  # local run - install locally/LOCAL.md
+  "25454aac179140ffe6fde56fb1b1936ac934528f",
+  # server side rendering - install locally/LOCAL.md
+  "917757cac598da90699fe9e58a066f74b4c67e2b",
+  # V1.0.0 alpha - docker/all-in-one/.env
+  "bd60daad93f10bc10329f0e4f7aa93b6b43b442c",
+  # main <- develop (#392) - docker/all-in-one/.env
+  "a95290553afc77e18f14164547510d754125ed9c",
+]
+
+# I file .env.example sono segnaposto per definizione: il loro contenuto e'
+# documentazione, non configurazione. Restano fuori dalla scansione anche in
+# futuro, altrimenti ogni modifica a un valore fittizio blocca la pipeline.
+paths = [
+  '''(^|/)\.env\.example$''',
+]
