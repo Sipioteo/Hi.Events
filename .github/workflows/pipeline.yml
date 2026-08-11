@@ -1,0 +1,302 @@
+name: pipeline
+
+# Pipeline unica del repo. Cosa succede lo decide il ref, non il nome del file:
+# il livello lo calcola plan.yml e tutti gli altri job leggono i suoi output.
+#
+#   pull_request / push su un branch -> check     controlli base, niente pubblicazione
+#   push su main/mensa               -> dev       base + immagini :dev
+#   tag bX.Y.Z                       -> staging   base + immagini :staging
+#   tag vX.Y.Z                       -> release   base + scansioni complete + Release firmata
+#   cron del lunedi                  -> audit     solo scansioni complete
+#
+# Questo repo e' un fork di HiEventsDev/Hi.Events e il branch di prodotto e'
+# main/mensa, non main. develop resta agganciato perche' e' il branch su cui
+# arrivano gli allineamenti da upstream ed e' uno dei trigger di
+# unit-tests.yml, il workflow che questa pipeline sostituisce: e' pero' un
+# trigger di soli controlli, non pubblica niente.
+
+on:
+  pull_request:
+    branches: [main/mensa, develop]
+  push:
+    branches: [main/mensa, develop]
+    tags: ['v*', 'b*']
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      tier:
+        type: choice
+        options: [check, dev, staging, release, audit]
+        default: check
+
+concurrency:
+  group: pipeline-${{ github.ref }}
+  # I tag non si annullano mai fra loro. Una release a meta' e' peggio di due
+  # release in coda.
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    uses: Mensa-Italia/.github/.github/workflows/plan.yml@main
+    with:
+      # Nessun 'image': plan.yml calcola i tag di UNA immagine e qui sono tre.
+      # Li costruisce il job 'tags' a partire da tier e version.
+      #
+      # plan.yml riconosce il livello 'dev' su refs/heads/main. Il branch di
+      # prodotto di questo fork e' main/mensa, quindi glielo imponiamo noi:
+      # senza questo, un push su main/mensa resterebbe a 'check' e non
+      # pubblicherebbe le immagini :dev.
+      forced-tier: ${{ inputs.tier || (github.event_name == 'push' && github.ref == 'refs/heads/main/mensa' && 'dev') || '' }}
+
+  # I controlli base sono due job perche' il repo e' due progetti: Laravel in
+  # backend/, React+Vite in frontend/.
+  check-backend:
+    name: backend (php ${{ matrix.php-versions }})
+    needs: plan
+    if: needs.plan.outputs.tier != 'audit'
+    runs-on: ${{ vars.LINUX_RUNNER || 'ubuntu-latest' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['8.2', '8.3', '8.4']
+
+    services:
+      # Serve alle Feature: usano RefreshDatabase e la prima migrazione carica
+      # database/migrations/extensions.sql (pg_trgm) e schema.sql.
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: backend
+          POSTGRES_USER: username
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U username -d backend"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          # L'elenco e' quello di unit-tests.yml. pdo_pgsql e pgsql sono
+          # l'unica aggiunta: senza, le Feature non hanno un driver.
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, pdo_pgsql, pgsql, tokenizer
+          ini-values: post_max_size=256M, upload_max_filesize=256M
+          coverage: none
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        # Era `::set-output`, che i runner non accettano piu'.
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Create Laravel bootstrap cache directory
+        run: mkdir -p ./backend/bootstrap/cache && chmod -R 777 ./backend/bootstrap/cache
+
+      - name: Install dependencies
+        run: cd backend && composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Run PHPUnit Tests
+        run: cd backend && ./vendor/bin/phpunit tests/Unit --no-coverage
+
+      # Le Feature esistono da sempre in tests/Feature e non le eseguiva
+      # nessuno: unit-tests.yml si fermava a tests/Unit.
+      - name: Prepare Laravel environment for Feature tests
+        run: cd backend && cp .env.example .env
+
+      - name: Run PHPUnit Feature Tests
+        env:
+          # Variabili d'ambiente vere: il repository di phpdotenv usato da
+          # Laravel e' immutable, quindi vincono su quelle di .env.
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: backend
+          DB_USERNAME: username
+          DB_PASSWORD: password
+        run: cd backend && ./vendor/bin/phpunit tests/Feature --no-coverage
+
+  check-frontend:
+    name: frontend
+    needs: plan
+    if: needs.plan.outputs.tier != 'audit'
+    runs-on: ${{ vars.LINUX_RUNNER || 'ubuntu-latest' }}
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '20'
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      # Lo script c'e' in package.json dal primo giorno e non lo invocava
+      # nessun workflow.
+      - name: ESLint
+        run: yarn lint
+
+  deep:
+    needs: plan
+    if: needs.plan.outputs.deep == 'true'
+    permissions:
+      contents: read
+      # osv-scanner, dentro scan.yml, dichiara security-events: write.
+      security-events: write
+    uses: Mensa-Italia/.github/.github/workflows/scan.yml@main
+
+  # plan.yml calcola i tag per una sola immagine, questo repo ne pubblica tre.
+  # Le regole per livello sono le stesse di plan.yml, applicate ai tre nomi.
+  tags:
+    name: tag immagini
+    needs: plan
+    if: needs.plan.outputs.publish == 'true'
+    runs-on: ${{ vars.LINUX_RUNNER || 'ubuntu-latest' }}
+    outputs:
+      backend: ${{ steps.t.outputs.backend }}
+      frontend_ssr: ${{ steps.t.outputs.frontend_ssr }}
+      frontend_csr: ${{ steps.t.outputs.frontend_csr }}
+    steps:
+      - id: t
+        env:
+          TIER: ${{ needs.plan.outputs.tier }}
+          VERSION: ${{ needs.plan.outputs.version }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          short="${SHA:0:7}"
+          summary=""
+
+          emit() {
+            out="$1"; comp="$2"
+            reg="ghcr.io/mensa-italia/mensa-events/${comp}"
+            case "$TIER" in
+              dev)
+                tags="${reg}:dev"$'\n'"${reg}:sha-${short}" ;;
+              staging)
+                tags="${reg}:staging"$'\n'"${reg}:${VERSION}"$'\n'"${reg}:sha-${short}" ;;
+              release)
+                tags="${reg}:latest"$'\n'"${reg}:${VERSION}"$'\n'"${reg}:${VERSION%.*}"$'\n'"${reg}:sha-${short}" ;;
+              *)
+                echo "::error::Livello '$TIER' non pubblica immagini: il job 'tags' non doveva partire."
+                exit 1 ;;
+            esac
+            {
+              echo "${out}<<__EOT__"
+              printf '%s\n' "$tags"
+              echo "__EOT__"
+            } >> "$GITHUB_OUTPUT"
+            summary="${summary}${tags}"$'\n'
+          }
+
+          emit backend      backend
+          emit frontend_ssr frontend-ssr
+          emit frontend_csr frontend-csr
+
+          {
+            echo "### Tag immagine (livello \`$TIER\`)"
+            echo ""
+            echo '```'
+            printf '%s' "$summary"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # Niente esce prima dei controlli: i tre job immagine hanno needs veri verso
+  # entrambi i check e verso deep. deep non gira sotto il livello release, e
+  # 'saltato' non e' 'fallito': per questo la condizione e' esplicita invece
+  # del success() implicito.
+  image-backend:
+    needs: [plan, check-backend, check-frontend, deep, tags]
+    if: >-
+      !cancelled()
+      && needs.plan.outputs.publish == 'true'
+      && needs.check-backend.result == 'success'
+      && needs.check-frontend.result == 'success'
+      && needs.tags.result == 'success'
+      && needs.deep.result != 'failure'
+      && needs.deep.result != 'cancelled'
+    permissions:
+      contents: read
+      packages: write
+    uses: Mensa-Italia/.github/.github/workflows/image.yml@main
+    with:
+      image: mensa-italia/mensa-events/backend
+      tags: ${{ needs.tags.outputs.backend }}
+      context: ./backend
+      file: ./backend/Dockerfile
+
+  image-frontend-ssr:
+    needs: [plan, check-backend, check-frontend, deep, tags]
+    if: >-
+      !cancelled()
+      && needs.plan.outputs.publish == 'true'
+      && needs.check-backend.result == 'success'
+      && needs.check-frontend.result == 'success'
+      && needs.tags.result == 'success'
+      && needs.deep.result != 'failure'
+      && needs.deep.result != 'cancelled'
+    permissions:
+      contents: read
+      packages: write
+    uses: Mensa-Italia/.github/.github/workflows/image.yml@main
+    with:
+      image: mensa-italia/mensa-events/frontend-ssr
+      tags: ${{ needs.tags.outputs.frontend_ssr }}
+      context: ./frontend
+      file: ./frontend/Dockerfile.ssr
+
+  image-frontend-csr:
+    needs: [plan, check-backend, check-frontend, deep, tags]
+    if: >-
+      !cancelled()
+      && needs.plan.outputs.publish == 'true'
+      && needs.check-backend.result == 'success'
+      && needs.check-frontend.result == 'success'
+      && needs.tags.result == 'success'
+      && needs.deep.result != 'failure'
+      && needs.deep.result != 'cancelled'
+    permissions:
+      contents: read
+      packages: write
+    uses: Mensa-Italia/.github/.github/workflows/image.yml@main
+    with:
+      image: mensa-italia/mensa-events/frontend-csr
+      tags: ${{ needs.tags.outputs.frontend_csr }}
+      context: ./frontend
+      file: ./frontend/Dockerfile.csr
+
+  publish:
+    needs: [plan, check-backend, check-frontend, deep, image-backend, image-frontend-ssr, image-frontend-csr]
+    if: needs.plan.outputs.tier == 'release'
+    uses: Mensa-Italia/.github/.github/workflows/release.yml@main
+    permissions:
+      contents: write
+      id-token: write
+    with:
+      version: ${{ needs.plan.outputs.version }}
